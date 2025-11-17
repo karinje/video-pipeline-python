@@ -19,8 +19,6 @@ flowchart TD
     F["<b>Generate Universe</b><br/>Define characters, locations,<br/>props, visual style"] --> G
     
     G["<b>Generate Reference Images</b><br/>Create visual references<br/>for characters & locations"] --> H
-    G -->|sora2| I
-    G -->|veo3.1| J
     
     H["<b>Generate Scene Prompts</b><br/>Craft detailed prompts<br/>for each video scene"] --> I
     
@@ -29,6 +27,9 @@ flowchart TD
     J["<b>Generate Video Clips</b><br/>Produce individual<br/>scene videos"] --> K
     
     K["<b>Merge Clips</b><br/>Combine into final<br/>cohesive video"]
+    
+    G -.->|sora2| I
+    G -.->|veo3.1| J
     
     click B "https://github.com/karinje/video-pipeline-python/blob/main/s1_generate_concepts/inputs/prompt_templates/advanced_structured.md" "View Advanced Prompt Template"
     
