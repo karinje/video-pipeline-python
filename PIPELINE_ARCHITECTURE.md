@@ -30,6 +30,8 @@ flowchart TD
     
     K["<b>Merge Clips</b><br/>Combine into final<br/>cohesive video"]
     
+    click B href "s1_generate_concepts/inputs/prompt_templates/advanced_structured.md" "View Advanced Prompt Template"
+    
     style A fill:#e1f5ff
     style B fill:#fff4e1
     style C fill:#ffe1e1
