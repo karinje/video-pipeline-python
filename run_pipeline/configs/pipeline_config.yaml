@@ -1,0 +1,395 @@
+# ============================================================================
+# VIDEO GENERATION PIPELINE CONFIGURATION
+# ============================================================================
+# This config file controls all parameters for the complete video generation
+# pipeline from brand config to final video.
+#
+# Pipeline Steps:
+#   0. Generate Concepts (if start_from='brand_config')
+#   1. Judge/Evaluate Concepts (if start_from='brand_config')
+#   2. Extract Best Concept from Evaluation
+#   3. Revise Script for Video Timing
+#   4. Generate Universe and Characters
+#   5. Generate Reference Images
+#   6. Generate Scene Prompts
+#   7. Generate First Frame Images
+#   8. Generate Video Clips
+#   9. Merge Video Clips into Final Video
+# ============================================================================
+
+# ============================================================================
+# PIPELINE MODE
+# ============================================================================
+# Where to start the pipeline execution
+
+pipeline_mode:
+  start_from: brand_config  # Options: 'brand_config' or 'evaluation_json'
+  # 'brand_config': Run full pipeline (Steps 0-9) - generates concepts, evaluates, creates video
+  # 'evaluation_json': Run video only (Steps 2-9) - uses existing evaluation, creates video
+  
+  skip_concept_generation: false  # Skip Step 0 if batch summary already exists
+  skip_evaluation: false  # Skip Step 1 if evaluation JSON already exists
+
+# ============================================================================
+# INPUT FILES
+# ============================================================================
+# Required files for the pipeline
+
+input:
+  config_file: s1_generate_concepts/inputs/configs/rolex.json
+  # Brand configuration file (REQUIRED for all modes)
+  # Contains: BRAND_NAME, PRODUCT_DESCRIPTION, BRAND_VALUES, TAGLINE, etc.
+  # Used in: Steps 0, 3, 4, 6
+  
+  evaluation_json: s2_judge_concepts/outputs/rolex_evaluation_claude_4.5_1115_1848.json
+  # Path to evaluation JSON file (REQUIRED if start_from='evaluation_json')
+  # Contains scored ad concepts from Step 1
+  # Used in: Step 2 to extract best concept
+  # Auto-generated if start_from='brand_config'
+
+# ============================================================================
+# STEP 0: GENERATE CONCEPTS
+# ============================================================================
+# What it does:
+#   Generates 5-scene ad concepts for all combinations of AD_STYLE, templates,
+#   and models. Runs in parallel for speed.
+#
+# Inputs:
+#   - Brand config file (from input section)
+#   - Creative direction (below)
+#   - AD_STYLE list (below)
+#   - Templates (below)
+#   - Models (below)
+#
+# Outputs:
+#   - results/{brand}_{timestamp}/ - Concept files (one per combination)
+#   - prompts_history/{brand}_{timestamp}/ - Generated prompts
+#   - results/{brand}_{timestamp}/{brand}_batch_summary_{timestamp}.json
+
+concept_generation:
+  creative_direction: "Create a 30 second Instagram ad for luxury watches with elegant gold aesthetics"
+  # Creative direction prompt - describes what kind of ad to create
+  # Can be customized per run
+  
+  ad_styles:
+    - "Achievement - Inspirational"
+    # List of AD_STYLE options to generate
+    # Options include:
+    #   - "Humor - Hilarious", "Humor - Playful", "Humor - Sarcastic/Witty"
+    #   - "Sentiment - Heartwarming", "Sentiment - Tear-jerking", "Sentiment - Nostalgic"
+    #   - "Achievement - Inspirational", "Achievement - Empowering", "Achievement - Understated"
+    #   - "Adventure - Thrilling", "Adventure - Wonder-filled", "Adventure - Epic"
+    #   - "Reversal - Thought-provoking", "Reversal - Mind-blowing", "Reversal - Clever"
+  
+  templates:
+    - path: s1_generate_concepts/inputs/prompt_templates/advanced_structured.md
+      name: advanced
+    - path: s1_generate_concepts/inputs/prompt_templates/generic_simple.md
+      name: generic
+  # Prompt templates to use
+  # Both generic and advanced will be tested for each AD_STYLE/model combination
+  
+  models:
+    - provider: openai
+      model: gpt-5.1
+      reasoning_effort: high  # Max thinking for GPT-5.1
+      thinking: ~  # null in YAML (use ~ or omit the key)
+    - provider: anthropic
+      model: claude-sonnet-4-5-20250929
+      reasoning_effort: ~  # null in YAML (use ~ or omit the key)
+      thinking: 10000  # Max extended thinking (budget_tokens) for Claude
+  # LLM models to use for concept generation
+  # Format: [provider, model_name, reasoning_effort, thinking]
+  # GPT-5.1: reasoning_effort='high' for max thinking
+  # Claude: thinking=10000 (budget_tokens) for extended thinking
+  
+  concept_parallel_workers: 8
+  # Number of parallel workers for concept generation
+  # Higher = faster but more API calls simultaneously
+
+# ============================================================================
+# STEP 1: JUDGE/EVALUATE CONCEPTS
+# ============================================================================
+# What it does:
+#   Evaluates each concept separately (parallel) using an LLM judge.
+#   Scores 0-100 based on:
+#     - Narrative Quality (20 points)
+#     - Emotional Impact (20 points)
+#     - Brand Integration (15 points)
+#     - Memorability (15 points)
+#     - Visual Clarity (15 points)
+#     - Success Likelihood (15 points)
+#
+# Inputs:
+#   - Batch summary JSON from Step 0
+#
+# Outputs:
+#   - evaluations/{brand}_evaluation_{judge_model}_{timestamp}.json
+#   - evaluations/{brand}_scores_{judge_model}_{timestamp}.csv
+
+evaluation:
+  judge_model: anthropic/claude-sonnet-4-5-20250929
+  # LLM model to use for judging/evaluating concepts
+  # Format: 'provider/model_name'
+  
+  evaluation_output_dir: s2_judge_concepts/outputs
+  # Directory to save evaluation JSON and CSV files
+
+# ============================================================================
+# STEP 2: EXTRACT BEST CONCEPT
+# ============================================================================
+# What it does:
+#   Loads evaluation JSON, finds the highest-scoring concept, extracts the
+#   concept file path.
+#
+# Inputs:
+#   - Evaluation JSON file (from Step 1 or input section)
+#
+# Outputs:
+#   - Concept file path (used in Step 3)
+
+# (No configuration needed - uses evaluation_json from input section)
+
+# ============================================================================
+# STEP 3: REVISE SCRIPT FOR VIDEO
+# ============================================================================
+# What it does:
+#   Makes minor edits to ensure the 5-scene concept can be rendered in the
+#   specified duration. Adds standout elements section.
+#
+# Inputs:
+#   - Best concept from Step 2
+#   - Brand config file
+#   - Duration (from video_settings)
+#   - LLM model (from models section)
+#
+# Outputs:
+#   - {concept_name}_revised.txt
+
+# (Configuration in video_settings and models sections below)
+
+# ============================================================================
+# STEP 4: GENERATE UNIVERSE AND CHARACTERS
+# ============================================================================
+# What it does:
+#   Generates detailed descriptions for props, locations, and characters that
+#   appear across multiple scenes. Includes multiple versions for elements
+#   (e.g., "Early Struggle" vs "Opening Night Success").
+#
+# Inputs:
+#   - Revised script from Step 3
+#   - Brand config file
+#   - LLM model (from models section)
+#
+# Outputs:
+#   - {concept_name}_universe_characters.json
+
+# (Configuration in models section below)
+
+# ============================================================================
+# STEP 5: GENERATE REFERENCE IMAGES
+# ============================================================================
+# What it does:
+#   Generates hyper-realistic reference images for all universe/character
+#   elements using nano-banana. Handles multiple versions and sequential
+#   generation with reference images.
+#
+# Inputs:
+#   - Universe/characters JSON from Step 4
+#   - Image generation model (from models section)
+#
+# Outputs:
+#   - universe_characters/{concept_name}/ - All reference images
+#   - universe_characters/{concept_name}/image_generation_summary.json
+
+# (Configuration in models and image_generation sections below)
+
+# ============================================================================
+# STEP 6: GENERATE SCENE PROMPTS
+# ============================================================================
+# What it does:
+#   Generates detailed video prompts for each scene including camera angles,
+#   style, actions, dialogue, and audio prompts.
+#
+# Inputs:
+#   - Revised script from Step 3
+#   - Universe/characters JSON from Step 4
+#   - Image generation summary from Step 5
+#   - Video settings (duration, resolution, aspect ratio)
+#   - LLM model (from models section)
+#
+# Outputs:
+#   - {concept_name}_scene_prompts.json
+
+# (Configuration in video_settings and models sections below)
+
+# ============================================================================
+# STEP 7: GENERATE FIRST FRAME IMAGES
+# ============================================================================
+# What it does:
+#   Generates first frame images for each scene using nano-banana with
+#   reference images from Step 5. Ensures all characters/locations/props are
+#   included in the first frame.
+#
+# Inputs:
+#   - Scene prompts JSON from Step 6
+#   - Universe/characters JSON from Step 4
+#   - Reference images from Step 5
+#   - Resolution, aspect ratio (from video_settings)
+#
+# Outputs:
+#   - first_frames/{concept_name}/ - First frame images for each scene
+
+# (Configuration in video_settings, models, and image_generation sections below)
+
+# ============================================================================
+# STEP 8: GENERATE VIDEO CLIPS
+# ============================================================================
+# What it does:
+#   Generates video clips for each scene using Veo 3 Fast (or other video
+#   model) with first frame images as reference. Includes audio generation.
+#
+# Inputs:
+#   - Scene prompts JSON from Step 6
+#   - First frame images from Step 7
+#   - Video generation model (from models section)
+#   - Video settings (resolution, aspect ratio, duration)
+#
+# Outputs:
+#   - video_outputs/{concept_name}/ - Video clips for each scene
+
+# (Configuration in video_settings, models, and video_generation sections below)
+
+# ============================================================================
+# STEP 9: MERGE VIDEO CLIPS
+# ============================================================================
+# What it does:
+#   Merges all video clips into a single final video using FFmpeg.
+#
+# Inputs:
+#   - Video clips from Step 8
+#
+# Outputs:
+#   - video_outputs/{concept_name}/{concept_name}_final_{model}.mp4
+
+# (No configuration needed - uses video clips from Step 8)
+
+# ============================================================================
+# OUTPUT DIRECTORIES
+# ============================================================================
+# Where to save generated files
+
+output:
+  results_base_dir: s1_generate_concepts/outputs
+  # Base directory for concept generation results (Step 0 output)
+  
+  prompts_base_dir: s1_generate_concepts/outputs
+  # Base directory for generated prompts (Step 0 output)
+  
+  base_output_dir: s4_revise_script/outputs
+  # Base directory for script generation outputs (Steps 3-6)
+  
+  universe_images_dir: s6_generate_reference_images/outputs
+  # Directory for generated universe/character reference images
+  # Step 5 output, Steps 6-7 input
+  
+  first_frames_dir: s8_generate_first_frames/outputs
+  # Directory for generated first frame images
+  # Step 7 output, Step 8 input
+  
+  video_outputs_dir: s9_generate_video_clips/outputs
+  # Directory for generated video clips and final merged video
+  # Steps 8-9 output
+
+# ============================================================================
+# VIDEO SETTINGS
+# ============================================================================
+# Used in Steps 3, 6, 7, 8
+
+video_settings:
+  duration_seconds: 30
+  # Total video duration in seconds
+  # Used in: Step 3 (script revision), Step 6 (scene prompts), Step 8 (video generation)
+  
+  resolution: 720p
+  # Video resolution
+  # Options: "480p", "720p", "1080p"
+  # Used in: Step 6 (scene prompts), Step 7 (first frames), Step 8 (video clips)
+  
+  aspect_ratio: 16:9
+  # Video aspect ratio
+  # Used in: Step 6 (scene prompts), Step 7 (first frames), Step 8 (video clips)
+  
+  scenes_count: 5
+  # Number of scenes in the video
+  # Used to calculate scene duration (duration_seconds / scenes_count)
+
+# ============================================================================
+# MODEL SETTINGS
+# ============================================================================
+# LLM and video/image generation models
+
+models:
+  llm_model: anthropic/claude-sonnet-4-5-20250929
+  # LLM model for script revision, universe generation, and scene prompts
+  # Used in: Steps 3, 4, 6
+  # Format: 'provider/model_name'
+  
+  video_model: google/veo-3-fast
+  # Video generation model
+  # Options: "google/veo-3-fast", "openai/sora-2", "bytedance/seedance-1-pro"
+  # Used in: Step 8
+  
+  image_model: google/nano-banana
+  # Image generation model for universe/characters and first frames
+  # Used in: Steps 5, 7
+
+# ============================================================================
+# IMAGE GENERATION SETTINGS
+# ============================================================================
+# Used in Steps 5, 7
+
+image_generation:
+  max_reference_images: 5
+  # Maximum number of reference images for first frame generation
+  # This is nano-banana's limit
+  # Used in: Step 7
+  
+  image_parallel_workers: 5
+  # Number of parallel workers for image generation
+  # Used in: Steps 5, 7
+
+# ============================================================================
+# VIDEO GENERATION SETTINGS
+# ============================================================================
+# Used in Step 8
+
+video_generation:
+  generate_audio: true
+  # Whether to generate audio with video
+  # Veo 3 Fast supports this
+  # Used in: Step 8
+  
+  video_parallel_workers: 3
+  # Number of parallel workers for video clip generation
+  # Used in: Step 8
+
+# ============================================================================
+# ADVANCED OPTIONS
+# ============================================================================
+# Skip steps if outputs already exist
+
+advanced:
+  skip_image_generation: false
+  # Skip Step 5 (universe/character image generation) if images already exist
+  
+  skip_first_frames: false
+  # Skip Step 7 (first frame generation) if frames already exist
+  
+  skip_video_clips: false
+  # Skip Step 8 (video clip generation) if clips already exist
+  
+  regenerate_scene_prompts: false
+  # Force regeneration of scene_prompts.json even if it exists
+  # Used in: Step 6
+

@@ -1,0 +1,150 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Storefront/Restaurant",
+        "scenes_used": [
+          1,
+          4
+        ],
+        "has_multiple_versions": true,
+        "versions": [
+          {
+            "version_name": "Empty Storefront",
+            "scenes_used": [
+              1
+            ],
+            "description": "An abandoned urban storefront with dusty windows, peeling paint on the door frame, and faded 'FOR LEASE' sign. The interior is visible through grimy glass\u2014bare concrete floors, exposed pipes, and dim natural light filtering through. The space has good bones but shows years of neglect. Urban architectural details suggest a historic neighborhood with potential.",
+            "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic abandoned urban storefront exterior, documentary photography style. Dusty plate glass windows with natural fingerprints and grime, authentic weathered door frame with chipped burgundy paint, faded sun-bleached FOR LEASE sign taped inside window. Lifelike natural lighting showing bare concrete floor visible through glass, real exposed ceiling pipes, realistic dust particles in afternoon light. Professional architectural photography, authentic urban decay, natural skin texture on weathered surfaces, realistic material details, real property photograph style, 4K ultra-detailed realism",
+            "is_original": true
+          },
+          {
+            "version_name": "Packed Opening Night Restaurant",
+            "scenes_used": [
+              4
+            ],
+            "description": "The same storefront completely transformed into an elegant, warmly-lit restaurant. Polished brass door handles, gleaming windows with soft golden light spilling onto the sidewalk. Inside, intimate dining room with warm ochre walls, Edison bulb fixtures casting amber glow, rustic wooden tables packed with diverse diners. Open kitchen visible in background with copper pots hanging. White tablecloths, flickering votives, full house atmosphere with standing guests waiting.",
+            "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic elegant restaurant interior on opening night, documentary photography style. Warm golden ambient lighting from authentic Edison bulb fixtures casting natural amber glow, lifelike intimate dining room with real ochre-painted walls showing subtle texture, photorealistic rustic wooden tables with natural grain visible, professional portrait photography lighting. Diverse crowd of real people dining, realistic white linen tablecloths with natural fabric wrinkles, genuine flickering votive candles with real flame glow, authentic copper pots hanging in background, ultra-realistic busy restaurant atmosphere, natural skin tones on diners, realistic clothing fabric details, professional food photography lighting quality, 4K hyper-detailed realism",
+            "is_original": false,
+            "references_original_version": "Empty Storefront"
+          }
+        ]
+      }
+    ],
+    "props": [
+      {
+        "name": "Grandmother's Restaurant Photo",
+        "scenes_used": [
+          1,
+          3
+        ],
+        "has_multiple_versions": false,
+        "description": "A vintage black-and-white photograph in weathered condition, 4x6 inches with rounded corners and sepia tones creeping in from edges. Shows a small, bustling restaurant exterior from the 1960s with hand-painted signage in an Asian script. A proud elderly woman in traditional dress stands in the doorway. The photo has authentic aging\u2014slight creases, fingerprint smudges on glossy surface, and a small tear in one corner that's been carefully mended with yellowed tape on the back.",
+        "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic vintage black-and-white photograph from 1960s, documentary photography style. Authentic aged photograph with real sepia toning at edges, lifelike rounded corners, natural wear patterns and creases, genuine fingerprint smudges on glossy surface, realistic small tear carefully mended with yellowed tape visible. Photo shows real elderly Asian woman in traditional dress standing in doorway of small restaurant, authentic hand-painted signage with Asian characters, natural vintage photo grain and contrast, professional archival photograph quality, realistic light exposure variations of old film photography, ultra-detailed aging effects, natural photo paper texture, 4K hyper-realistic vintage photograph"
+      },
+      {
+        "name": "Traditional Recipe Book",
+        "scenes_used": [
+          2,
+          3
+        ],
+        "has_multiple_versions": false,
+        "description": "A well-worn leather-bound recipe journal with burgundy cover, about 8x10 inches, showing years of kitchen use. Cover has natural patina with oil stains, corner wear exposing underlying material, and a fabric bookmark ribbon faded to pale pink. Pages inside are handwritten in two distinct scripts\u2014older elegant cursive (grandmother's) in faded blue ink, and newer careful notes in black pen with ingredient adjustments and temperature conversions. Some pages have sauce splatters and grease stains that have become part of the book's character.",
+        "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic well-worn leather recipe journal, documentary photography style. Authentic burgundy leather cover with natural patina and realistic oil stains from kitchen use, lifelike corner wear exposing underlying material layers, real faded pale pink fabric bookmark ribbon, professional product photography. Interior pages show genuine handwritten text in two distinct handwriting styles\u2014elegant cursive in naturally faded blue ink and modern careful black pen notes, realistic paper texture with authentic yellowing, natural sauce splatters and grease stains with real translucent quality, ultra-realistic aging and use patterns, natural lighting showing leather texture and paper grain details, 4K hyper-detailed worn book realism, authentic archival document quality"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Main Chef (Protagonist)",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Early Struggle Period",
+          "scenes_used": [
+            1,
+            2,
+            3
+          ],
+          "description": "Asian immigrant man, early 60s, with weathered medium-brown skin showing natural aging lines and sun spots. Salt-and-pepper hair, mostly grey, cut short and practical. Deep-set dark brown eyes showing weariness but determination. Slight build, around 5'8\", with calloused hands from decades of kitchen work. Wearing worn jeans with faded knees, plain grey t-shirt under an old denim jacket with frayed cuffs, scuffed work boots. Expression carries weight of doubt and financial stress, but underlying resolve. Natural Asian facial features with pronounced laugh lines and furrowed brow from years of concentration.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic portrait of Asian immigrant man in early 60s, documentary photography style. Real person with authentic weathered medium-brown skin tone showing natural aging lines, genuine sun spots and age spots, lifelike salt-and-pepper hair mostly grey with realistic hair texture, professional portrait photography. Deep-set dark brown eyes with natural eye wetness and real iris detail, authentic calloused hands with visible skin texture and work wear, realistic slight build around 5'8\" tall. Wearing genuine worn denim jeans with naturally faded knees, plain grey cotton t-shirt with real fabric texture, authentic old denim jacket with frayed cuffs showing individual threads, real scuffed leather work boots with natural wear patterns. Natural Asian facial features with real pronounced laugh lines, authentic furrowed brow, lifelike skin texture with visible pores, realistic natural lighting showing all facial details, ultra-realistic expression of weariness but determination, 4K hyper-detailed realism, professional documentary portrait quality",
+          "is_original": true
+        },
+        {
+          "version_name": "Opening Night Success",
+          "scenes_used": [
+            4,
+            5
+          ],
+          "description": "Same Asian man, now appearing more confident and refined. Same weathered skin but with healthier glow from better rest. Hair still salt-and-pepper but freshly trimmed. Eyes now show pride and quiet confidence instead of weariness. Wearing crisp white chef's coat with his name embroidered in gold thread, tailored black chef's pants, professional kitchen clogs. Gold Rolex prominently visible on left wrist. Posture is more upright, shoulders back. Expression shows earned respect and satisfaction\u2014subtle smile with genuine warmth in eyes.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic portrait of same Asian immigrant man now in confident success, documentary photography style. Same real person with authentic weathered medium-brown skin now showing healthier natural glow, lifelike salt-and-pepper hair freshly trimmed with realistic texture, professional portrait photography. Same deep-set dark brown eyes now showing genuine pride and confidence with natural eye reflection, authentic upright posture with shoulders back, realistic refined appearance. Wearing genuine crisp white chef's coat with real fabric texture and gold embroidered name thread details visible, authentic tailored black chef's pants with natural fabric drape, real professional kitchen clogs. Gold Rolex watch prominently displayed on left wrist with ultra-realistic metallic sheen and authentic watch face details, natural warm lighting catching watch surface. Same natural Asian facial features with real pronounced laugh lines now in genuine subtle smile, authentic expression of earned respect and satisfaction, lifelike skin texture with visible pores and natural warmth, realistic professional chef portrait lighting, 4K hyper-detailed realism matching earlier version but more confident",
+          "is_original": false,
+          "references_original_version": "Early Struggle Period"
+        }
+      ]
+    },
+    {
+      "name": "Young Chef Group",
+      "scenes_used": [
+        2,
+        4
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Mocking Younger Chefs",
+          "scenes_used": [
+            2
+          ],
+          "description": "Group of 4 diverse young chefs in their late 20s-early 30s showing dismissive attitudes. DIVERSITY FIRST: Chef 1 - White male with pale peachy skin tone, light brown hair, European features with narrow nose and thin lips. Chef 2 - Black male with deep brown skin tone, African features with broader nose and full lips, short natural hair. Chef 3 - Hispanic male with medium olive-tan skin tone, Latin American features with wider face shape, dark wavy hair. Chef 4 - White female with fair porcelain skin tone, European features, blonde hair in tight bun. All wearing modern chef coats with colorful designer details (one has visible tattoos on forearms). Body language is arrogant\u2014crossed arms, smirking expressions, one pointing dismissively at recipe book. Contemporary trendy appearance with styled hair, several wearing thick-framed glasses, expensive chef knives visible in pockets.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic group portrait of 4 diverse young chefs, documentary photography style. EXPLICIT DIVERSITY - PERSON 1: Real White male with authentic pale peachy skin tone and European features, narrow nose, thin lips, natural light brown hair texture, clearly distinguishable ethnic features. PERSON 2: Real Black male with genuine deep brown skin tone and African facial features, broader nose, full lips, short natural Black hair texture, clearly distinguishable ethnic features. PERSON 3: Real Hispanic male with authentic medium olive-tan skin tone and Latin American features, wider face shape, natural dark wavy hair texture, clearly distinguishable ethnic features. PERSON 4: Real White female with genuine fair porcelain skin tone and European features, blonde hair in realistic tight bun, clearly distinguishable ethnic features. Each person clearly distinct with realistic skin tone variations, natural facial feature differences, lifelike individual characteristics. All wearing authentic modern chef coats with real colorful designer detail stitching, genuine visible tattoos with realistic ink texture on forearms, natural arrogant body language with crossed arms, real smirking expressions with authentic facial muscle movement, one person pointing dismissively with realistic hand gesture. Professional portrait photography lighting showing all four individuals with clear ethnic and feature distinctions, ultra-realistic group dynamic, 4K hyper-detailed realism with each person individually photorealistic",
+          "is_original": true
+        },
+        {
+          "version_name": "Respectful Admiring Chefs",
+          "scenes_used": [
+            4
+          ],
+          "description": "Same 4 diverse chefs now showing complete transformation in attitude and body language. SAME DIVERSITY: Same Chef 1 (White male with pale peachy skin), Chef 2 (Black male with deep brown skin), Chef 3 (Hispanic male with medium olive-tan skin), Chef 4 (White female with fair porcelain skin). Now all wearing slightly more formal attire\u2014same chef coats but cleaner, pressed, with hands clasped respectfully in front or behind backs. Expressions show genuine admiration and humility\u2014soft eyes, slight bows of heads, reverent smiles. One holds a notepad taking careful notes. Body language is open and attentive, leaning forward slightly. The arrogance has been completely replaced by respect\u2014they look like students before a master.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic group portrait of same 4 diverse young chefs now showing respect, documentary photography style. EXPLICIT DIVERSITY MAINTAINED - PERSON 1: Same real White male with authentic pale peachy skin tone and European features identical to mocking version. PERSON 2: Same real Black male with genuine deep brown skin tone and African features identical to mocking version. PERSON 3: Same real Hispanic male with authentic medium olive-tan skin tone and Latin American features identical to mocking version. PERSON 4: Same real White female with genuine fair porcelain skin tone and European features identical to mocking version. Each person clearly same individual with matching realistic skin tones, same natural facial features, same lifelike hair and body type from previous version. Now wearing same authentic chef coats but cleaner and pressed with realistic fabric crispness, natural respectful body language with hands clasped in front, real expressions of genuine admiration with authentic soft eyes and natural reverent smiles, one holding realistic notepad with natural hand grip, lifelike attentive posture leaning forward slightly. Professional portrait photography showing complete attitude transformation while maintaining exact same individuals, ultra-realistic group dynamic of respect, 4K hyper-detailed realism matching previous version but with transformed demeanor",
+          "is_original": false,
+          "references_original_version": "Mocking Younger Chefs"
+        }
+      ]
+    },
+    {
+      "name": "Bank Loan Officers",
+      "scenes_used": [
+        2
+      ],
+      "has_multiple_versions": false,
+      "description": "Two corporate bank employees in conservative business attire. Officer 1: Middle-aged white male, around 50, with thinning grey hair combed to side, pale skin, wire-rimmed glasses, wearing navy suit with red striped tie, holding manila folder with 'DECLINED' stamp visible. Expression is bureaucratically sympathetic but firm\u2014slight head shake, pursed lips. Officer 2: South Asian female, late 40s, with shoulder-length black hair, medium-brown skin, wearing charcoal grey pantsuit with pearl earrings. Holding tablet showing financial rejection screen. Both sitting behind sterile bank desk with corporate logo visible, fluorescent office lighting creating harsh shadows.",
+      "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic portrait of two bank loan officers behind desk, documentary photography style. PERSON 1: Real middle-aged White male around 50 with authentic thinning grey hair naturally combed to side, genuine pale skin tone with natural aging, real wire-rimmed glasses with lens reflection, wearing authentic navy business suit with realistic fabric texture and red striped silk tie with natural sheen, holding genuine manila folder with visible red 'DECLINED' rubber stamp impression, realistic bureaucratic expression with natural slight head shake and pursed lips, authentic skin texture with visible pores. PERSON 2: Real South Asian female in late 40s with genuine medium-brown skin tone and South Asian facial features, authentic shoulder-length black hair with natural texture and shine, wearing real charcoal grey pantsuit with lifelike fabric drape and genuine pearl earrings with realistic luster, holding authentic tablet device showing financial rejection screen with real screen glow. Professional corporate portrait photography, both seated behind sterile bank desk with realistic wood grain, genuine corporate logo visible, harsh fluorescent office lighting creating natural shadows and unflattering light quality, ultra-realistic professional business environment, 4K hyper-detailed realism, authentic corporate photography style"
+    },
+    {
+      "name": "Michelin Critics",
+      "scenes_used": [
+        5
+      ],
+      "has_multiple_versions": false,
+      "description": "Two distinguished restaurant critics at elegant table in warm restaurant lighting. Critic 1: French woman in early 50s with pale ivory skin, silver-grey hair in sophisticated low chignon, wearing elegant black dress with single strand of pearls. Refined features with natural aging\u2014subtle lines around eyes, aristocratic bearing. Holding gold-embossed Michelin certificate with reverent two-handed grip. Critic 2: Japanese male, late 50s, with light beige-tan skin, neatly trimmed black hair greying at temples, wearing impeccable charcoal suit with burgundy pocket square. Wire-rimmed glasses, precise goatee. Expression shows deep respect\u2014slight bow, genuine smile. Both bathed in warm candlelight creating golden highlights on faces.",
+      "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic portrait of two Michelin restaurant critics, documentary photography style. PERSON 1: Real French woman in early 50s with authentic pale ivory skin tone showing natural aging and European features, genuine silver-grey hair styled in sophisticated low chignon with realistic hair texture, wearing elegant black dress with natural fabric drape and authentic single strand of real pearls with lifelike luster, refined facial features with natural subtle lines around eyes showing real aging, aristocratic bearing, holding gold-embossed Michelin certificate with reverent two-handed grip showing realistic hand position and natural finger details, lifelike skin texture with visible pores. PERSON 2: Real Japanese male in late 50s with authentic light beige-tan skin tone and Japanese facial features, genuine neatly trimmed black hair naturally greying at temples with realistic hair texture, wearing impeccable charcoal suit with real fabric texture and authentic burgundy pocket square with silk sheen, real wire-rimmed glasses with lens reflection, precise goatee with natural hair growth pattern, expression showing authentic deep respect with natural slight bow and genuine smile, realistic facial muscle movement. Professional portrait photography with warm candlelight creating natural golden highlights on both faces, realistic ambient restaurant lighting, ultra-realistic distinguished atmosphere, 4K hyper-detailed realism, authentic fine dining photography quality"
+    },
+    {
+      "name": "Opening Night Diners",
+      "scenes_used": [
+        4
+      ],
+      "has_multiple_versions": false,
+      "description": "Diverse crowd of approximately 15-20 restaurant patrons filling intimate dining room. Mixed ages from 30s to 70s, varied ethnicities including White, Black, Hispanic, Asian, and Middle Eastern. Range of upscale-casual attire\u2014some in business casual (blazers, button-downs), others in smart casual (nice sweaters, dresses). Natural crowd behavior\u2014some actively eating and conversing, others raising glasses in toasts, a few capturing photos on phones. Expressions show genuine enjoyment\u2014real smiles, engaged conversation, appreciative nods. Some standing along walls waiting for tables. Realistic restaurant patron diversity in both appearance and behavior, with natural candlelight and warm overhead lighting creating varied lighting on different skin tones.",
+      "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic crowded restaurant scene with diverse patrons, documentary photography style. EXPLICIT ETHNIC DIVERSITY: Group of 15-20 real people with clearly distinguishable ethnicities\u2014multiple White individuals with authentic pale to peachy skin tones and European features, Black individuals with genuine dark brown skin tones and African features, Hispanic individuals with real medium olive-tan skin tones and Latin American features, Asian individuals with authentic light beige skin tones and Asian facial features, Middle Eastern individuals with genuine tan-brown skin tones and Middle Eastern features. Each person clearly distinct with realistic individual skin tone variations, natural diverse facial features, lifelike age range from 30s to 70s with authentic aging differences. Mixed upscale-casual attire with real fabric textures\u2014some wearing genuine business blazers and button-down shirts, others in authentic smart casual sweaters and dresses with natural fabric drape. Realistic crowd behavior with some people actively eating with natural hand movements, others raising real glasses in toasts with authentic gestures, few capturing photos on phones with genuine device handling, natural expressions of enjoyment with real smiles and authentic engaged conversation facial expressions, some standing along walls naturally. Professional documentary photography with warm candlelight creating realistic varied lighting across different skin tones, natural overhead restaurant lighting, ultra-realistic crowded intimate restaurant atmosphere, 4K hyper-detailed realism with each person individually photorealistic and ethnically distinct"
+    }
+  ]
+}

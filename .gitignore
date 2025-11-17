@@ -1,0 +1,64 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+
+# Output directories (optional - uncomment if you don't want to track outputs)
+# s1_generate_concepts/outputs/
+# s2_judge_concepts/outputs/
+# s4_revise_script/outputs/
+# s6_generate_reference_images/outputs/
+# s8_generate_first_frames/outputs/
+# s9_generate_video_clips/outputs/
+# s10_merge_clips/outputs/
+
+# Debug folders
+**/debug/
+**/nano-banana-prompts/
+
+# Temporary configs
+temp_configs/
+
