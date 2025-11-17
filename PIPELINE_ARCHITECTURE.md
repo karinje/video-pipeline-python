@@ -6,7 +6,7 @@ This diagram illustrates the complete video generation pipeline, from initial re
 
 ```mermaid
 flowchart TD
-    A["<b>Perplexity Research</b><br/>Top 1000 Campaigns → Patterns<br/><br/><b>Top 5 Patterns:</b><br/>1. Problem-Solution<br/>2. Challenger-Underdog<br/>3. Lifestyle-Identity<br/>4. Entertainment-Spectacle<br/>5. Social-Cultural Movement"] --> B
+    A["<b>Manus Research</b><br/>Top 1000 Campaigns → Patterns<br/><br/><b>Top 5 Patterns:</b><br/>1. Problem-Solution<br/>2. Challenger-Underdog<br/>3. Lifestyle-Identity<br/>4. Entertainment-Spectacle<br/>5. Social-Cultural Movement"] --> B
     
     B["<b>Generate Concepts</b><br/>Multiple versions via prompt templates<br/>For diversity & pattern application<br/><br/><i>Example: Scene 1 - Hook</i><br/><i>Scene 2 - Problem/Conflict</i><br/><i>Scene 3 - Solution/Resolution</i>"] --> C
     
