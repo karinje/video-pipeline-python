@@ -19,12 +19,14 @@ flowchart TD
     F["<b>Generate Universe</b><br/>Define characters, locations,<br/>props, visual style"] --> G
     
     G["<b>Generate Reference Images</b><br/>Create visual references<br/>for characters & locations"] --> H
+    G -->|sora2| I
+    G -->|veo3.1| J
     
     H["<b>Generate Scene Prompts</b><br/>Craft detailed prompts<br/>for each video scene"] --> I
     
     I["<b>Generate First Frames</b><br/>Create starting frames<br/>for video clips"] --> J
     
-    J["<b>Generate Video Clips</b><br/>Produce individual<br/>scene videos (Sora 2)"] --> K
+    J["<b>Generate Video Clips</b><br/>Produce individual<br/>scene videos"] --> K
     
     K["<b>Merge Clips</b><br/>Combine into final<br/>cohesive video"]
     
