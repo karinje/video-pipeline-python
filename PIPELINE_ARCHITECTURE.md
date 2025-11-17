@@ -10,7 +10,7 @@ flowchart TD
     
     B["<b>Generate Concepts</b><br/>Multiple versions via prompt templates<br/>For diversity & pattern application<br/><br/><i>Example: Scene 1 - Hook</i><br/><i>Scene 2 - Problem/Conflict</i><br/><i>Scene 3 - Solution/Resolution</i>"] --> C
     
-    C["<b>LLM Judge</b><br/>Evaluate & score concepts<br/>Select best concept"] --> D
+    C["<b>LLM Judge</b><br/>Evaluate & score concepts<br/><br/><b>Example Rolex Scores:</b><br/>5.1 Advanced: 92, 4.5 Advanced: 78<br/>5.1 Generic: 82, 4.5 Generic: 72"] --> D
     
     D["<b>Extract Best Concept</b><br/>Isolate winning concept"] --> E
     
