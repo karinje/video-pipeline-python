@@ -7,7 +7,7 @@ Orchestrates all pipeline steps from brand config (or evaluation JSON) to final 
 1. **Step 0**: Generate Concepts (if `start_from='brand_config'`)
 2. **Step 1**: Judge/Evaluate Concepts (if `start_from='brand_config'`)
 3. **Step 2**: Extract Best Concept from Evaluation
-4. **Step 3**: Revise Script for Video Timing
+4. **Step 3**: Revise Concept Based on Judge Feedback (with optional re-judging)
 5. **Step 4**: Generate Universe and Characters
 6. **Step 5**: Generate Reference Images
 7. **Step 6**: Generate Scene Prompts
@@ -60,8 +60,12 @@ python run_pipeline_complete.py ../configs/my_config.yaml
 All outputs are organized by step:
 - `../s1_generate_concepts/outputs/` - Concepts and prompts
 - `../s2_judge_concepts/outputs/` - Evaluations
-- `../s4_revise_script/outputs/` - Revised scripts, universe, scene prompts
+- `../s3_extract_best_concept/outputs/` - Best concept metadata
+- `../s4_revise_concept/outputs/` - Revised concepts with re-evaluation scores
+- `../s5_generate_universe/outputs/` - Universe and character descriptions
 - `../s6_generate_reference_images/outputs/` - Reference images
+- `../s7_generate_scene_prompts/outputs/` - Scene-by-scene video prompts
 - `../s8_generate_first_frames/outputs/` - First frame images
-- `../s9_generate_video_clips/outputs/` - Video clips and final video
+- `../s9_generate_video_clips/outputs/` - Video clips
+- `../s10_merge_clips/outputs/` - Final merged video
 

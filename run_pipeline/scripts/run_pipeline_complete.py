@@ -16,11 +16,14 @@ Steps:
 9. Merge video clips into final video
 """
 
+print("🚀 SCRIPT STARTING - Loading imports...")
+
 import os
 import sys
 import json
 import re
 import yaml
+import shutil
 from pathlib import Path
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -30,7 +33,9 @@ import time
 # Load environment variables
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    # Load .env from project root
+    env_path = Path(__file__).resolve().parents[2] / ".env"
+    load_dotenv(env_path)
 except ImportError:
     pass
 
@@ -38,11 +43,15 @@ except ImportError:
 BASE_DIR = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(BASE_DIR / "s1_generate_concepts" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s2_judge_concepts" / "scripts"))
-sys.path.insert(0, str(BASE_DIR / "s4_revise_script" / "scripts"))
+sys.path.insert(0, str(BASE_DIR / "s4_revise_concept" / "scripts"))
+sys.path.insert(0, str(BASE_DIR / "s5_generate_universe" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s6_generate_reference_images" / "scripts"))
+sys.path.insert(0, str(BASE_DIR / "s7_generate_scene_prompts" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s8_generate_first_frames" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s9_generate_video_clips" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s10_merge_clips" / "scripts"))
+
+print("✓ Basic imports done, loading pipeline modules...")
 
 # Import pipeline modules
 from generate_prompt import generate_prompt, slugify, clean_model_name
@@ -50,14 +59,20 @@ from generate_prompt import load_config as load_prompt_config
 from execute_llm import execute_llm
 from generate_video_script import (
     load_evaluation_json, load_concept_file, load_config_file,
-    revise_script_for_video, generate_universe_and_characters,
-    generate_scene_prompts
+    revise_script_for_video
 )
-from generate_universe_images import generate_all_element_images
+# Import step 3 function
+sys.path.insert(0, str(BASE_DIR / "s3_extract_best_concept" / "scripts"))
+from extract_best_concept import extract_best_concept as extract_best_concept_step3
+from generate_universe import generate_universe_and_characters
+from generate_scene_prompts import generate_scene_prompts
+from generate_universe_images import generate_all_images
 from generate_first_frames import generate_all_first_frames
 from generate_sora2_clip import generate_sora2_clip
 from merge_video_clips_ffmpeg import merge_video_clips
-from judge_concepts import judge_batch, load_batch_summary
+from judge_concepts import judge_batch, load_batch_summary, evaluate_single_concept
+
+print("✓ All imports complete!\n")
 
 
 def load_pipeline_config(config_path):
@@ -125,7 +140,7 @@ def generate_concepts_batch(config_path, creative_direction, ad_styles, template
         (batch_folder_name, batch_summary_path)
     """
     print("=" * 80)
-    print("STEP 0: Generate Concepts (Batch)")
+    print("STEP 1: Generate Concepts (Batch)")
     print("=" * 80)
     
     # Load base config
@@ -137,10 +152,13 @@ def generate_concepts_batch(config_path, creative_direction, ad_styles, template
     batch_folder_name = f"{brand_name.lower()}_{batch_timestamp}"
     
     # Both results and prompts go to same outputs directory
+    # Resolve paths relative to BASE_DIR if not absolute
+    if not os.path.isabs(results_base_dir):
+        results_base_dir = str(BASE_DIR / results_base_dir)
     results_dir = os.path.join(results_base_dir, batch_folder_name)
     prompts_dir = results_dir  # Prompts saved alongside concepts
-    os.makedirs(results_dir, exist_ok=True)
-    os.makedirs(prompts_dir, exist_ok=True)
+    # Clear folder if it exists (for clean regeneration)
+    clear_output_folder(results_dir)
     
     print(f"Brand: {brand_name}")
     print(f"Batch Folder: {batch_folder_name}")
@@ -164,6 +182,10 @@ def generate_concepts_batch(config_path, creative_direction, ad_styles, template
                 template_name = template_item.get("name")
             else:
                 template_path, template_name = template_item[0], template_item[1]
+            
+            # Resolve template path relative to project root if not absolute
+            if not os.path.isabs(template_path):
+                template_path = str(BASE_DIR / template_path)
             
             for model_config in models:
                 # Handle both list format ["provider", "model", ...] and dict format {"provider": "...", "model": "..."}
@@ -305,6 +327,26 @@ def generate_concepts_batch(config_path, creative_direction, ad_styles, template
     return batch_folder_name, summary_path
 
 
+
+
+def clear_output_folder(folder_path):
+    """
+    Delete all contents of a folder if it exists, then recreate the folder.
+    Used to ensure clean output when regenerating steps.
+    """
+    folder = Path(folder_path)
+    if folder.exists() and folder.is_dir():
+        # Delete all contents
+        for item in folder.iterdir():
+            if item.is_file():
+                item.unlink()
+            elif item.is_dir():
+                shutil.rmtree(item)
+        print(f"  🗑️  Cleared existing folder: {folder}")
+    # Ensure folder exists (will create if it doesn't exist)
+    folder.mkdir(parents=True, exist_ok=True)
+
+
 def run_pipeline_complete(config_path="pipeline_config.json"):
     """
     Run the complete video generation pipeline.
@@ -316,7 +358,11 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
     print("=" * 80)
     print("COMPLETE VIDEO GENERATION PIPELINE")
     print("=" * 80)
+    pipeline_start_time = time.time()
     print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    
+    # Track step times
+    step_times = {}
     
     # Load configuration
     print("Loading pipeline configuration...")
@@ -331,21 +377,26 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
     models_cfg = config.get("models", {})
     image_cfg = config.get("image_generation", {})
     video_gen_cfg = config.get("video_generation", {})
-    advanced_cfg = config.get("advanced", {})
+    step_cfg = config.get("pipeline_steps", {})
     concept_cfg = config.get("concept_generation", {})
     eval_cfg = config.get("evaluation", {})
     
     start_from = mode_cfg.get("start_from", "brand_config")
     config_file = input_cfg.get("config_file")
+    # Resolve config file path relative to project root
+    if not os.path.isabs(config_file):
+        config_file = str(BASE_DIR / config_file)
     config_data = load_prompt_config(config_file)  # Use same load_config function
     brand_name = config_data.get("BRAND_NAME", "unknown")
     
     evaluation_path = None
     batch_folder_name = None
     
-    # Step 0: Generate Concepts (if starting from brand_config)
+    # Step 1: Generate Concepts (if starting from brand_config)
     if start_from == "brand_config":
-        if not mode_cfg.get("skip_concept_generation", False):
+        step1_start = time.time()
+        if step_cfg.get("run_step_1", True):
+            print("  → Running (run_step_1=true)")
             ad_styles = concept_cfg.get("ad_styles", [])
             templates = concept_cfg.get("templates", [])
             models = concept_cfg.get("models", [])
@@ -358,8 +409,11 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
                 output_cfg.get("prompts_base_dir", "s1_generate_concepts/outputs"),
                 max_workers=max_workers
             )
+            step_times["Step 1: Generate Concepts"] = time.time() - step1_start
             print(f"  ✓ Batch summary: {batch_summary_path}\n")
         else:
+            print("  ⏭  Skipped (run_step_1=false)")
+            step_times["Step 1: Generate Concepts"] = 0.0
             # Find existing batch summary
             results_base = Path(output_cfg.get("results_base_dir", "s1_generate_concepts/outputs"))
             batch_folders = sorted([d for d in results_base.iterdir() if d.is_dir() and d.name.startswith(brand_name.lower())], 
@@ -369,145 +423,413 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
                 summary_files = list(batch_folders[0].glob("*_batch_summary_*.json"))
                 if summary_files:
                     batch_summary_path = str(summary_files[0])
-                    print(f"  ⚠ Using existing batch: {batch_folder_name}\n")
+                    print(f"  ✓ Using existing batch: {batch_folder_name}\n")
                 else:
                     raise FileNotFoundError(f"No batch summary found in {batch_folders[0]}")
             else:
-                raise FileNotFoundError("No existing batch found and skip_concept_generation=True")
+                raise FileNotFoundError("No existing batch found and run_step_1=false")
         
-        # Step 1: Judge Concepts
-        if not mode_cfg.get("skip_evaluation", False):
+        # Step 2: Judge Concepts
+        step2_start = time.time()
+        if step_cfg.get("run_step_2", True):
             print("=" * 80)
-            print("STEP 1: Judge/Evaluate Concepts")
+            print("STEP 2: Judge/Evaluate Concepts")
             print("=" * 80)
+            print("  → Running (run_step_2=true)")
             
             judge_model = eval_cfg.get("judge_model", "anthropic/claude-sonnet-4-5-20250929")
             eval_output_dir = eval_cfg.get("evaluation_output_dir", "s2_judge_concepts/outputs")
+            # Resolve eval_output_dir relative to BASE_DIR if not absolute
+            if not os.path.isabs(eval_output_dir):
+                eval_output_dir = str(BASE_DIR / eval_output_dir)
             
-            evaluation_path = judge_batch(batch_summary_path, judge_model, eval_output_dir)
+            evaluation_path, csv_path = judge_batch(batch_summary_path, judge_model, eval_output_dir)
+            step_times["Step 2: Judge/Evaluate Concepts"] = time.time() - step2_start
             print(f"  ✓ Evaluation saved: {evaluation_path}\n")
         else:
+            print("=" * 80)
+            print("STEP 2: Judge/Evaluate Concepts")
+            print("=" * 80)
+            print("  ⏭  Skipped (run_step_2=false)")
+            step_times["Step 2: Judge/Evaluate Concepts"] = 0.0
             # Find existing evaluation
             eval_dir = Path(eval_cfg.get("evaluation_output_dir", "s2_judge_concepts/outputs"))
             eval_files = sorted([f for f in eval_dir.glob(f"{brand_name.lower()}_evaluation_*.json")],
                               key=lambda x: x.stat().st_mtime, reverse=True)
             if eval_files:
                 evaluation_path = str(eval_files[0])
-                print(f"  ⚠ Using existing evaluation: {evaluation_path}\n")
+                print(f"  ✓ Using existing evaluation: {evaluation_path}\n")
             else:
-                raise FileNotFoundError("No existing evaluation found and skip_evaluation=True")
+                raise FileNotFoundError("No existing evaluation found and run_step_2=false")
     else:
         # Start from evaluation JSON
         evaluation_path = input_cfg.get("evaluation_json")
         if not evaluation_path or not os.path.exists(evaluation_path):
             raise FileNotFoundError(f"Evaluation file not found: {evaluation_path}")
     
-    # Step 2: Extract best concept from evaluation
+    # Step 3: Extract best concept from evaluation
     print("=" * 80)
-    print("STEP 2: Extract Best Concept from Evaluation")
+    print("STEP 3: Extract Best Concept from Evaluation")
     print("=" * 80)
+    step3_start = time.time()
     
-    best_concept, best_score = load_evaluation_json(evaluation_path)
-    concept_file = best_concept.get("file")
-    if not concept_file or not os.path.exists(concept_file):
-        raise FileNotFoundError(f"Concept file not found: {concept_file}")
-    
-    concept_content = load_concept_file(concept_file)
-    
-    print(f"  ✓ Best concept: {os.path.basename(concept_file)}")
-    print(f"  ✓ Score: {best_score}/100")
-    print(f"  ✓ Model: {best_concept.get('model')}")
-    print(f"  ✓ Template: {best_concept.get('template')}\n")
+    if step_cfg.get("run_step_3", True):
+        print(f"  → Running (run_step_3=true)")
+        # Use step 3's extract_best_concept function to save output
+        step3_output_dir = output_cfg.get("step3_output_dir", "s3_extract_best_concept/outputs")
+        # Resolve path relative to BASE_DIR if not absolute
+        if not os.path.isabs(step3_output_dir):
+            step3_output_dir = str(BASE_DIR / step3_output_dir)
+        
+        best_concept_metadata_file = extract_best_concept_step3(evaluation_path, step3_output_dir)
+        
+        # Also load for use in pipeline
+        best_concept, best_score = load_evaluation_json(evaluation_path)
+        concept_file = best_concept.get("file")
+        if not concept_file or not os.path.exists(concept_file):
+            raise FileNotFoundError(f"Concept file not found: {concept_file}")
+        
+        concept_content = load_concept_file(concept_file)
+        
+        print(f"  ✓ Best concept: {os.path.basename(concept_file)}")
+        print(f"  ✓ Score: {best_score}/100")
+        print(f"  ✓ Model: {best_concept.get('model')}")
+        print(f"  ✓ Template: {best_concept.get('template')}")
+        print(f"  ✓ Metadata saved: {best_concept_metadata_file}\n")
+        step_times["Step 3: Extract Best Concept"] = time.time() - step3_start
+    else:
+        print(f"  ⏭  Skipped (run_step_3=false)")
+        # Load existing best concept metadata
+        # (This would need to be cached somewhere for this to work)
+        print(f"  ⚠  Warning: Step 3 skip not fully implemented - always run this step\n")
+        best_concept, best_score = load_evaluation_json(evaluation_path)
+        concept_file = best_concept.get("file")
+        concept_content = load_concept_file(concept_file)
+        print(f"  ✓ Using: {os.path.basename(concept_file)} ({best_score}/100)\n")
+        step_times["Step 3: Extract Best Concept"] = 0.0
     
     # Determine output directory
     if batch_folder_name:
-        output_base = Path(output_cfg.get("base_output_dir", "s4_revise_script/outputs"))
+        output_base = output_cfg.get("base_output_dir", "s4_revise_concept/outputs")
+        # Resolve relative to BASE_DIR if not absolute
+        if not os.path.isabs(output_base):
+            output_base = str(BASE_DIR / output_base)
+        output_base = Path(output_base)
         concept_name = Path(concept_file).stem
         output_dir = output_base / batch_folder_name / concept_name
     else:
-        evaluation_file = Path(evaluation_path)
-        batch_folder = evaluation_file.stem.replace("_evaluation", "").replace("evaluation_", "")
-        timestamp = datetime.now().strftime("%m%d_%H%M")
-        batch_folder = f"{brand_name.lower()}_{timestamp}"
-        output_base = Path(output_cfg.get("base_output_dir", "s4_revise_script/outputs"))
+        # When steps 1-3 are skipped, extract batch folder from concept file path
+        concept_path = Path(concept_file)
+        batch_folder_name = concept_path.parent.name  # Extract from concept file path
+        output_base = output_cfg.get("base_output_dir", "s4_revise_concept/outputs")
+        # Resolve relative to BASE_DIR if not absolute
+        if not os.path.isabs(output_base):
+            output_base = str(BASE_DIR / output_base)
+        output_base = Path(output_base)
         concept_name = Path(concept_file).stem
-        output_dir = output_base / batch_folder / concept_name
+        output_dir = output_base / batch_folder_name / concept_name
     
-    output_dir.mkdir(parents=True, exist_ok=True)
-    print(f"Output directory: {output_dir}\n")
-    
-    # Step 3: Revise script for video
+    # Step 4: Revise concept based on judge feedback
     print("=" * 80)
-    print("STEP 3: Revise Script for Video Generation")
+    print("STEP 4: Revise Concept Based on Judge Feedback")
     print("=" * 80)
-    duration = video_cfg.get("duration_seconds", 30)
+    step4_start = time.time()
+    # Get duration - use total_duration if provided, otherwise legacy duration_seconds
+    total_duration = video_cfg.get("total_duration")
+    duration = total_duration if total_duration is not None else video_cfg.get("duration_seconds", 30)
     llm_model = models_cfg.get("llm_model", "anthropic/claude-sonnet-4-5-20250929")
-    
-    revised_script = revise_script_for_video(concept_content, config_data, llm_model, duration)
     revised_file = output_dir / f"{concept_name}_revised.txt"
-    with open(revised_file, 'w', encoding='utf-8') as f:
-        f.write(revised_script)
-    print(f"  ✓ Saved: {revised_file}\n")
     
-    # Step 4: Generate universe and characters
-    print("=" * 80)
-    print("STEP 4: Generate Universe and Characters")
-    print("=" * 80)
-    universe_chars = generate_universe_and_characters(revised_script, config_data, llm_model)
-    universe_file = output_dir / f"{concept_name}_universe_characters.json"
-    with open(universe_file, 'w', encoding='utf-8') as f:
-        json.dump(universe_chars, f, indent=2)
-    print(f"  ✓ Saved: {universe_file}\n")
+    # Extract weaknesses from judge evaluation for the best concept
+    weaknesses = best_concept.get("weaknesses", [])
     
-    # Step 5: Generate reference images
-    print("=" * 80)
-    print("STEP 5: Generate Reference Images for Universe/Characters")
-    print("=" * 80)
-    universe_images_base = Path(output_cfg.get("universe_images_dir", "s6_generate_reference_images/outputs"))
-    universe_images_dir = universe_images_base / concept_name
-    
-    if advanced_cfg.get("skip_image_generation", False) and universe_images_dir.exists():
-        print(f"  ⚠ Skipping image generation (images already exist)\n")
+    if step_cfg.get("run_step_4", True):
+        print(f"  → Running (run_step_4=true) - will overwrite if exists")
+        clear_output_folder(output_dir)
+        print(f"Output directory: {output_dir}\n")
+        print(f"  → Addressing {len(weaknesses)} judge weaknesses")
+        revised_script = revise_script_for_video(concept_content, config_data, llm_model, duration, weaknesses)
+        with open(revised_file, 'w', encoding='utf-8') as f:
+            f.write(revised_script)
+        print(f"  ✓ Saved: {revised_file}")
+        
+        # Comparative re-judging: judge sees both concepts side-by-side
+        if True:  # Always re-judge as part of step 4
+            print(f"  → Comparative judging: comparing original vs revised...")
+            judge_model = eval_cfg.get("judge_model", "anthropic/claude-sonnet-4-5-20250929")
+            
+            # Extract info from best_concept
+            ad_style = best_concept.get("ad_style", config_data.get("AD_STYLE", "Unknown"))
+            brand_name = best_concept.get("brand_name", config_data.get("BRAND_NAME", "Unknown"))
+            original_score = best_concept.get("score", 0)
+            weaknesses_addressed = best_concept.get("weaknesses", [])
+            
+            # Create comparative judging prompt
+            comparative_prompt = f"""You are an expert ad concept evaluator. You will compare TWO versions of the same ad concept: ORIGINAL and REVISED.
+
+**CONTEXT:**
+- Brand: {brand_name}
+- Ad Style: {ad_style}
+- The REVISED concept was created to address specific weaknesses in the ORIGINAL
+- Your job is to determine if the revision improved the concept
+
+**ORIGINAL CONCEPT (scored {original_score}/100):**
+{concept_content}
+
+**WEAKNESSES IDENTIFIED IN ORIGINAL:**
+{chr(10).join([f"{i+1}. {w}" for i, w in enumerate(weaknesses_addressed)])}
+
+**REVISED CONCEPT:**
+{revised_script}
+
+**YOUR TASK:**
+1. Compare both concepts carefully
+2. Determine if the REVISED version successfully addresses the weaknesses
+3. Evaluate if the revision introduced any NEW weaknesses
+4. Score BOTH concepts on the same 0-100 scale
+5. Provide a clear explanation of which is better and why
+
+**SCORING CRITERIA (same as original evaluation):**
+- Narrative Quality (20 points)
+- Emotional Impact (20 points)
+- Brand Integration (15 points)
+- Memorability (15 points)
+- Visual Clarity (15 points)
+- Success Likelihood (15 points)
+
+**OUTPUT FORMAT (JSON):**
+```json
+{{
+  "original_score": <0-100>,
+  "revised_score": <0-100>,
+  "improvement": <positive or negative number>,
+  "winner": "original" or "revised",
+  "explanation": "Detailed comparison explaining which is better and why",
+  "weaknesses_addressed": ["List of weaknesses that were successfully fixed"],
+  "new_weaknesses_introduced": ["List of any new problems the revision created"],
+  "recommendation": "Use original" or "Use revised" or "Scores too close to call"
+}}
+```
+
+Be objective and analytical. Small differences (±5 points) mean they're roughly equal."""
+            
+            # Call judge LLM with comparative prompt
+            provider_judge, model_judge = judge_model.split("/", 1) if "/" in judge_model else ("anthropic", judge_model)
+            
+            print(f"  → Calling {provider_judge}/{model_judge} for comparative judging...")
+            print(f"  → This may take 30-90 seconds with extended thinking...")
+            
+            try:
+                if provider_judge == "openai":
+                    from execute_llm import call_openai
+                    api_key = os.getenv("OPENAI_API_KEY")
+                    response = call_openai(comparative_prompt, model_judge, api_key, reasoning_effort="high")
+                else:
+                    from execute_llm import call_anthropic
+                    api_key = os.getenv("ANTHROPIC_API_KEY")
+                    # Use proportional thinking: 1000 tokens for revision task (~1k word output)
+                    response = call_anthropic(comparative_prompt, model_judge, api_key, thinking=1000)
+                
+                print(f"  ✓ Comparative judge response received, parsing...")
+                
+                # Parse JSON response
+                if "```json" in response:
+                    json_text = response.split("```json")[1].split("```")[0]
+                elif "```" in response:
+                    json_text = response.split("```")[1].split("```")[0]
+                else:
+                    json_text = response.strip()
+                
+                comparison = json.loads(json_text)
+                
+                revised_evaluation = {
+                    "comparison": comparison,
+                    "judge_model": judge_model,
+                    "method": "comparative"
+                }
+                
+                improvement = comparison.get("improvement", 0)
+                revised_score = comparison.get("revised_score", 0)
+                
+                print(f"  ✓ Original score: {original_score}/100")
+                print(f"  ✓ Revised score:  {revised_score}/100")
+                print(f"  ✓ Winner: {comparison.get('winner', 'unknown').upper()}")
+                if improvement > 0:
+                    print(f"  ✓ Improvement: +{improvement} points 🎉")
+                elif improvement == 0:
+                    print(f"  → No change in score")
+                else:
+                    print(f"  ⚠ Score decreased: {improvement} points")
+                print(f"  → Recommendation: {comparison.get('recommendation', 'N/A')}")
+                
+            except Exception as e:
+                print(f"  ⚠ Comparative judging failed: {str(e)}")
+                print(f"  → Skipping score comparison\n")
+                revised_evaluation = {"error": str(e), "method": "comparative"}
+                improvement = None
+            
+            # Save re-evaluation result
+            rejudge_file = output_dir / f"{concept_name}_revised_evaluation.json"
+            with open(rejudge_file, 'w', encoding='utf-8') as f:
+                json.dump({
+                    "original_evaluation": best_concept,
+                    "revised_evaluation": revised_evaluation,
+                    "improvement": improvement
+                }, f, indent=2)
+            print(f"  ✓ Re-evaluation saved: {rejudge_file}")
+            
+            # Determine which version to use for downstream steps
+            if improvement is not None:
+                winner = comparison.get("winner", "original")
+                if winner == "revised" and improvement > 0:
+                    print(f"  → Using REVISED concept for downstream steps (scored higher)")
+                    final_concept = revised_script
+                    final_concept_file = revised_file
+                else:
+                    print(f"  → Using ORIGINAL concept for downstream steps (scored higher)")
+                    final_concept = concept_content
+                    final_concept_file = concept_file
+            else:
+                # If comparative judging failed, use original
+                print(f"  → Using ORIGINAL concept for downstream steps (judging failed)")
+                final_concept = concept_content
+                final_concept_file = concept_file
+            
+            print()
+        step_times["Step 4: Revise Concept"] = time.time() - step4_start
     else:
-        generate_all_element_images(
-            str(universe_file),
-            str(universe_images_dir),
-            max_workers=image_cfg.get("image_parallel_workers", 5)
-        )
-        print(f"  ✓ Images saved to: {universe_images_dir}\n")
+        print(f"  ⏭  Skipped (run_step_4=false)")
+        step_times["Step 4: Revise Concept"] = 0.0
+        # When skipping, check if revised file exists, otherwise use original
+        if revised_file.exists():
+            with open(revised_file, 'r', encoding='utf-8') as f:
+                final_concept = f.read()
+            final_concept_file = revised_file
+            print(f"  ✓ Using existing revised: {revised_file}\n")
+        else:
+            final_concept = concept_content
+            final_concept_file = concept_file
+            print(f"  ✓ Using original: {concept_file}\n")
     
-    # Step 6: Generate scene prompts
+    # Step 5: Generate universe and characters
     print("=" * 80)
-    print("STEP 6: Generate Scene Prompts")
+    print("STEP 5: Generate Universe and Characters")
     print("=" * 80)
+    step5_start = time.time()
+    # Step 5 has its own output directory
+    universe_output_base = Path("s5_generate_universe/outputs")
+    universe_output_dir = universe_output_base / batch_folder_name / concept_name
+    universe_file = universe_output_dir / f"{concept_name}_universe_characters.json"
+    
+    if step_cfg.get("run_step_5", True):
+        print(f"  → Running (run_step_5=true) - will overwrite if exists")
+        clear_output_folder(universe_output_dir)
+        print(f"  → Input: {Path(final_concept_file).name}")
+        universe_chars = generate_universe_and_characters(final_concept, config_data, llm_model)
+        with open(universe_file, 'w', encoding='utf-8') as f:
+            json.dump(universe_chars, f, indent=2)
+        step_times["Step 5: Generate Universe"] = time.time() - step5_start
+        print(f"  ✓ Saved: {universe_file}\n")
+    else:
+        print(f"  ⏭  Skipped (run_step_5=false)")
+        step_times["Step 5: Generate Universe"] = 0.0
+        if universe_file.exists():
+            with open(universe_file, 'r', encoding='utf-8') as f:
+                universe_chars = json.load(f)
+            print(f"  ✓ Using existing: {universe_file}\n")
+        else:
+            # Create empty structure for skipped step
+            universe_chars = {}
+            print(f"  ⚠  No existing universe file found (step skipped)\n")
+    
+    # Step 6: Generate reference images
+    print("=" * 80)
+    print("STEP 6: Generate Reference Images for Universe/Characters")
+    print("=" * 80)
+    step6_start = time.time()
+    universe_images_base = Path(output_cfg.get("universe_images_dir", "s6_generate_reference_images/outputs"))
+    # generate_all_images adds json_prefix (concept_name) to output_base_dir
+    # So we pass: {base}/{batch} and it creates: {base}/{batch}/{concept}
+    output_base_dir_for_step6 = universe_images_base / batch_folder_name
+    # The actual images dir (where summary.json will be) is where generate_all_images creates it
+    universe_images_dir = universe_images_base / batch_folder_name / concept_name
+    
+    if step_cfg.get("run_step_6", True):
+        print(f"  → Running (run_step_6=true) - will overwrite if exists")
+        clear_output_folder(universe_images_dir)
+        generate_all_images(
+            str(universe_file),
+            str(output_base_dir_for_step6),
+            max_workers=image_cfg.get("parallel_workers", 5)
+        )
+        step_times["Step 6: Generate Reference Images"] = time.time() - step6_start
+        print(f"  ✓ Images saved to: {universe_images_dir}\n")
+    else:
+        print(f"  ⏭  Skipped (run_step_6=false)")
+        step_times["Step 6: Generate Reference Images"] = 0.0
+        print(f"  ✓ Using existing images: {universe_images_dir}\n")
+    
+    # Step 7: Generate scene prompts
+    print("=" * 80)
+    print("STEP 7: Generate Scene Prompts")
+    print("=" * 80)
+    step7_start = time.time()
+    # Step 7 has its own output directory
+    scene_prompts_output_base = Path("s7_generate_scene_prompts/outputs")
+    scene_prompts_output_dir = scene_prompts_output_base / batch_folder_name / concept_name
+    scenes_file = scene_prompts_output_dir / f"{concept_name}_scene_prompts.json"
+    
     resolution = video_cfg.get("resolution", "720p")
     image_summary_path = universe_images_dir / "image_generation_summary.json"
+    llm_thinking = models_cfg.get("llm_thinking", 0)  # Default to 0 (disabled) for speed
+    video_model = models_cfg.get("video_model", "google/veo-3-fast")  # Get video model early for step 7
     
-    scenes_file = output_dir / f"{concept_name}_scene_prompts.json"
-    if not advanced_cfg.get("regenerate_scene_prompts", False) and scenes_file.exists():
-        print(f"  ⚠ Scene prompts already exist, loading...\n")
-        with open(scenes_file, 'r') as f:
-            scene_prompts = json.load(f)
-    else:
+    if step_cfg.get("run_step_7", True):
+        print(f"  → Running (run_step_7=true) - will overwrite if exists")
+        clear_output_folder(scene_prompts_output_dir)
+        # Get flexible duration inputs from config
+        clip_duration = video_cfg.get("clip_duration")
+        num_clips = video_cfg.get("num_clips")
+        total_duration = video_cfg.get("total_duration")
+        # Use total_duration if provided, otherwise use legacy duration
+        if total_duration is not None:
+            duration = total_duration
         scene_prompts = generate_scene_prompts(
-            revised_script, universe_chars, config_data,
+            final_concept, universe_chars, config_data,
             duration, llm_model, resolution,
-            str(image_summary_path) if image_summary_path.exists() else None
+            str(image_summary_path) if image_summary_path.exists() else None,
+            thinking=llm_thinking,
+            clip_duration=clip_duration,
+            num_clips=num_clips,
+            video_model=video_model
         )
         with open(scenes_file, 'w', encoding='utf-8') as f:
             json.dump(scene_prompts, f, indent=2)
+        step_times["Step 7: Generate Scene Prompts"] = time.time() - step7_start
         print(f"  ✓ Saved: {scenes_file}\n")
-    
-    # Step 7: Generate first frames
-    print("=" * 80)
-    print("STEP 7: Generate First Frame Images")
-    print("=" * 80)
-    first_frames_base = Path(output_cfg.get("first_frames_dir", "s8_generate_first_frames/outputs"))
-    first_frames_dir = first_frames_base / concept_name
-    
-    if advanced_cfg.get("skip_first_frames", False) and first_frames_dir.exists():
-        print(f"  ⚠ Skipping first frame generation (frames already exist)\n")
     else:
+        print(f"  ⏭  Skipped (run_step_7=false)")
+        step_times["Step 7: Generate Scene Prompts"] = 0.0
+        if scenes_file.exists():
+            with open(scenes_file, 'r') as f:
+                scene_prompts = json.load(f)
+            print(f"  ✓ Using existing: {scenes_file}\n")
+        else:
+            scene_prompts = {"scenes": []}
+            print(f"  ⚠  No existing scene prompts file found (step skipped)\n")
+    
+    # Step 8: Generate first frames
+    print("=" * 80)
+    print("STEP 8: Generate First Frame Images")
+    print("=" * 80)
+    step8_start = time.time()
+    first_frames_base = Path(output_cfg.get("first_frames_dir", "s8_generate_first_frames/outputs"))
+    # Include batch folder to match reference images location
+    first_frames_dir = first_frames_base / batch_folder_name / concept_name
+    
+    if step_cfg.get("run_step_8", True):
+        print(f"  → Running (run_step_8=true) - will overwrite if exists")
+        clear_output_folder(first_frames_dir)
         generate_all_first_frames(
             str(scenes_file),
             str(universe_file),
@@ -516,22 +838,47 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
             resolution,
             max_workers=image_cfg.get("image_parallel_workers", 5)
         )
+        step_times["Step 8: Generate First Frames"] = time.time() - step8_start
         print(f"  ✓ First frames saved to: {first_frames_dir}\n")
-    
-    # Step 8: Generate video clips
-    print("=" * 80)
-    print("STEP 8: Generate Video Clips")
-    print("=" * 80)
-    video_model = models_cfg.get("video_model", "google/veo-3-fast")
-    video_outputs_base = Path(output_cfg.get("video_outputs_dir", "s9_generate_video_clips/outputs"))
-    video_output_dir = video_outputs_base / concept_name
-    
-    scenes = scene_prompts.get("scenes", [])
-    generated_clips = []
-    
-    if advanced_cfg.get("skip_video_clips", False):
-        print(f"  ⚠ Skipping video clip generation (clips may already exist)\n")
     else:
+        print(f"  ⏭  Skipped (run_step_8=false)")
+        step_times["Step 8: Generate First Frames"] = 0.0
+        print(f"  ✓ Using existing frames: {first_frames_dir}\n")
+    
+    # Step 9: Generate video clips
+    print("=" * 80)
+    print("STEP 9: Generate Video Clips")
+    print("=" * 80)
+    step9_start = time.time()
+    # video_model already defined above for step 7
+    video_outputs_base = Path(output_cfg.get("video_outputs_dir", "s9_generate_video_clips/outputs"))
+    # Include batch folder for consistency
+    video_output_dir = video_outputs_base / batch_folder_name / concept_name
+    
+    # Only get scenes if step 7 ran or file exists
+    if step_cfg.get("run_step_7", True) or scenes_file.exists():
+        scenes = scene_prompts.get("scenes", [])
+    else:
+        scenes = []
+    
+    model_suffix = video_model.split('/')[-1].replace('-', '_')
+    
+    if step_cfg.get("run_step_9", True):
+        print(f"  → Running (run_step_9=true) - PARALLEL EXECUTION")
+        clear_output_folder(video_output_dir)
+        # Ensure Replicate API token is available
+        if not os.getenv("REPLICATE_API_TOKEN") and not os.getenv("REPLICATE_API_KEY"):
+            print("  ✗ ERROR: REPLICATE_API_TOKEN or REPLICATE_API_KEY not found in environment")
+            print("  Please add to .env file or export as environment variable\n")
+            return
+        
+        # Get aspect ratio from video config (defaults to 16:9)
+        aspect_ratio = str(video_cfg.get("aspect_ratio", "16:9"))
+        if aspect_ratio not in ["16:9", "9:16", "1:1"]:
+            aspect_ratio = "16:9"
+        
+        # Prepare tasks for parallel execution
+        tasks = []
         for scene in scenes:
             scene_num = scene.get("scene_number", 0)
             first_frame_path = first_frames_dir / f"{concept_name}_p{scene_num}_first_frame.jpg"
@@ -540,37 +887,122 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
                 print(f"  ✗ Scene {scene_num}: First frame not found, skipping")
                 continue
             
-            model_suffix = video_model.split('/')[-1].replace('-', '_')
             output_clip = video_output_dir / f"{concept_name}_p{scene_num}_{model_suffix}.mp4"
-            
-            if output_clip.exists() and not advanced_cfg.get("regenerate_scene_prompts", False):
-                print(f"  ⚠ Scene {scene_num}: Clip already exists, skipping")
-                continue
-            
-            print(f"  Generating Scene {scene_num}...")
+            tasks.append({
+                "scene": scene,
+                "scene_num": scene_num,
+                "first_frame_path": str(first_frame_path),
+                "output_clip": str(output_clip),
+                "video_model": video_model,
+                "aspect_ratio": aspect_ratio
+            })
+        
+        print(f"  Generating {len(tasks)} video clips in parallel...")
+        
+        # Execute video generation in parallel
+        generated_clips = []
+        clips_lock = threading.Lock()
+        
+        def generate_clip_task(task):
+            scene_num = task["scene_num"]
             try:
-                generate_sora2_clip(scene, str(first_frame_path), str(output_clip))
-                generated_clips.append(str(output_clip))
-                print(f"    ✓ Scene {scene_num} complete\n")
+                generate_sora2_clip(
+                    task["scene"],
+                    task["first_frame_path"],
+                    task["output_clip"],
+                    video_model=task["video_model"],
+                    aspect_ratio=task["aspect_ratio"]
+                )
+                with clips_lock:
+                    generated_clips.append(task["output_clip"])
+                return {"status": "SUCCESS", "scene": scene_num, "output": task["output_clip"]}
             except Exception as e:
-                print(f"    ✗ Scene {scene_num} failed: {e}\n")
+                return {"status": "FAILED", "scene": scene_num, "error": str(e)}
+        
+        # Use ThreadPoolExecutor for parallel execution (max 3 concurrent to avoid API rate limits)
+        max_workers = min(3, len(tasks))
+        completed = 0
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_task = {executor.submit(generate_clip_task, task): task for task in tasks}
+            
+            for future in as_completed(future_to_task):
+                completed += 1
+                result = future.result()
+                
+                if result["status"] == "SUCCESS":
+                    print(f"  [{completed}/{len(tasks)}] ✓ Scene {result['scene']} complete")
+                else:
+                    print(f"  [{completed}/{len(tasks)}] ✗ Scene {result['scene']} failed: {result['error']}")
+        
+        step_times["Step 9: Generate Video Clips"] = time.time() - step9_start
+        print(f"\n  ✓ Generated {len(generated_clips)}/{len(tasks)} clips in parallel\n")
+    else:
+        print(f"  ⏭  Skipped (run_step_9=false)")
+        step_times["Step 9: Generate Video Clips"] = 0.0
+        expected_clips = [
+            video_output_dir / f"{concept_name}_p{scene.get('scene_number', 0)}_{model_suffix}.mp4"
+            for scene in scenes
+        ]
+        generated_clips = [str(clip) for clip in expected_clips if clip.exists()]
+        print(f"  ✓ Using existing clips: {len(generated_clips)}/{len(scenes)} scenes\n")
     
-    # Step 9: Merge video clips
+    # Step 10: Merge video clips
     print("=" * 80)
-    print("STEP 9: Merge Video Clips into Final Video")
+    print("STEP 10: Merge Video Clips into Final Video")
     print("=" * 80)
-    model_suffix = video_model.split('/')[-1].replace('-', '_')
-    final_video = video_output_dir / f"{concept_name}_final_{model_suffix}.mp4"
+    step10_start = time.time()
     
-    merge_video_clips(
-        str(scenes_file),
-        str(video_output_dir),
-        str(final_video),
-        model_suffix
-    )
-    print(f"  ✓ Final video: {final_video}\n")
+    # Create output directory for merged video (separate from video clips)
+    merge_outputs_base = Path(output_cfg.get("merge_outputs_dir", "s10_merge_clips/outputs"))
+    merge_output_dir = merge_outputs_base / batch_folder_name / concept_name
+    merge_output_dir.mkdir(parents=True, exist_ok=True)
+    
+    final_video = merge_output_dir / f"{concept_name}_final_{model_suffix}.mp4"
+    
+    if step_cfg.get("run_step_10", True):
+        print(f"  → Running (run_step_10=true)")
+        merge_video_clips(
+            str(scenes_file),
+            str(video_output_dir),
+            str(final_video),
+            model_suffix
+        )
+        step_times["Step 10: Merge Video Clips"] = time.time() - step10_start
+        print(f"  ✓ Final video: {final_video}\n")
+    else:
+        print(f"  ⏭  Skipped (run_step_10=false)")
+        step_times["Step 10: Merge Video Clips"] = 0.0
+        print(f"  ✓ Using existing: {final_video}\n")
+    
+    # Calculate total time
+    pipeline_total_time = time.time() - pipeline_start_time
     
     # Summary
+    print("=" * 80)
+    print("PIPELINE STEP TIMING SUMMARY")
+    print("=" * 80)
+    total_time = 0.0
+    for step_name in sorted(step_times.keys()):
+        step_time = step_times[step_name]
+        total_time += step_time
+        if step_time == 0.0:
+            status = "SKIPPED"
+            time_str = "0.0s"
+        else:
+            status = "COMPLETED"
+            if step_time < 60:
+                time_str = f"{step_time:.1f}s"
+            else:
+                time_str = f"{step_time/60:.1f}m ({step_time:.1f}s)"
+        print(f"  {step_name:.<50} {status:>10} {time_str:>10}")
+    print("=" * 80)
+    if total_time < 60:
+        print(f"  Total Pipeline Time: {total_time:.1f} seconds")
+    else:
+        print(f"  Total Pipeline Time: {total_time/60:.1f} minutes ({total_time:.1f} seconds)")
+    print("=" * 80)
+    print()
+    
     print("=" * 80)
     print("PIPELINE COMPLETE")
     print("=" * 80)
@@ -582,7 +1014,8 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
     print(f"  - Reference images: {universe_images_dir}")
     print(f"  - First frames: {first_frames_dir}")
     print(f"  - Video clips: {video_output_dir}")
-    print(f"  - Final video: {final_video}")
+    print(f"  - Final merged video: {final_video}")
+    print(f"  - Merge outputs: {merge_output_dir}")
     if batch_folder_name:
         print(f"  - Batch folder: {batch_folder_name}")
     if evaluation_path:
@@ -597,6 +1030,7 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
         "first_frames": str(first_frames_dir),
         "video_clips": str(video_output_dir),
         "final_video": str(final_video),
+        "merge_outputs": str(merge_output_dir),
         "batch_folder": batch_folder_name,
         "evaluation": evaluation_path
     }

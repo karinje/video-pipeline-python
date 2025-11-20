@@ -83,23 +83,33 @@ Runs in parallel for speed.
 
 ---
 
-### Step 3: Revise Script for Video
+### Step 3: Revise Concept Based on Judge Feedback
 **Input:** 
-- Concept file content
+- Concept file content (best scoring concept)
+- Judge evaluation weaknesses (from Step 1)
 - Brand config file (`config_file` in config)
 - Duration (`duration_seconds` in config)
 - LLM model (`llm_model` in config)
 
-**Output:** Revised script file  
-**What it does:** Makes minor edits to ensure the 5-scene concept can be rendered in the specified duration. Adds standout elements section.
+**Output:** Revised concept file + re-evaluation scores  
+**What it does:** 
+1. Takes the best scoring concept and addresses judge-identified weaknesses
+2. Makes strategic improvements while maintaining core strengths
+3. Ensures scenes are appropriately paced for video generation
+4. **Optional:** Re-judges the revised concept to measure improvement
 
 **Files:**
-- Input: Concept file from Step 1
-- Output: `{concept_name}_revised.txt` in output directory
+- Input: Best concept file from Step 2
+- Output: 
+  - `{concept_name}_revised.txt` - Improved concept
+  - `{concept_name}_revised_evaluation.json` - Re-evaluation with score comparison
 
 **Config parameters:**
+- `pipeline_steps.run_concept_revision`: Enable/disable revision (default: true)
+- `pipeline_steps.rejudge_revised_concept`: Enable/disable re-judging (default: true)
 - `video_settings.duration_seconds`: Total video duration
-- `models.llm_model`: LLM for script revision
+- `models.llm_model`: LLM for concept revision
+- `evaluation.judge_model`: LLM for re-judging
 
 ---
 
@@ -244,21 +254,22 @@ Images are saved in organized directory structure with an `image_generation_summ
 
 ---
 
-### Step 9: Merge Video Clips
+### Step 10: Merge Video Clips
 **Input:**
 - Scene prompts JSON (for scene order)
-- Video clips directory
+- Video clips directory (from Step 9)
 - Model suffix (for file naming)
 
 **Output:** Final merged video  
-**What it does:** Merges all scene clips in sequence using ffmpeg into a single final video.
+**What it does:** Merges all scene clips in sequence using ffmpeg into a single final video. Output is saved to dedicated `s10_merge_clips/outputs/` directory.
 
 **Files:**
-- Input: Scene prompts JSON, individual video clips
-- Output: `{video_outputs_dir}/{concept_name}/{concept_name}_final_{model_suffix}.mp4`
+- Input: Scene prompts JSON, individual video clips from Step 9
+- Output: `{merge_outputs_dir}/{batch}/{concept_name}/{concept_name}_final_{model_suffix}.mp4`
 
 **Config parameters:**
 - `models.video_model`: Used to determine model suffix for output filename
+- `output.merge_outputs_dir`: Directory for final merged video (default: `s10_merge_clips/outputs`)
 
 ---
 
@@ -311,7 +322,8 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 - `base_output_dir`: Base directory for script generation outputs
 - `universe_images_dir`: Directory for reference images
 - `first_frames_dir`: Directory for first frame images
-- `video_outputs_dir`: Directory for video clips and final video
+- `video_outputs_dir`: Directory for individual video clips (Step 9 output)
+- `merge_outputs_dir`: Directory for final merged video (Step 10 output, default: `s10_merge_clips/outputs`)
 
 ### `video_settings`
 - `duration_seconds`: Total video duration (default: 30)
@@ -422,6 +434,191 @@ video_outputs/
       scene_{num}/
         {model}_p{num}_prompt.txt
 ```
+
+## Advanced Features (2025)
+
+### JSON Validation & Structured Outputs
+
+The pipeline uses state-of-the-art techniques (as of Nov 2025) to ensure reliable JSON generation from LLMs:
+
+#### 1. OpenAI Structured Outputs (GPT-4o/5+)
+**What it does:** Guarantees 100% valid JSON matching a predefined schema - no parsing errors possible.
+
+**Implementation:**
+```python
+# Define JSON schema
+schema = {
+    "type": "object",
+    "properties": {
+        "universe": {...},
+        "characters": {...}
+    },
+    "required": ["universe", "characters"],
+    "additionalProperties": False
+}
+
+# Use structured outputs
+completion = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": prompt}],
+    response_format={
+        "type": "json_schema",
+        "json_schema": {
+            "name": "schema_name",
+            "strict": True,
+            "schema": schema
+        }
+    }
+)
+```
+
+**Benefits:**
+- Zero JSON parsing errors
+- Automatic validation against schema
+- No need for error handling or fixes
+- Works with GPT-4o, GPT-5.1, and later models
+
+**Used in:** Steps 5 (Universe), 7 (Scene Prompts) when using GPT models
+
+---
+
+#### 2. Anthropic Prompt Caching + Extended Thinking
+**What it does:** Reduces costs by 90% and handles Claude's ThinkingBlock format correctly.
+
+**Implementation:**
+```python
+# Split prompt into cacheable and dynamic parts
+system = [
+    {
+        "type": "text",
+        "text": "Schema and instructions...",
+        "cache_control": {"type": "ephemeral"}  # Cache this
+    }
+]
+
+# Call with thinking enabled
+response = client.messages.create(
+    model="claude-sonnet-4-5-20250929",
+    system=system,
+    messages=[{"role": "user", "content": "Dynamic content..."}],
+    thinking={"type": "enabled", "budget_tokens": 10000},
+    max_tokens=16000
+)
+
+# Extract text content (skip ThinkingBlocks)
+content_parts = []
+for block in response.content:
+    if hasattr(block, 'type') and block.type == 'thinking':
+        continue  # Skip internal reasoning
+    if hasattr(block, 'text'):
+        content_parts.append(block.text)
+
+content = '\n'.join(content_parts)
+```
+
+**Benefits:**
+- **Cost Savings:** Cache reads cost 10% vs 100% of input tokens
+- **Speed:** Up to 85% faster with cache hits
+- **Quality:** Extended thinking (10k tokens) for better reasoning
+- **Correct Parsing:** Filters out ThinkingBlock objects
+
+**Used in:** Steps 5 (Universe), 7 (Scene Prompts) when using Claude models
+
+---
+
+#### 3. Robust JSON Extraction & Auto-Fixing
+**What it does:** Handles common LLM JSON issues automatically with multiple fallback strategies.
+
+**Implementation:**
+```python
+# 1. Remove markdown code blocks
+if "```json" in response:
+    json_text = response.split("```json")[1].split("```")[0].strip()
+
+# 2. Find JSON boundaries
+if not json_text.startswith("{"):
+    start = json_text.find("{")
+    end = json_text.rfind("}") + 1
+    json_text = json_text[start:end]
+
+# 3. Try to parse
+try:
+    result = json.loads(json_text)
+except json.JSONDecodeError:
+    # 4. Auto-fix common issues
+    json_text = re.sub(r',(\s*[}\]])', r'\1', json_text)  # Trailing commas
+    json_text = re.sub(r'//.*?\n', '\n', json_text)  # Comments
+    json_text = re.sub(r'/\*.*?\*/', '', json_text, flags=re.DOTALL)
+    
+    # 5. Try again
+    result = json.loads(json_text)
+```
+
+**Handles:**
+- Markdown code blocks (```json)
+- Extra text before/after JSON
+- Trailing commas
+- JavaScript-style comments
+- Unescaped characters
+
+**Used in:** All LLM-based steps (5, 7) as fallback
+
+---
+
+#### 4. Debug Mode & Error Reporting
+**What it does:** Saves failed responses for manual inspection and debugging.
+
+**Implementation:**
+```python
+except json.JSONDecodeError as e:
+    # Save debug info
+    debug_dir = Path("outputs/debug")
+    debug_dir.mkdir(parents=True, exist_ok=True)
+    
+    debug_file = debug_dir / "failed_response.txt"
+    with open(debug_file, 'w') as f:
+        f.write("=== ORIGINAL RESPONSE ===\n")
+        f.write(response)
+        f.write("\n\n=== EXTRACTED JSON ===\n")
+        f.write(json_text)
+        f.write(f"\n\n=== ERROR ===\n{e}")
+    
+    print(f"Debug info saved to: {debug_file}")
+    print(f"Error location: line {e.lineno}, column {e.colno}")
+    
+    # Show context around error
+    if hasattr(e, 'pos'):
+        start = max(0, e.pos - 100)
+        end = min(len(json_text), e.pos + 100)
+        print(f"Context: ...{json_text[start:end]}...")
+```
+
+**Benefits:**
+- Easy debugging with full context
+- Exact error location shown
+- Original and processed JSON saved
+- Can manually fix and retry
+
+**Used in:** All LLM-based steps as final fallback
+
+---
+
+### Summary: JSON Reliability Strategy
+
+| Model | Primary Method | Fallback | Error Rate |
+|-------|---------------|----------|------------|
+| GPT-4o/5+ | Structured Outputs | Auto-fix | ~0% |
+| Claude 4.5 | Prompt Caching + Thinking | Auto-fix | ~1-2% |
+| Older Models | Prompt Engineering | Auto-fix | ~5-10% |
+
+**Best Practices:**
+1. Use GPT-4o/5+ for guaranteed valid JSON (zero errors)
+2. Use Claude with prompt caching for cost savings (90% cheaper on cache hits)
+3. Enable extended thinking for complex JSON structures
+4. Always check debug files if parsing fails
+5. Retry with higher thinking budget if quality issues occur
+
+---
 
 ## Dependencies
 

@@ -36,7 +36,7 @@ pipeline_mode:
 # Required files for the pipeline
 
 input:
-  config_file: s1_generate_concepts/inputs/configs/rolex.json
+  config_file: s1_generate_concepts/inputs/configs/luxury_watch.json
   # Brand configuration file (REQUIRED for all modes)
   # Contains: BRAND_NAME, PRODUCT_DESCRIPTION, BRAND_VALUES, TAGLINE, etc.
   # Used in: Steps 0, 3, 4, 6
@@ -97,7 +97,7 @@ concept_generation:
     - provider: anthropic
       model: claude-sonnet-4-5-20250929
       reasoning_effort: ~  # null in YAML (use ~ or omit the key)
-      thinking: 10000  # Max extended thinking (budget_tokens) for Claude
+      thinking: 1000  # Extended thinking for concept generation (proportional to ~1k word output)
   # LLM models to use for concept generation
   # Format: [provider, model_name, reasoning_effort, thinking]
   # GPT-5.1: reasoning_effort='high' for max thinking
@@ -286,7 +286,7 @@ output:
   prompts_base_dir: s1_generate_concepts/outputs
   # Base directory for generated prompts (Step 0 output)
   
-  base_output_dir: s4_revise_script/outputs
+  base_output_dir: s4_revise_concept/outputs
   # Base directory for script generation outputs (Steps 3-6)
   
   universe_images_dir: s6_generate_reference_images/outputs
@@ -298,8 +298,12 @@ output:
   # Step 7 output, Step 8 input
   
   video_outputs_dir: s9_generate_video_clips/outputs
-  # Directory for generated video clips and final merged video
-  # Steps 8-9 output
+  # Directory for generated video clips (individual scene clips)
+  # Step 9 output
+  
+  merge_outputs_dir: s10_merge_clips/outputs
+  # Directory for final merged video
+  # Step 10 output
 
 # ============================================================================
 # VIDEO SETTINGS
@@ -307,22 +311,49 @@ output:
 # Used in Steps 3, 6, 7, 8
 
 video_settings:
-  duration_seconds: 30
-  # Total video duration in seconds
-  # Used in: Step 3 (script revision), Step 6 (scene prompts), Step 8 (video generation)
+  # ============================================================================
+  # DURATION CONFIGURATION (Flexible Input Options)
+  # ============================================================================
+  # You can provide any combination of the following:
+  # 1. clip_duration + num_clips → calculates total_duration
+  # 2. total_duration + num_clips → calculates clip_duration (rounds to valid)
+  # 3. total_duration + clip_duration → calculates num_clips
+  # 4. total_duration only → uses scenes_count to calculate clip_duration (current behavior)
+  
+  clip_duration: 8
+  # Duration of each video clip in seconds
+  # Will be rounded to valid values based on video model:
+  #   - Sora-2: 4, 8, or 12 seconds
+  #   - Veo 3 Fast: 4, 6, or 8 seconds
+  # If not provided, will be calculated from total_duration / num_clips
+  
+  num_clips: 4
+  # Number of video clips/scenes to generate
+  # If not provided, will be calculated from total_duration / clip_duration
+  # Or defaults to scenes_count if total_duration is provided alone
+  
+  total_duration: null
+  # Total video duration in seconds (optional)
+  # If provided with num_clips, calculates clip_duration
+  # If provided alone, uses scenes_count to calculate clip_duration
+  # If null, calculated from clip_duration * num_clips
+  
+  scenes_count: 5
+  # Fallback: Number of scenes (used only if total_duration provided without num_clips)
+  # Used to calculate scene duration (duration_seconds / scenes_count)
+  
+  # ============================================================================
+  # VIDEO QUALITY SETTINGS
+  # ============================================================================
   
   resolution: 720p
   # Video resolution
   # Options: "480p", "720p", "1080p"
   # Used in: Step 6 (scene prompts), Step 7 (first frames), Step 8 (video clips)
   
-  aspect_ratio: 16:9
+  aspect_ratio: "16:9"
   # Video aspect ratio
   # Used in: Step 6 (scene prompts), Step 7 (first frames), Step 8 (video clips)
-  
-  scenes_count: 5
-  # Number of scenes in the video
-  # Used to calculate scene duration (duration_seconds / scenes_count)
 
 # ============================================================================
 # MODEL SETTINGS
@@ -335,10 +366,28 @@ models:
   # Used in: Steps 3, 4, 6
   # Format: 'provider/model_name'
   
-  video_model: google/veo-3-fast
+  llm_thinking: 2500
+  # Extended thinking budget for Claude (budget_tokens)
+  # 0 = disabled (fastest, ~10-30 seconds) - NOT RECOMMENDED for quality
+  # 1000 = light thinking (~30-60 seconds) - good for simple tasks
+  # 2000-3000 = medium thinking (~1-3 minutes) - RECOMMENDED for scene prompts (~5k token output)
+  # 10000 = max thinking (~7-12 minutes) - overkill for most tasks
+  # Used in: Step 7 (scene prompts generation)
+  # Proportional to output: ~2500 tokens for ~5k token structured JSON output
+  
+  scene_prompts_temperature: 0.5
+  # Temperature for scene prompts generation (lower = faster, more deterministic)
+  # Range: 0.0-1.0
+  # Lower values (0.3-0.5) = faster generation, less creative variation
+  # Higher values (0.7-1.0) = slower, more creative variation
+  # Default: 0.5 (balanced for speed and quality)
+  
+  video_model: google/veo-3.1-fast
   # Video generation model
-  # Options: "google/veo-3-fast", "openai/sora-2", "bytedance/seedance-1-pro"
-  # Used in: Step 8
+  # Options: "openai/sora-2", "google/veo-3-fast", or "google/veo-3.1-fast"
+  # Sora-2: Uses input_reference, seconds, aspect_ratio (landscape/portrait)
+  # Veo 3/3.1 Fast: Uses image, duration, resolution, aspect_ratio, generate_audio
+  # Used in: Step 9
   
   image_model: google/nano-banana
   # Image generation model for universe/characters and first frames
@@ -379,17 +428,46 @@ video_generation:
 # ============================================================================
 # Skip steps if outputs already exist
 
-advanced:
-  skip_image_generation: false
-  # Skip Step 5 (universe/character image generation) if images already exist
+pipeline_steps:
+  # ============================================================================
+  # EXPLICIT STEP CONTROL
+  # Set to false to skip a step and use existing output
+  # Set to true to run the step (default: all true for fresh runs)
+  # ============================================================================
   
-  skip_first_frames: false
-  # Skip Step 7 (first frame generation) if frames already exist
+  run_step_1: true
+  # s1_generate_concepts: Generate ad concepts (generic + advanced, GPT + Claude)
   
-  skip_video_clips: false
-  # Skip Step 8 (video clip generation) if clips already exist
+  run_step_2: true
+  # s2_judge_concepts: Judge and evaluate all generated concepts
   
-  regenerate_scene_prompts: false
-  # Force regeneration of scene_prompts.json even if it exists
-  # Used in: Step 6
+  run_step_3: true
+  # s3_extract_best_concept: Extract the best scoring concept from evaluation
+  
+  run_step_4: true
+  # s4_revise_concept: Revise concept based on judge feedback
+  
+  run_step_5: true
+  # s5_generate_universe: Generate universe and characters
+  
+  run_step_6: true
+  # s6_generate_reference_images: Generate reference images for all characters/props/locations
+  
+  run_step_7: true
+  # s7_generate_scene_prompts: Generate detailed video/audio prompts for each scene
+  
+  run_step_8: true
+  # s8_generate_first_frames: Generate first frame images for each scene
+  
+  run_step_9: true
+  # s9_generate_video_clips: Generate video clips using Veo 3.1 Fast
+  
+  run_step_10: true
+  # s10_merge_clips: Merge all video clips into final video
+  # RUNNING: Complete pipeline from start to end
+  # s10_merge_clips: Merge all video clips into final video
+  # DISABLED: Testing steps 1-3 only
+  
+  # NOTE: If pipeline fails mid-way, set completed steps to false, rerun, 
+  # then set all back to true for next fresh run
 

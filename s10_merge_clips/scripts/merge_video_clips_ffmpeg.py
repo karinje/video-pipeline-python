@@ -97,7 +97,12 @@ def merge_video_clips(scene_prompts_path, video_dir=None, output_filename=None, 
     if not output_filename:
         output_filename = video_dir / f"{base_name}_final_{model_suffix}.mp4"
     else:
-        output_filename = video_dir / output_filename
+        # output_filename is provided - convert to Path and use as-is
+        # (it's already a full path from the pipeline script)
+        output_filename = Path(output_filename)
+    
+    # Create output directory if it doesn't exist
+    output_filename.parent.mkdir(parents=True, exist_ok=True)
     
     print(f"Output: {output_filename}\n")
     
