@@ -11,6 +11,10 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 
+# Add path for imports
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE_DIR / "s6_generate_reference_images" / "scripts"))
+
 # Load environment variables
 try:
     from dotenv import load_dotenv

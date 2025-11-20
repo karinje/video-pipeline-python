@@ -27,10 +27,12 @@ Generates 5-scene ad concepts for all combinations of AD_STYLE, templates, and m
 ```bash
 cd s1_generate_concepts/scripts
 python batch_run_all_styles.py \
-  --config ../inputs/configs/rolex.json \
-  --creative-direction "Create a 30 second Instagram ad for luxury watches" \
-  --output-dir ../outputs
+  ../inputs/configs/rolex.json \
+  "Create a 30 second Instagram ad for luxury watches" \
+  ../outputs
 ```
+
+Note: The third argument (output directory) is optional. If omitted, outputs default to `../outputs/`.
 
 Or use the main pipeline:
 ```bash

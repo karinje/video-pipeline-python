@@ -44,17 +44,16 @@ video-gen/
 │   ├── docs/
 │   └── outputs/
 │
-├── s4_revise_script/               # Step 4: Revise script for video
+├── s4_revise_concept/              # Step 4: Revise concept based on judge feedback
 │   ├── scripts/
 │   │   └── generate_video_script.py
 │   ├── inputs/
 │   ├── docs/
-│   └── outputs/                    # Revised scripts, universe, scene prompts
+│   └── outputs/                    # Revised concepts and evaluations
 │       └── {brand}_{timestamp}/
 │           └── {concept_name}/
 │               ├── {concept_name}_revised.txt
-│               ├── {concept_name}_universe_characters.json
-│               └── {concept_name}_scene_prompts.json
+│               └── {concept_name}_revised_evaluation.json
 │
 ├── s5_generate_universe/           # Step 5: Generate universe/characters
 │   ├── scripts/

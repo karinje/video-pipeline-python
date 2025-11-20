@@ -25,9 +25,14 @@ Evaluates each concept separately (parallel) using an LLM judge. Scores 0-100 ba
 cd s2_judge_concepts/scripts
 python judge_concepts.py \
   ../../s1_generate_concepts/outputs/rolex_1115_1833/rolex_batch_summary_1115_1833.json \
-  --judge-model anthropic/claude-sonnet-4-5-20250929 \
-  --output-dir ../outputs
+  anthropic/claude-sonnet-4-5-20250929 \
+  ../outputs
 ```
+
+Arguments:
+- `batch_summary.json` (required): Path to batch summary from Step 1
+- `judge_model` (optional): Model to use for judging (default: `anthropic/claude-sonnet-4-5-20250929`)
+- `output_dir` (optional): Output directory (default: `../outputs`)
 
 Or use the main pipeline:
 ```bash

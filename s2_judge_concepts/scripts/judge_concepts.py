@@ -28,9 +28,18 @@ def load_batch_summary(summary_path):
 
 
 def load_concept_file(file_path):
-    """Load concept content from file."""
+    """Load concept content from file. Handles both absolute and relative paths."""
+    # If path doesn't exist, try resolving relative to project root
     if not os.path.exists(file_path):
-        return None
+        # Try resolving from project root (go up 2 levels from scripts/ to project root)
+        script_dir = Path(__file__).parent
+        project_root = script_dir.parent.parent
+        resolved_path = project_root / file_path
+        if resolved_path.exists():
+            file_path = str(resolved_path)
+        else:
+            return None
+    
     with open(file_path, 'r', encoding='utf-8') as f:
         return f.read()
 
@@ -419,19 +428,22 @@ def judge_batch(summary_path, judge_model="anthropic/claude-sonnet-4-5-20250929"
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python judge_concepts.py <batch_summary.json> [judge_model]")
+        print("Usage: python judge_concepts.py <batch_summary.json> [judge_model] [output_dir]")
         print("\nExample:")
-        print("  python judge_concepts.py results/rolex_batch_summary_1115_1708.json")
-        print("  python judge_concepts.py results/rolex_batch_summary_1115_1708.json openai/gpt-4o")
+        print("  python judge_concepts.py ../../s1_generate_concepts/outputs/rolex_1115_1833/rolex_batch_summary_1115_1833.json")
+        print("  python judge_concepts.py ../../s1_generate_concepts/outputs/rolex_1115_1833/rolex_batch_summary_1115_1833.json anthropic/claude-sonnet-4-5-20250929")
+        print("  python judge_concepts.py ../../s1_generate_concepts/outputs/rolex_1115_1833/rolex_batch_summary_1115_1833.json anthropic/claude-sonnet-4-5-20250929 ../outputs")
         print("\nDefault judge model: anthropic/claude-sonnet-4-5-20250929")
+        print("Default output directory: ../outputs")
         sys.exit(1)
     
     summary_path = sys.argv[1]
     judge_model = sys.argv[2] if len(sys.argv) > 2 else "anthropic/claude-sonnet-4-5-20250929"
+    output_dir = sys.argv[3] if len(sys.argv) > 3 else "../outputs"
     
     if not os.path.exists(summary_path):
         print(f"Error: Summary file not found: {summary_path}")
         sys.exit(1)
     
-    judge_batch(summary_path, judge_model)
+    judge_batch(summary_path, judge_model, output_dir)
 

@@ -16,7 +16,7 @@ The project is organized into step folders (`s1_` through `s10_`) that clearly s
 - **s1_generate_concepts/** - Generate ad concepts (generic + advanced prompts, multiple models)
 - **s2_judge_concepts/** - Judge/evaluate concepts using LLM
 - **s3_extract_best_concept/** - Extract best-scoring concept
-- **s4_revise_script/** - Revise script for video timing
+- **s4_revise_concept/** - Revise concept based on judge feedback
 - **s5_generate_universe/** - Generate universe/characters
 - **s6_generate_reference_images/** - Generate reference images
 - **s7_generate_scene_prompts/** - Generate scene prompts

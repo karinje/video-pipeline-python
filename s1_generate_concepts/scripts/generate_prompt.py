@@ -43,12 +43,14 @@ def replace_variables(template, config):
 
 
 def slugify(text):
-    """Convert text to filename-safe slug."""
+    """Convert text to filename-safe slug, preserving dots in version numbers."""
     if not text:
         return ""
     # Convert to lowercase and replace spaces/special chars with underscores
     text = str(text).lower()
-    text = re.sub(r'[^\w\s-]', '', text)
+    # Preserve dots and word characters, remove everything else
+    text = re.sub(r'[^\w\s.-]', '', text)
+    # Replace spaces and hyphens with underscores
     text = re.sub(r'[-\s]+', '_', text)
     # Remove multiple consecutive underscores
     text = re.sub(r'_+', '_', text)

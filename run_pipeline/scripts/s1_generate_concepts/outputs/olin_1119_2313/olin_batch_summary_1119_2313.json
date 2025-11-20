@@ -1,0 +1,43 @@
+{
+  "brand_name": "Olin",
+  "batch_folder": "olin_1119_2313",
+  "creative_direction": "Create a 30 second Instagram ad for luxury watches with elegant gold aesthetics",
+  "timestamp": "2025-11-19T23:13:35.452278",
+  "total_runs": 4,
+  "successful": 0,
+  "failed": 4,
+  "results": [
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "advanced",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "status": "ERROR",
+      "error": "[Errno 2] No such file or directory: 's1_generate_concepts/inputs/prompt_templates/advanced_structured.md'"
+    },
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "advanced",
+      "provider": "openai",
+      "model": "gpt-5.1",
+      "status": "ERROR",
+      "error": "[Errno 2] No such file or directory: 's1_generate_concepts/inputs/prompt_templates/advanced_structured.md'"
+    },
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "generic",
+      "provider": "openai",
+      "model": "gpt-5.1",
+      "status": "ERROR",
+      "error": "[Errno 2] No such file or directory: 's1_generate_concepts/inputs/prompt_templates/generic_simple.md'"
+    },
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "generic",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "status": "ERROR",
+      "error": "[Errno 2] No such file or directory: 's1_generate_concepts/inputs/prompt_templates/generic_simple.md'"
+    }
+  ]
+}

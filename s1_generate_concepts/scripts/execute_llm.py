@@ -114,7 +114,7 @@ def call_openai(prompt, model, api_key, reasoning_effort=None):
     return content
 
 
-def call_anthropic(prompt, model, api_key, thinking=None):
+def call_anthropic(prompt, model, api_key, thinking=None, max_tokens=None, temperature=None):
     """Call Anthropic API.
     
     Args:
@@ -122,6 +122,8 @@ def call_anthropic(prompt, model, api_key, thinking=None):
         model: Model name (e.g., 'claude-sonnet-4.5')
         api_key: API key
         thinking: For extended thinking, set to dict with 'type': 'enabled' or max_tokens
+        max_tokens: Maximum output tokens (overrides default if provided)
+        temperature: Temperature for generation (0.0-1.0). If None, uses defaults based on thinking mode.
     """
     try:
         from anthropic import Anthropic
@@ -154,16 +156,27 @@ def call_anthropic(prompt, model, api_key, thinking=None):
             params["thinking"] = {"type": "enabled", "budget_tokens": budget_tokens}
         
         # max_tokens must be greater than budget_tokens
-        params["max_tokens"] = budget_tokens + 2000  # Add buffer for actual response
+        if max_tokens is None:
+            params["max_tokens"] = budget_tokens + 2000  # Add buffer for actual response
+        else:
+            params["max_tokens"] = max_tokens
         
-        # Claude requires temperature=1 when thinking is enabled
-        params["temperature"] = 1
+        # Claude requires temperature=1 when thinking is enabled (unless explicitly overridden)
+        params["temperature"] = temperature if temperature is not None else 1
     else:
         # No thinking mode - use optimized temperature
-        params["max_tokens"] = 2000
-        params["temperature"] = 0.75  # Optimized for creative ad concept generation (balances creativity with coherence)
+        if max_tokens is None:
+            params["max_tokens"] = 2000  # Default for short responses
+        else:
+            params["max_tokens"] = max_tokens
+        params["temperature"] = temperature if temperature is not None else 0.75  # Optimized for creative ad concept generation (balances creativity with coherence)
     
     response = client.messages.create(**params)
+    
+    # Check if response was truncated
+    stop_reason = getattr(response, 'stop_reason', None)
+    if stop_reason == 'max_tokens':
+        raise ValueError(f"Response was truncated at max_tokens={params.get('max_tokens')}. Increase max_tokens parameter to get full response.")
     
     # Handle Claude response - may have thinking blocks when thinking mode is enabled
     if hasattr(response, 'content') and len(response.content) > 0:

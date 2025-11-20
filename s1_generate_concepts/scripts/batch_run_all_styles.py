@@ -54,19 +54,25 @@ MODELS = [
     ("anthropic", "claude-sonnet-4-5-20250929", None, 10000),  # Claude Sonnet 4.5 (Nov 2025) with max extended thinking (10000 budget_tokens)
 ]
 
-# Templates to test
+# Templates to test - resolve paths relative to script location
+SCRIPT_DIR = Path(__file__).parent
+INPUTS_DIR = SCRIPT_DIR.parent / "inputs"
 TEMPLATES = [
-    ("prompt_templates/advanced_structured.md", "advanced"),
-    ("prompt_templates/generic_simple.md", "generic"),
+    (str(INPUTS_DIR / "prompt_templates" / "advanced_structured.md"), "advanced"),
+    (str(INPUTS_DIR / "prompt_templates" / "generic_simple.md"), "generic"),
 ]
 
 
 def slugify(text):
-    """Convert text to filename-friendly slug."""
-    # Replace spaces, hyphens, slashes with single underscore
-    slug = text.lower().replace(" ", "_").replace("-", "_").replace("/", "_")
-    # Remove multiple consecutive underscores
+    """Convert text to filename-friendly slug, preserving dots in version numbers."""
     import re
+    if not text:
+        return ""
+    # Replace spaces, hyphens, slashes with underscore
+    slug = text.lower().replace(" ", "_").replace("-", "_").replace("/", "_")
+    # Preserve dots and word characters, remove everything else
+    slug = re.sub(r'[^\w._]', '', slug)
+    # Remove multiple consecutive underscores
     slug = re.sub(r'_+', '_', slug)
     # Remove leading/trailing underscores
     slug = slug.strip('_')
@@ -167,17 +173,23 @@ def save_result_to_results_dir(concept_path, brand_name, ad_style, template_name
     return result_path
 
 
-def batch_run_all_styles(config_path, creative_direction, results_base_dir="results", prompts_base_dir="prompts_history", temp_config_dir="temp_configs"):
+def batch_run_all_styles(config_path, creative_direction, results_base_dir=None, prompts_base_dir=None, temp_config_dir="temp_configs"):
     """
     Run all AD_STYLE combinations.
     
     Args:
         config_path: Path to brand config JSON
         creative_direction: Creative direction string (e.g., "Create a 30 second Instagram ad for luxury watches with elegant gold aesthetics")
-        results_base_dir: Base directory for results
-        prompts_base_dir: Base directory for prompts
+        results_base_dir: Base directory for results (default: ../outputs)
+        prompts_base_dir: Base directory for prompts (default: same as results_base_dir)
         temp_config_dir: Directory for temporary config files
     """
+    # Set default output directories relative to script location
+    if results_base_dir is None:
+        results_base_dir = str(SCRIPT_DIR.parent / "outputs")
+    if prompts_base_dir is None:
+        prompts_base_dir = results_base_dir  # Prompts go to same directory as concepts
+    
     # Load base config
     base_config = load_config(config_path)
     brand_name = base_config["BRAND_NAME"]
@@ -383,17 +395,18 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Usage: python batch_run_all_styles.py <config_path> <creative_direction> [results_dir]")
         print("\nExample:")
-        print('  python batch_run_all_styles.py configs/rolex.json "Create a 30 second Instagram ad for luxury watches with elegant gold aesthetics"')
+        print('  python batch_run_all_styles.py ../inputs/configs/rolex.json "Create a 30 second Instagram ad for luxury watches"')
         print("\nThis will:")
-        print("  - Run all 15 AD_STYLE options")
+        print("  - Run all AD_STYLE options (currently: Achievement - Inspirational)")
         print("  - Use both advanced and generic templates")
-        print("  - Test multiple models (gpt-5.1, sonnet-4.5, etc.)")
+        print("  - Test multiple models (gpt-5.1, claude-sonnet-4.5, etc.)")
+        print("  - Save results to ../outputs/{brand}_{timestamp}/ by default")
         print("  - Save results with descriptive filenames: brand_adstyle_template_model.txt")
         sys.exit(1)
     
     config_path = sys.argv[1]
     creative_direction = sys.argv[2]
-    results_dir = sys.argv[3] if len(sys.argv) > 3 else "results"
+    results_dir = sys.argv[3] if len(sys.argv) > 3 else None  # Use default if not provided
     
     if not os.path.exists(config_path):
         print(f"Error: Config file not found: {config_path}")

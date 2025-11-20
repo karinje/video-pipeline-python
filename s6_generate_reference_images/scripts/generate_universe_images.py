@@ -234,8 +234,8 @@ def generate_element_images(element, element_type, output_dir, json_prefix):
         "images": {}
     }
     
-    # Debug directory for this element
-    debug_base_dir = os.path.join("nano-banana-prompts", json_prefix, element_type, element_slug)
+    # Debug directory for this element - place inside output_dir
+    debug_base_dir = os.path.join(output_dir, "debug", "nano-banana-prompts", json_prefix, element_type, element_slug)
     
     # Check if element has multiple versions
     has_multiple_versions = element.get("has_multiple_versions", False)
@@ -312,7 +312,7 @@ def generate_element_images(element, element_type, output_dir, json_prefix):
                     print(f"      ✓ Image saved to: {filepath}")
                     print(f"      ⚠ No URL from Replicate - will try file object for next version")
             else:
-                print(f"    ✗ Failed to generate image for {version_name}")
+                print(f"    ⚠ Image saved but no URL available (can't be used as reference for next version)")
                 previous_image_url = None
                 previous_image_path = None
     
@@ -345,24 +345,30 @@ def generate_element_images(element, element_type, output_dir, json_prefix):
             debug_name=debug_name
         )
         
-        if image_url:
+        if filepath and os.path.exists(filepath):
             result["images"]["default"] = {
-                "url": image_url,
+                "url": image_url if image_url else None,
                 "filepath": filepath
             }
+            if image_url:
+                print(f"      ✓ Image saved with URL: {image_url}")
+            else:
+                print(f"      ✓ Image saved to: {filepath}")
+                print(f"      ⚠ No URL from Replicate")
         else:
-            print(f"    ✗ Failed to generate image")
+            print(f"    ⚠ Image generation failed - file not found: {filepath}")
     
     return result
 
 
-def generate_all_images(json_path, output_base_dir="universe_characters"):
+def generate_all_images(json_path, output_base_dir="universe_characters", max_workers=5):
     """
     Main function: Generate all images from universe_characters.json.
     
     Args:
         json_path: Path to universe_characters.json file
         output_base_dir: Base directory for output images
+        max_workers: Number of parallel workers for image generation (default: 5)
     """
     print(f"\n{'='*80}")
     print("UNIVERSE/CHARACTERS IMAGE GENERATOR")
@@ -381,26 +387,40 @@ def generate_all_images(json_path, output_base_dir="universe_characters"):
     print(f"Output directory: {output_base_dir}/{json_prefix}/")
     
     # Collect all elements to process
+    # ONLY process elements that appear in 2+ scenes (reference images are only for multi-scene elements)
     tasks = []
     
-    # Process characters
+    # Process characters - only if they appear in 2+ scenes
     for char in data.get("characters", []):
-        tasks.append(("characters", char))
+        scenes_used = char.get("scenes_used", [])
+        if len(scenes_used) >= 2:
+            tasks.append(("characters", char))
+        else:
+            print(f"  ⏭  Skipping {char.get('name', 'unknown')}: only appears in {len(scenes_used)} scene(s)")
     
-    # Process locations
+    # Process locations - only if they appear in 2+ scenes
     for loc in data.get("universe", {}).get("locations", []):
-        tasks.append(("locations", loc))
+        scenes_used = loc.get("scenes_used", [])
+        if len(scenes_used) >= 2:
+            tasks.append(("locations", loc))
+        else:
+            print(f"  ⏭  Skipping {loc.get('name', 'unknown')}: only appears in {len(scenes_used)} scene(s)")
     
-    # Process props
+    # Process props - only if they appear in 2+ scenes
     for prop in data.get("universe", {}).get("props", []):
-        tasks.append(("props", prop))
+        scenes_used = prop.get("scenes_used", [])
+        if len(scenes_used) >= 2:
+            tasks.append(("props", prop))
+        else:
+            print(f"  ⏭  Skipping {prop.get('name', 'unknown')}: only appears in {len(scenes_used)} scene(s)")
     
-    print(f"\nFound {len(tasks)} elements to process")
-    print(f"Processing in parallel (multi-version elements will run sequentially)...\n")
+    print(f"\nFound {len(tasks)} elements to process (multi-scene elements only)")
+    print(f"Processing in parallel (multi-version elements will run sequentially)...")
+    print(f"Max workers: {max_workers}\n")
     
     # Process elements in parallel
     results = []
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_task = {
             executor.submit(
                 generate_element_images,

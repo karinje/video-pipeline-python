@@ -1,0 +1,130 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Watchmaking Workbench",
+        "scenes_used": [
+          1,
+          3,
+          5
+        ],
+        "has_multiple_versions": true,
+        "versions": [
+          {
+            "version_name": "Early Years Workbench",
+            "scenes_used": [
+              1,
+              3
+            ],
+            "description": "Pristine traditional Swiss watchmaking workbench with rich walnut wood surface, brass lamp with green glass shade casting warm focused light, organized rows of precision tools in leather cases, magnifying loupe on stand, white porcelain parts trays, small brass vise, vintage wall clock visible in background, large windows with natural daylight, clean and meticulously maintained workspace reflecting early career precision",
+            "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional photography of traditional Swiss watchmaking workbench, rich walnut wood surface with natural grain texture, authentic brass lamp with green glass banker's shade casting warm focused light pool, organized precision watchmaking tools in aged leather cases, real metal magnifying loupe on articulated brass stand, white porcelain sorting trays with delicate watch components, small brass jeweler's vise, vintage round wall clock showing traditional Roman numerals, large workshop windows with natural daylight streaming in, lifelike wood texture, real metal tools with wear patterns, documentary photography style, professional workshop interior photography, natural lighting, realistic shadows and reflections, 8k detail, photographic realism",
+            "is_original": true
+          },
+          {
+            "version_name": "Master's Workbench",
+            "scenes_used": [
+              5
+            ],
+            "description": "Same walnut workbench now showing dignified patina and character from years of masterful use, brass lamp slightly aged with deeper golden tone, expanded collection of precision tools including rare vintage instruments, added personal touches like framed watchmaking certificates on wall, small antique watch collection display case, leather desk pad worn smooth from decades of work, same windows now with mature ivy visible outside, workspace reflecting earned mastery and generational continuity",
+            "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional photography of aged traditional Swiss watchmaking workbench, same rich walnut wood now with dignified patina and deeper color from years of use, authentic brass lamp with deeper golden aged tone and slight weathering, expanded collection of precision tools including rare vintage instruments in leather cases, framed authentic Swiss watchmaking certificates on wall behind workbench, small antique pocket watch collection in glass display case, leather desk pad worn smooth and darkened from decades of use, same large windows now with mature ivy growth visible outside, lifelike aged wood grain texture, real aged metal with authentic patina, documentary photography style, professional heritage workshop photography, natural lighting showing time passage, realistic aging details, 8k detail, photographic realism showing workspace evolution",
+            "is_original": false,
+            "references_original_version": "Early Years Workbench"
+          }
+        ]
+      },
+      {
+        "name": "Swiss Watchmaking Workshop",
+        "scenes_used": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Authentic traditional Swiss watch atelier with high ceilings, large arched windows with northern light exposure, white painted walls with subtle aging, wooden herringbone parquet floors showing natural wear, multiple wooden workbenches arranged in traditional layout, walls lined with vintage tool cabinets and parts storage, antique wall-mounted precision instruments, subtle warm lighting from brass fixtures, glimpses of historical watchmaking posters and technical diagrams, atmosphere of quiet concentration and centuries-old craftsmanship tradition",
+        "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional photography of authentic traditional Swiss watch atelier workshop interior, high ceilings with exposed wooden beams, large arched windows with northern light exposure casting natural illumination, white painted walls with subtle authentic aging and slight patina, wooden herringbone parquet floors with natural wear patterns and realistic wood grain, multiple traditional wooden workbenches in classic Swiss workshop layout, vintage wooden tool cabinets with glass doors lining walls, antique precision instruments mounted on walls, subtle warm ambient lighting from brass wall fixtures, historical Swiss watchmaking posters and technical diagrams in aged frames, atmosphere of concentrated craftsmanship, lifelike architectural details, real wood textures, authentic workshop environment, documentary photography style, professional architectural interior photography, natural window lighting mixing with warm artificial light, realistic shadows and depth, 8k detail, photographic realism of heritage Swiss workshop"
+      }
+    ],
+    "props": [
+      {
+        "name": "Gold Olin Luxury Watch",
+        "scenes_used": [
+          1,
+          4,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Elegant luxury Swiss watch with 18k yellow gold case (40mm diameter), polished and brushed finishing creating subtle play of light, champagne gold dial with applied gold hour markers and delicate dauphine hands, small seconds subdial at 6 o'clock position, exhibition caseback revealing in-house perpetual calendar movement with Geneva stripes decoration, honey-brown leather strap with gold tang buckle, sapphire crystal with anti-reflective coating, crown with engraved Olin crown logo, watch showing impeccable Swiss craftsmanship with every detail precisely finished",
+        "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional product photography of elegant luxury Swiss watch, authentic 18k yellow gold case 40mm diameter with mix of polished mirror-finish sides and brushed satin-finish top surfaces creating realistic light play, champagne gold sunburst dial with applied three-dimensional gold hour markers casting subtle shadows, delicate gold dauphine hands with perfect finishing, small seconds subdial at 6 o'clock with fine printing, exhibition sapphire caseback revealing intricate in-house perpetual calendar movement with authentic Geneva stripes decoration and gold rotor, rich honey-brown genuine leather strap with visible grain texture and gold tang buckle, flawless sapphire crystal with anti-reflective blue coating, crown at 3 o'clock with micro-engraved Olin crown logo, every detail showing Swiss precision finishing, lifelike metal reflections, real leather texture, authentic watch photography lighting, macro detail clarity, professional luxury watch product photography style, dramatic side lighting highlighting case finishing, realistic depth and dimension, 8k detail, photographic realism"
+      },
+      {
+        "name": "Precision Watchmaking Tools",
+        "scenes_used": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Professional Swiss watchmaking tool collection including tweezers in various sizes (fine-tipped brass and steel), screwdrivers with rotating wooden handles and interchangeable blades, brass hand-setting tools, steel movement holders, jeweler's loupes (2.5x to 10x magnification), pegwood sticks for cleaning, rodico cleaning putty, oilers with fine needles, mainspring winders, case opening tools, all showing signs of professional use with slight wear patterns, organized in leather tool rolls and wooden trays",
+        "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional photography of authentic Swiss watchmaking precision tools, collection of professional tweezers in various sizes with fine-tipped ends in brass and stainless steel, precision screwdrivers with rotating turned wooden handles and interchangeable micro blades, brass hand-setting tools with delicate tips, steel movement holders with cushioned grips, jeweler's magnifying loupes in multiple magnifications showing real glass lens clarity, natural pegwood cleaning sticks, blue rodico cleaning putty, precision oilers with ultra-fine needles, traditional mainspring winding tools, watch case opening tools, all tools showing authentic signs of professional use with slight wear and patina, organized in aged brown leather tool rolls with individual pockets and wooden sorting trays, lifelike metal surfaces with realistic wear patterns, real wood grain on handles, authentic leather texture, documentary photography style, professional tool photography with dramatic lighting, natural shadows showing three-dimensional form, realistic material properties, 8k macro detail, photographic realism"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Protagonist - Apprentice to Master Watchmaker",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Young Apprentice",
+          "scenes_used": [
+            1,
+            2,
+            3
+          ],
+          "description": "Real person, male, early 20s, mixed European and East Asian heritage with light olive complexion, naturally youthful face with expressive dark brown eyes showing intense focus and determination, short neat black hair with natural texture, clean-shaven with smooth skin, lean build, wearing simple white button-down shirt with rolled sleeves and gray vest, eager expression mixing concentration with occasional frustration, hands showing early precision work with slight trembling from nerves, posture leaning forward with intense focus at workbench, youthful energy combined with serious dedication to craft",
+          "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic lifelike portrait of real young male apprentice watchmaker, early 20s, authentic mixed European and East Asian heritage with natural light olive skin tone and realistic skin texture showing fine pores and natural complexion, genuinely youthful face with expressive dark brown eyes showing intense focus and determination, natural short neat black hair with realistic hair texture and individual strands visible, clean-shaven with smooth realistic skin, lean athletic build, wearing simple white cotton button-down shirt with rolled sleeves showing natural fabric wrinkles and gray wool vest with visible weave texture, eager genuine expression mixing concentration with determination, real hands with natural skin texture positioned for precision work, slight nervous energy in posture, documentary photography style, professional portrait photography with natural workshop lighting, authentic facial features and expressions, real person not model-like, natural skin imperfections, lifelike eye detail with realistic iris patterns, genuine human presence, 8k detail, photographic realism of real person working at watchmaking bench",
+          "is_original": true
+        },
+        {
+          "version_name": "Accomplished Watchmaker",
+          "scenes_used": [
+            4
+          ],
+          "description": "Same real person now late 20s to early 30s, face matured with subtle signs of focused years of craftsmanship, same mixed heritage features now with refined confidence, same dark brown eyes now showing deep satisfaction and earned pride, hair slightly longer with distinguished styling, hint of facial hair with neatly groomed short beard, face showing character development from years of dedication, wearing tailored charcoal gray suit with crisp white shirt open at collar, gold Olin watch visible on left wrist, posture upright with quiet confidence, hands now completely steady showing mastered precision, expression of profound accomplishment mixed with humble satisfaction",
+          "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic lifelike portrait of same real young male watchmaker now matured, late 20s to early 30s, same authentic mixed European and East Asian heritage with natural light olive skin tone now showing subtle character development, same facial structure slightly matured with defined features and natural aging, same expressive dark brown eyes now showing deeper wisdom and earned satisfaction with realistic iris detail, hair grown slightly longer with distinguished professional styling and natural texture, neatly groomed short beard with realistic individual hair detail adding maturity, face showing subtle lines from years of focused craftsmanship, natural skin texture with fine detail, wearing tailored charcoal gray wool suit with visible fabric weave and crisp white cotton shirt open at collar showing fabric texture, elegant gold Olin luxury watch clearly visible on left wrist, confident upright posture reflecting earned mastery, real hands with steady positioning showing complete precision control, expression of genuine profound accomplishment mixed with humble satisfaction, documentary photography style, professional portrait with warm natural lighting, authentic facial maturation, real person showing time progression, natural confident presence, lifelike details, 8k resolution, photographic realism of accomplished craftsman",
+          "is_original": false,
+          "references_original_version": "Young Apprentice"
+        },
+        {
+          "version_name": "Seasoned Master Watchmaker",
+          "scenes_used": [
+            5
+          ],
+          "description": "Same real person now mid to late 30s, face showing distinguished maturity and earned wisdom, same mixed heritage features with natural aging grace, same dark brown eyes now radiating patient mentorship and quiet authority, hair with distinguished hints of silver at temples, well-maintained beard now fuller and professionally groomed, face showing gentle smile lines and character from years of mastery, wearing refined navy blue suit with subtle pinstripe, elegant white shirt, gold Olin watch prominent on wrist showing years of cherished wear, posture of relaxed confidence and mentorship, hands moving with absolute mastery and gentle guidance, expression combining patient wisdom with generational pride as he guides new apprentice",
+          "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic lifelike portrait of same real male master watchmaker now fully matured, mid to late 30s, same authentic mixed European and East Asian heritage with natural light olive skin tone showing distinguished aging, same facial structure now with refined mature features and natural character lines, same expressive dark brown eyes now radiating patient mentorship wisdom and quiet authority with lifelike depth, distinguished hair with natural silver highlights at temples and realistic hair texture, fuller well-groomed beard with mix of black and silver showing natural aging pattern, face with gentle smile lines around eyes and mouth from years of satisfied craftsmanship, natural mature skin texture with fine realistic detail, wearing refined navy blue wool suit with subtle pinstripe pattern visible in fabric and elegant white dress shirt with natural fabric drape, prestigious gold Olin luxury watch prominently displayed on left wrist showing slight wear patina from years of cherished use, relaxed confident posture of established master craftsman, real hands positioned in gentle teaching gesture showing absolute precision and grace, expression combining patient wisdom with generational pride and mentorship warmth, documentary photography style, professional portrait with warm natural workshop lighting, authentic facial aging showing time progression, real person with genuine mature presence, lifelike distinguished features, natural confident authority, 8k detail, photographic realism of seasoned master craftsman in mentorship moment",
+          "is_original": false,
+          "references_original_version": "Young Apprentice"
+        }
+      ]
+    },
+    {
+      "name": "Original Master Watchmaker",
+      "scenes_used": [
+        1,
+        3
+      ],
+      "has_multiple_versions": false,
+      "description": "Real person, distinguished male master craftsman, late 50s to early 60s, Northern European descent with fair skin showing natural aging, kind weathered face with deep character lines earned from decades of focused precision work, wise gray-blue eyes with gentle expression of patient mentorship, silver-gray hair neatly combed back with natural texture, well-groomed salt-and-pepper beard, dignified presence combining authority with warmth, wearing traditional gray wool waistcoat over white shirt with sleeves rolled to forearms, elegant gold Olin watch on left wrist showing years of wear, reading glasses hanging from neck chain, hands showing lifetime of skilled craftsmanship with subtle age spots and steady capable movements, posture of quiet confidence and teaching patience, expression radiating mentorship pride and generational wisdom",
+      "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic lifelike portrait of real distinguished male master watchmaker, late 50s to early 60s, authentic Northern European descent with natural fair skin tone showing realistic aging with fine wrinkles and age spots, kind weathered face with deep character lines around eyes and forehead from decades of precision work, wise gray-blue eyes with gentle patient expression and lifelike depth showing mentorship warmth, natural silver-gray hair neatly combed back with realistic hair texture and individual strands, well-groomed salt-and-pepper beard with natural gray pattern and realistic facial hair detail, dignified mature presence combining quiet authority with approachable warmth, wearing traditional gray wool waistcoat with visible fabric weave over crisp white cotton shirt with sleeves professionally rolled to forearms showing natural fabric folds, elegant gold Olin luxury watch on left wrist with slight patina from years of daily wear, reading glasses with thin metal frames hanging from leather neck chain, real hands showing lifetime of skilled craftsmanship with natural age spots and prominent veins and steady capable positioning, confident patient posture of experienced mentor, expression radiating genuine teaching pride and generational wisdom, documentary photography style, professional portrait with natural workshop window lighting, authentic mature facial features and expressions, real elderly craftsman not model, natural skin aging details, lifelike eye warmth, genuine human mentorship presence, 8k detail, photographic realism of distinguished master craftsman"
+    }
+  ]
+}
