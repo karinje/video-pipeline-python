@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate first frame reference images for all scenes in parallel using nano-banana.
+Generate first frame reference images for all scenes in parallel using nano-banana-pro.
 Runs after generate_video_script.py and before generate_video_clips.py.
 """
 
@@ -433,8 +433,8 @@ def generate_single_first_frame(scene_data, universe_chars, universe_images_dir,
     
     enhanced_prompt = f"{first_frame_prompt}{reference_info}"
     
-    # Create output filename
-    first_frame_filename = f"{base_name}_p{scene_num}_first_frame.jpg"
+    # Create output filename (nano-banana-pro outputs PNG)
+    first_frame_filename = f"{base_name}_p{scene_num}_first_frame.png"
     output_path = os.path.join(output_dir, first_frame_filename)
     
     # Create debug directory for this scene
@@ -447,12 +447,14 @@ def generate_single_first_frame(scene_data, universe_chars, universe_images_dir,
             print(f"    Using {len(reference_images)} reference image(s) for characters/locations")
         
         # Use the existing generate_image function with reference images and debug logging
+        # Pass resolution for nano-banana-pro (maps 480p/720p/1080p to 2K)
         generate_image(
             prompt=enhanced_prompt,
             image_input=reference_images if reference_images else None,
             output_path=output_path,
             debug_dir=debug_dir,
-            debug_name=debug_name
+            debug_name=debug_name,
+            resolution=resolution
         )
         
         print(f"    ✓ Scene {scene_num}: {os.path.basename(output_path)}")

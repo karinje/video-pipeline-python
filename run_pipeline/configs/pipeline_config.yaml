@@ -36,7 +36,7 @@ pipeline_mode:
 # Required files for the pipeline
 
 input:
-  config_file: s1_generate_concepts/inputs/configs/luxury_watch.json
+  config_file: s1_generate_concepts/inputs/configs/sunglasses.json
   # Brand configuration file (REQUIRED for all modes)
   # Contains: BRAND_NAME, PRODUCT_DESCRIPTION, BRAND_VALUES, TAGLINE, etc.
   # Used in: Steps 0, 3, 4, 6
@@ -67,24 +67,26 @@ input:
 #   - results/{brand}_{timestamp}/{brand}_batch_summary_{timestamp}.json
 
 concept_generation:
-  creative_direction: "Create a 30 second Instagram ad for luxury watches with elegant gold aesthetics"
+  creative_direction: "Create a 30 second Instagram ad for sunglasses with urban professional style, signature look transformation, and golden hour lighting"
   # Creative direction prompt - describes what kind of ad to create
   # Can be customized per run
   
   ad_styles:
     - "Achievement - Inspirational"
-    # List of AD_STYLE options to generate
+    # FALLBACK ONLY: List of AD_STYLE options to generate
+    # Priority: Pipeline first checks brand config's AD_STYLE field, only uses this list if AD_STYLE is missing
     # Options include:
     #   - "Humor - Hilarious", "Humor - Playful", "Humor - Sarcastic/Witty"
     #   - "Sentiment - Heartwarming", "Sentiment - Tear-jerking", "Sentiment - Nostalgic"
     #   - "Achievement - Inspirational", "Achievement - Empowering", "Achievement - Understated"
     #   - "Adventure - Thrilling", "Adventure - Wonder-filled", "Adventure - Epic"
     #   - "Reversal - Thought-provoking", "Reversal - Mind-blowing", "Reversal - Clever"
+    #   - "Transformation - Instant Upgrade", "Transformation - Before/After", etc.
   
   templates:
-    - path: s1_generate_concepts/inputs/prompt_templates/advanced_structured.md
+    - path: s1_generate_concepts/inputs/prompt_templates/sunglasses_advanced_structured.md
       name: advanced
-    - path: s1_generate_concepts/inputs/prompt_templates/generic_simple.md
+    - path: s1_generate_concepts/inputs/prompt_templates/sunglasses_generic_simple.md
       name: generic
   # Prompt templates to use
   # Both generic and advanced will be tested for each AD_STYLE/model combination
@@ -97,7 +99,7 @@ concept_generation:
     - provider: anthropic
       model: claude-sonnet-4-5-20250929
       reasoning_effort: ~  # null in YAML (use ~ or omit the key)
-      thinking: 1000  # Extended thinking for concept generation (proportional to ~1k word output)
+      thinking: 1024  # Extended thinking for concept generation (minimum 1024 for Claude)
   # LLM models to use for concept generation
   # Format: [provider, model_name, reasoning_effort, thinking]
   # GPT-5.1: reasoning_effort='high' for max thinking
@@ -320,14 +322,14 @@ video_settings:
   # 3. total_duration + clip_duration → calculates num_clips
   # 4. total_duration only → uses scenes_count to calculate clip_duration (current behavior)
   
-  clip_duration: 8
+  clip_duration: 6
   # Duration of each video clip in seconds
   # Will be rounded to valid values based on video model:
   #   - Sora-2: 4, 8, or 12 seconds
   #   - Veo 3 Fast: 4, 6, or 8 seconds
   # If not provided, will be calculated from total_duration / num_clips
   
-  num_clips: 4
+  num_clips: 5
   # Number of video clips/scenes to generate
   # If not provided, will be calculated from total_duration / clip_duration
   # Or defaults to scenes_count if total_duration is provided alone
@@ -341,6 +343,12 @@ video_settings:
   scenes_count: 5
   # Fallback: Number of scenes (used only if total_duration provided without num_clips)
   # Used to calculate scene duration (duration_seconds / scenes_count)
+  
+  enable_visual_effects: true
+  # Enable/disable visual effects in scene prompt generation
+  # If true: Includes visual effects library and instructions in prompts
+  # If false: No visual effects included, scenes will be generated without effect instructions
+  # Used in: Step 7 (scene prompts generation)
   
   # ============================================================================
   # VIDEO QUALITY SETTINGS
@@ -366,13 +374,13 @@ models:
   # Used in: Steps 3, 4, 6
   # Format: 'provider/model_name'
   
-  llm_thinking: 2500
+  llm_thinking: 1500
   # Extended thinking budget for Claude (budget_tokens)
-  # 0 = disabled (fastest, ~10-30 seconds) - NOT RECOMMENDED for quality
-  # 1000 = light thinking (~30-60 seconds) - good for simple tasks
+  # Minimum: 1024 (Claude's requirement)
+  # 1500 = light-medium thinking (~30-60 seconds) - RECOMMENDED for universe generation (JSON output)
   # 2000-3000 = medium thinking (~1-3 minutes) - RECOMMENDED for scene prompts (~5k token output)
   # 10000 = max thinking (~7-12 minutes) - overkill for most tasks
-  # Used in: Step 7 (scene prompts generation)
+  # Used in: Step 5 (universe generation), Step 7 (scene prompts generation)
   # Proportional to output: ~2500 tokens for ~5k token structured JSON output
   
   scene_prompts_temperature: 0.5
@@ -435,34 +443,34 @@ pipeline_steps:
   # Set to true to run the step (default: all true for fresh runs)
   # ============================================================================
   
-  run_step_1: true
+  run_step_1: false
   # s1_generate_concepts: Generate ad concepts (generic + advanced, GPT + Claude)
   
-  run_step_2: true
+  run_step_2: false
   # s2_judge_concepts: Judge and evaluate all generated concepts
   
-  run_step_3: true
+  run_step_3: false
   # s3_extract_best_concept: Extract the best scoring concept from evaluation
   
-  run_step_4: true
+  run_step_4: false
   # s4_revise_concept: Revise concept based on judge feedback
   
-  run_step_5: true
+  run_step_5: false
   # s5_generate_universe: Generate universe and characters
   
-  run_step_6: true
+  run_step_6: false
   # s6_generate_reference_images: Generate reference images for all characters/props/locations
   
   run_step_7: true
   # s7_generate_scene_prompts: Generate detailed video/audio prompts for each scene
   
-  run_step_8: true
+  run_step_8: false
   # s8_generate_first_frames: Generate first frame images for each scene
   
-  run_step_9: true
+  run_step_9: false
   # s9_generate_video_clips: Generate video clips using Veo 3.1 Fast
   
-  run_step_10: true
+  run_step_10: false
   # s10_merge_clips: Merge all video clips into final video
   # RUNNING: Complete pipeline from start to end
   # s10_merge_clips: Merge all video clips into final video

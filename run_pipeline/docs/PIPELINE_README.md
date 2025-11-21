@@ -4,9 +4,11 @@ Complete guide to the video generation pipeline from brand config (or evaluation
 
 ## Overview
 
+**IMPORTANT: This pipeline is designed specifically for EYEWEAR/SUNGLASSES advertising only.** All steps assume eyewear products and include eyewear-specific fields (frame style, lens type, etc.) in prompts. If fields are not provided in the config, they are passed as blank and the LLM determines appropriate values based on context.
+
 The pipeline can start from two points:
-1. **Brand Config** (Full Pipeline): Generates concepts → Evaluates → Creates video (Steps 0-9)
-2. **Evaluation JSON** (Video Only): Uses existing evaluation → Creates video (Steps 2-9)
+1. **Brand Config** (Full Pipeline): Generates concepts → Evaluates → Creates video (Steps 1-10)
+2. **Evaluation JSON** (Video Only): Uses existing evaluation → Creates video (Steps 3-10)
 
 The complete pipeline generates:
 - Multiple ad concepts (generic + advanced prompts, multiple models)
@@ -14,24 +16,30 @@ The complete pipeline generates:
 - Best concept selection
 - Revised 5-scene script
 - Universe/character reference images
-- Scene-by-scene video prompts
+- Scene-by-scene video prompts (with eyewear-specific requirements and visual effects)
 - First frame images
 - Video clips with audio
 - Final merged video
 
+**Product Type:** Eyewear/Sunglasses only. All steps include eyewear-specific fields:
+- Frame Style, Lens Type, Lens Features
+- Style Persona, Wearing Occasion, Frame Material
+- Visual effects library integration (Step 7)
+- Eyewear-specific prompting requirements throughout
+
 ## Pipeline Steps
 
-### Step 0: Generate Concepts (Optional - if start_from='brand_config')
+### Step 1: Generate Concepts (Optional - if start_from='brand_config')
 **Input:** 
 - Brand config file (`config_file` in config)
 - Creative direction (`creative_direction` in config)
-- AD_STYLE list (`ad_styles` in config)
+- AD_STYLE: **First checks brand config's `AD_STYLE` field, if not found uses `ad_styles` list from pipeline config**
 - Templates (`templates` in config)
 - Models (`models` in config)
 
 **Output:** Batch summary JSON + concept files  
 **What it does:** Generates 5-scene ad concepts for all combinations of:
-- AD_STYLE options (e.g., "Achievement - Inspirational")
+- AD_STYLE: Uses `AD_STYLE` from brand config if present, otherwise uses `ad_styles` list from pipeline config
 - Templates (generic, advanced)
 - Models (GPT-5.1, Claude Sonnet 4.5, etc.)
 
@@ -45,16 +53,20 @@ Runs in parallel for speed.
   - `results/{brand}_{timestamp}/{brand}_batch_summary_{timestamp}.json`
 
 **Config parameters:**
-- `concept_generation.ad_styles`: List of AD_STYLE options
+- `concept_generation.ad_styles`: List of AD_STYLE options (FALLBACK ONLY - used if brand config doesn't have `AD_STYLE` field)
 - `concept_generation.templates`: List of [template_path, template_name]
 - `concept_generation.models`: List of [provider, model, reasoning_effort, thinking]
 - `concept_generation.creative_direction`: Creative direction prompt
 - `concept_generation.concept_parallel_workers`: Parallel workers (default: 8)
 
+**AD_STYLE Priority:**
+1. **First**: Uses `AD_STYLE` from brand config file (e.g., `sunglasses.json`) if present
+2. **Fallback**: Uses `ad_styles` list from pipeline config if brand config doesn't have `AD_STYLE`
+
 ---
 
-### Step 1: Judge/Evaluate Concepts (Optional - if start_from='brand_config')
-**Input:** Batch summary JSON from Step 0  
+### Step 2: Judge/Evaluate Concepts (Optional - if start_from='brand_config')
+**Input:** Batch summary JSON from Step 1  
 **Output:** Evaluation JSON with scored concepts  
 **What it does:** Evaluates each concept separately (parallel) using an LLM judge. Scores 0-100 based on:
 - Narrative Quality (20 points)
@@ -65,28 +77,28 @@ Runs in parallel for speed.
 - Success Likelihood (15 points)
 
 **Files:**
-- Input: Batch summary JSON from Step 0
+- Input: Batch summary JSON from Step 1
 - Output: `evaluations/{brand}_evaluation_{judge_model}_{timestamp}.json`
 
 **Config parameters:**
 - `evaluation.judge_model`: LLM model for judging
 - `evaluation.evaluation_output_dir`: Output directory for evaluations
 
-### Step 2: Extract Best Concept
+### Step 3: Extract Best Concept
 **Input:** Evaluation JSON file (`evaluation_json` in config)  
 **Output:** Best-scoring concept file path  
 **What it does:** Loads evaluation JSON, finds the highest-scoring concept, extracts the concept file path.
 
 **Files:**
-- Input: `evaluations/*_evaluation_*.json` (from Step 1 or provided)
+- Input: `evaluations/*_evaluation_*.json` (from Step 2 or provided)
 - Output: Concept file path (from evaluation JSON)
 
 ---
 
-### Step 3: Revise Concept Based on Judge Feedback
+### Step 4: Revise Concept Based on Judge Feedback
 **Input:** 
 - Concept file content (best scoring concept)
-- Judge evaluation weaknesses (from Step 1)
+- Judge evaluation weaknesses (from Step 2)
 - Brand config file (`config_file` in config)
 - Duration (`duration_seconds` in config)
 - LLM model (`llm_model` in config)
@@ -99,7 +111,7 @@ Runs in parallel for speed.
 4. **Optional:** Re-judges the revised concept to measure improvement
 
 **Files:**
-- Input: Best concept file from Step 2
+- Input: Best concept file from Step 3
 - Output: 
   - `{concept_name}_revised.txt` - Improved concept
   - `{concept_name}_revised_evaluation.json` - Re-evaluation with score comparison
@@ -113,7 +125,7 @@ Runs in parallel for speed.
 
 ---
 
-### Step 4: Generate Universe and Characters
+### Step 5: Generate Universe and Characters
 **Input:**
 - Revised script
 - Brand config file
@@ -126,7 +138,7 @@ Runs in parallel for speed.
 - **Versions:** Multiple versions/states for elements (e.g., "Early Struggle" vs "Opening Night Success")
 
 **Files:**
-- Input: Revised script from Step 2
+- Input: Revised script from Step 4
 - Output: `{concept_name}_universe_characters.json` in output directory
 
 **Config parameters:**
@@ -134,7 +146,7 @@ Runs in parallel for speed.
 
 ---
 
-### Step 5: Generate Reference Images
+### Step 6: Generate Reference Images
 **Input:**
 - Universe/characters JSON file
 - Image generation model (`image_model` in config)
@@ -148,7 +160,7 @@ Runs in parallel for speed.
 Images are saved in organized directory structure with an `image_generation_summary.json` mapping element names to file paths.
 
 **Files:**
-- Input: `{concept_name}_universe_characters.json` from Step 3
+- Input: `{concept_name}_universe_characters.json` from Step 5
 - Output: `{universe_images_dir}/{concept_name}/` directory with:
   - `characters/` subdirectories
   - `locations/` subdirectories
@@ -163,14 +175,15 @@ Images are saved in organized directory structure with an `image_generation_summ
 
 ---
 
-### Step 6: Generate Scene Prompts
+### Step 7: Generate Scene Prompts
 **Input:**
 - Revised script
 - Universe/characters JSON
-- Brand config
+- Brand config (with eyewear-specific fields: FRAME_STYLE, LENS_TYPE, LENS_FEATURES, STYLE_PERSONA, WEARING_OCCASION, FRAME_MATERIAL)
 - Image generation summary (for element name mapping)
 - Duration, resolution, aspect ratio
 - LLM model
+- Visual effects library (from `s7_generate_scene_prompts/inputs/visual_effects.md`)
 
 **Output:** Scene prompts JSON file  
 **What it does:** Generates detailed video generation prompts for each scene including:
@@ -179,6 +192,13 @@ Images are saved in organized directory structure with an `image_generation_summ
 - **audio_dialogue:** Dialogue with speaker name and voice characteristics (format: "Character Name: dialogue" or "Narrator (voice): dialogue")
 - **first_frame_image_prompt:** Detailed image prompt for first frame
 - **elements_used:** List of characters/locations/props with version names (format: "Element Name - Version Name")
+- **visual_effects:** Array of 1-3 visual effects from library (name, description, timing) - eyewear-specific effects like "Luminous Gaze", "3D Rotation", etc.
+
+**Eyewear-Specific Features:**
+- Includes eyewear requirements: frames visible in every scene, hero shots, light interactions with lenses
+- Uses eyewear specs from config (passed as blank if not provided, LLM determines appropriate values)
+- Selects 1-3 appropriate visual effects per scene from eyewear visual effects library
+- Ensures frame style, lens type, and style persona are maintained throughout
 
 **Files:**
 - Input: Revised script, universe/characters JSON, image summary
@@ -194,7 +214,7 @@ Images are saved in organized directory structure with an `image_generation_summ
 
 ---
 
-### Step 7: Generate First Frame Images
+### Step 8: Generate First Frame Images
 **Input:**
 - Scene prompts JSON
 - Universe/characters JSON
@@ -223,7 +243,7 @@ Images are saved in organized directory structure with an `image_generation_summ
 
 ---
 
-### Step 8: Generate Video Clips
+### Step 9: Generate Video Clips
 **Input:**
 - Scene prompts JSON
 - First frame images
@@ -305,10 +325,14 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 
 ### `concept_generation` (Step 0)
 - `creative_direction`: Creative direction prompt
-- `ad_styles`: List of AD_STYLE options to generate
+- `ad_styles`: List of AD_STYLE options to generate (FALLBACK ONLY - used if brand config doesn't have `AD_STYLE` field)
 - `templates`: List of [template_path, template_name]
 - `models`: List of [provider, model, reasoning_effort, thinking]
 - `concept_parallel_workers`: Parallel workers
+
+**AD_STYLE Priority:**
+1. **First**: Uses `AD_STYLE` from brand config file (e.g., `sunglasses.json`) if present
+2. **Fallback**: Uses `ad_styles` list from pipeline config if brand config doesn't have `AD_STYLE`
 
 ### `evaluation` (Step 1)
 - `judge_model`: LLM model for judging
@@ -316,7 +340,15 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 
 ### `input`
 - `evaluation_json`: Path to evaluation JSON file
-- `config_file`: Path to brand configuration file
+- `config_file`: Path to brand configuration file (eyewear/sunglasses config)
+
+**Eyewear Config Fields (all optional, passed as blank if missing):**
+- `FRAME_STYLE`: Frame style (e.g., "Aviator Classic", "Wayfarer")
+- `LENS_TYPE`: Lens type (e.g., "Polarized Sunglasses", "Photochromic")
+- `LENS_FEATURES`: Lens features (e.g., "UV protection, anti-reflective coating")
+- `STYLE_PERSONA`: Style persona (e.g., "Timeless Cool - Classic rebel")
+- `WEARING_OCCASION`: Wearing occasions (e.g., "Driving, Beach, City Life")
+- `FRAME_MATERIAL`: Frame material (e.g., "Gold metal frame with acetate temple tips")
 
 ### `output`
 - `base_output_dir`: Base directory for script generation outputs
@@ -629,6 +661,8 @@ except json.JSONDecodeError as e:
 
 ## Notes
 
+- **Product Type:** This pipeline is designed exclusively for eyewear/sunglasses advertising. All steps include eyewear-specific fields and requirements.
+- **Missing Fields:** If eyewear-specific fields (FRAME_STYLE, LENS_TYPE, etc.) are not provided in config, they are passed as blank and the LLM determines appropriate values based on context. No defaults are hardcoded.
 - The pipeline automatically creates batch folders with timestamps
 - Version names in `elements_used` ensure correct image matching
 - Dialogue format includes speaker names and voice characteristics for audio models
@@ -636,4 +670,5 @@ except json.JSONDecodeError as e:
 - Parallel execution is used for concept generation, image generation, and video generation where possible
 - You can skip Steps 0-1 if you already have an evaluation JSON
 - You can skip individual steps (image generation, first frames, video clips) if outputs already exist
+- Visual effects library is automatically loaded from `s7_generate_scene_prompts/inputs/visual_effects.md` and integrated into scene prompts
 

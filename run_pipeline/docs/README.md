@@ -19,7 +19,8 @@ Orchestrates all pipeline steps from brand config (or evaluation JSON) to final 
 Edit `configs/pipeline_config.yaml` to configure:
 - Pipeline mode (start_from, skip options)
 - Input files (brand config, evaluation JSON)
-- Concept generation settings (ad_styles, templates, models)
+- Concept generation settings (ad_styles [fallback only], templates, models)
+  - **AD_STYLE Priority**: First uses `AD_STYLE` from brand config, falls back to `ad_styles` list in pipeline config
 - Evaluation settings (judge model)
 - Output directories
 - Video settings (duration, resolution, aspect ratio)

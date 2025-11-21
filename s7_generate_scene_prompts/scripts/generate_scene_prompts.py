@@ -190,7 +190,16 @@ def repair_json(json_text):
     
     return repaired
 
-def generate_scene_prompts(revised_script, universe_chars, config, duration=30, model="anthropic/claude-sonnet-4-5-20250929", resolution="480p", image_summary_path=None, thinking=None, temperature=None, clip_duration=None, num_clips=None, video_model="google/veo-3-fast"):
+def load_visual_effects_library():
+    """Load visual effects from markdown file."""
+    effects_path = BASE_DIR / "s7_generate_scene_prompts" / "inputs" / "visual_effects.md"
+    if effects_path.exists():
+        with open(effects_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    return None
+
+
+def generate_scene_prompts(revised_script, universe_chars, config, duration=30, model="anthropic/claude-sonnet-4-5-20250929", resolution="480p", image_summary_path=None, thinking=None, temperature=None, clip_duration=None, num_clips=None, video_model="google/veo-3-fast", enable_visual_effects=True):
     """Generate detailed video generation prompts for each scene.
     
     Args:
@@ -206,6 +215,7 @@ def generate_scene_prompts(revised_script, universe_chars, config, duration=30, 
         clip_duration: Duration per clip in seconds (optional)
         num_clips: Number of clips to generate (optional)
         video_model: Video model to determine valid durations
+        enable_visual_effects: Whether to include visual effects in prompts (default: True)
     """
     
     step_start_time = time.time()
@@ -324,17 +334,75 @@ def generate_scene_prompts(revised_script, universe_chars, config, duration=30, 
     allowed_prop_names = [get_display_name(prop.get('name')) for prop in universe_chars.get('universe', {}).get('props', [])]
     print(f"  ✓ Allowed names: {len(allowed_char_names)} characters, {len(allowed_loc_names)} locations, {len(allowed_prop_names)} props")
     
-    print("  [Step 5/6] Building LLM prompt...")
-    prompt = f"""You are a professional video director creating prompts for AI video generation (Veo 3 Fast, Sora 2).
+    # Load visual effects library only if enabled
+    visual_effects_library = None
+    if enable_visual_effects:
+        print("  [Step 5/6] Loading visual effects library...")
+        visual_effects_library = load_visual_effects_library()
+        if visual_effects_library:
+            print(f"  ✓ Loaded visual effects library")
+        else:
+            print(f"  ⚠ Visual effects library not found")
+    else:
+        print("  [Step 5/6] Visual effects disabled (enable_visual_effects=false)")
+    
+    print("  [Step 6/7] Building LLM prompt...")
+    
+    # Build visual effects section conditionally
+    if enable_visual_effects:
+        visual_effects_section = f"""
+
+**VISUAL EFFECTS LIBRARY:**
+{visual_effects_library if visual_effects_library else "Visual effects library not available"}
+
+**VISUAL EFFECTS USAGE INSTRUCTIONS:**
+1. Select 1-3 visual effects per scene that enhance the eyewear storytelling
+2. Effects should complement, not overshadow the frames
+3. Use effects that highlight the product benefits (e.g., "Luminous Gaze" for lens quality, "3D Rotation" for design showcase)
+4. Include the exact effect name and description in your scene
+5. Time the effects appropriately within the scene duration"""
+        visual_effects_instruction = """
+
+6. **visual_effects**: Include 1-3 visual effects from the library.
+   - Use EXACT effect names from the visual effects library
+   - Include full description from library
+   - Specify timing within the scene (e.g., "at 2-3 seconds")
+   - Effects should enhance the eyewear storytelling"""
+        visual_effects_example = """,
+      "visual_effects": [
+        {{
+          "name": "Effect Name from Library",
+          "description": "Full description from visual effects library",
+          "timing": "When in the scene (e.g., '2-3 seconds', 'throughout', 'at climax')"
+        }}
+      ]"""
+    else:
+        visual_effects_section = ""
+        visual_effects_instruction = ""
+        visual_effects_example = ""
+    
+    # Pipeline assumes eyewear/sunglasses products only
+    prompt = f"""You are a professional video director creating prompts for AI video generation (Veo 3 Fast, Sora 2) specializing in eyewear/sunglasses advertising.
 
 **CRITICAL CONTEXT**: Each scene will be generated INDEPENDENTLY by the video AI model. Each prompt must be COMPLETELY SELF-CONTAINED with all necessary information.
 
 **BRAND CONTEXT:**
-- Brand: {config.get('BRAND_NAME', 'N/A')}
-- Product: {config.get('PRODUCT_DESCRIPTION', 'N/A')}
-- Tagline: {config.get('TAGLINE', 'N/A')}
-- Creative Direction: {config.get('CREATIVE_DIRECTION', 'N/A')}
+- Brand: {config.get('BRAND_NAME', '')}
+- Product: {config.get('PRODUCT_DESCRIPTION', '')}
+- Tagline: {config.get('TAGLINE', '')}
+- Creative Direction: {config.get('CREATIVE_DIRECTION', '')}
 
+**EYEWEAR AD REQUIREMENTS:**
+- Frames must be clearly visible and identifiable in EVERY scene
+- Include at least one "hero shot" of the glasses per scene
+- Show frames from multiple angles across the video
+- Include moments where light interacts with lenses (reflections, glare reduction)
+- Frame Style: {config.get('FRAME_STYLE', '')}
+- Lens Type: {config.get('LENS_TYPE', '')}
+- Lens Features: {config.get('LENS_FEATURES', '')}
+- Style Persona: {config.get('STYLE_PERSONA', '')}
+- Wearing Occasion: {config.get('WEARING_OCCASION', '')}
+- Frame Material: {config.get('FRAME_MATERIAL', '')}
 **{num_scenes}-SCENE CONCEPT:**
 {revised_script}
 
@@ -366,7 +434,7 @@ You MUST use the EXACT names from the universe_characters.json above. Do NOT cre
 5. **Dialogue**: Always specify WHO is speaking (character name or narrator with voice description)
 6. **Keep motion simple**: One clear camera move, one clear subject action per shot
 7. **Lighting**: Describe quality and source, not just "well lit"
-
+{visual_effects_section}
 **INSTRUCTIONS:**
 For EACH of the {num_scenes} scenes, create:
 
@@ -437,7 +505,7 @@ For EACH of the {num_scenes} scenes, create:
    - Use EXACT names from ALLOWED lists
    - Include version name if has_multiple_versions: "Name - Version Name"
    - Only include if scenes_used has 2+ scene numbers
-
+{visual_effects_instruction}
 **EXAMPLE OUTPUT STRUCTURE:**
 
 Single shot scene example:
@@ -496,18 +564,50 @@ Action: [What happens in this shot]
         "characters": ["Exact Name - Version Name"],
         "locations": ["Exact Name - Version Name"],
         "props": ["Exact Name"]
-      }}
+      }}{visual_effects_example}
     }}
   ]
 }}
 ```"""
     print(f"  ✓ Prompt built ({len(prompt)} chars)")
     
-    print("  [Step 6/6] Calling LLM to generate scene prompts...")
+    print("  [Step 7/7] Calling LLM to generate scene prompts...")
     provider, model_name = model.split("/", 1) if "/" in model else ("anthropic", model)
     api_key = get_api_key(provider)
     
     # Define JSON schema for structured output (OpenAI)
+    scene_properties = {
+        "scene_number": {"type": "integer"},
+        "duration_seconds": {"type": "integer"},
+        "video_prompt": {"type": "string"},
+        "audio_background": {"type": "string"},
+        "audio_dialogue": {"type": ["string", "null"]},
+        "first_frame_image_prompt": {"type": "string"},
+        "elements_used": {
+            "type": "object",
+            "properties": {
+                "characters": {"type": "array", "items": {"type": "string"}},
+                "locations": {"type": "array", "items": {"type": "string"}},
+                "props": {"type": "array", "items": {"type": "string"}}
+            }
+        }
+    }
+    
+    # Add visual_effects to schema only if enabled
+    if enable_visual_effects:
+        scene_properties["visual_effects"] = {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "description": {"type": "string"},
+                    "timing": {"type": "string"}
+                },
+                "required": ["name", "description", "timing"]
+            }
+        }
+    
     scene_schema = {
         "type": "object",
         "properties": {
@@ -515,22 +615,7 @@ Action: [What happens in this shot]
                 "type": "array",
                 "items": {
                     "type": "object",
-                    "properties": {
-                        "scene_number": {"type": "integer"},
-                        "duration_seconds": {"type": "integer"},
-                        "video_prompt": {"type": "string"},
-                        "audio_background": {"type": "string"},
-                        "audio_dialogue": {"type": ["string", "null"]},
-                        "first_frame_image_prompt": {"type": "string"},
-                        "elements_used": {
-                            "type": "object",
-                            "properties": {
-                                "characters": {"type": "array", "items": {"type": "string"}},
-                                "locations": {"type": "array", "items": {"type": "string"}},
-                                "props": {"type": "array", "items": {"type": "string"}}
-                            }
-                        }
-                    },
+                    "properties": scene_properties,
                     "required": ["scene_number", "duration_seconds", "video_prompt", "audio_background", "first_frame_image_prompt", "elements_used"]
                 }
             }

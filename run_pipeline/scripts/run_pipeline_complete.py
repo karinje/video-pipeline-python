@@ -397,7 +397,14 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
         step1_start = time.time()
         if step_cfg.get("run_step_1", True):
             print("  → Running (run_step_1=true)")
-            ad_styles = concept_cfg.get("ad_styles", [])
+            # Use AD_STYLE from brand config first, fall back to pipeline config's ad_styles list
+            brand_ad_style = config_data.get("AD_STYLE")
+            if brand_ad_style:
+                ad_styles = [brand_ad_style]
+                print(f"  → Using AD_STYLE from brand config: {brand_ad_style}")
+            else:
+                ad_styles = concept_cfg.get("ad_styles", [])
+                print(f"  → AD_STYLE not in brand config, using pipeline config: {ad_styles}")
             templates = concept_cfg.get("templates", [])
             models = concept_cfg.get("models", [])
             creative_direction = concept_cfg.get("creative_direction", "")
@@ -554,18 +561,18 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
         print(f"  ✓ Saved: {revised_file}")
         
         # Comparative re-judging: judge sees both concepts side-by-side
-        if True:  # Always re-judge as part of step 4
-            print(f"  → Comparative judging: comparing original vs revised...")
-            judge_model = eval_cfg.get("judge_model", "anthropic/claude-sonnet-4-5-20250929")
-            
-            # Extract info from best_concept
-            ad_style = best_concept.get("ad_style", config_data.get("AD_STYLE", "Unknown"))
-            brand_name = best_concept.get("brand_name", config_data.get("BRAND_NAME", "Unknown"))
-            original_score = best_concept.get("score", 0)
-            weaknesses_addressed = best_concept.get("weaknesses", [])
-            
-            # Create comparative judging prompt
-            comparative_prompt = f"""You are an expert ad concept evaluator. You will compare TWO versions of the same ad concept: ORIGINAL and REVISED.
+        # ALWAYS runs when Step 4 is enabled - no file existence checks, always overwrites
+        print(f"  → Comparative judging: comparing original vs revised...")
+        judge_model = eval_cfg.get("judge_model", "anthropic/claude-sonnet-4-5-20250929")
+        
+        # Extract info from best_concept
+        ad_style = best_concept.get("ad_style", config_data.get("AD_STYLE", "Unknown"))
+        brand_name = best_concept.get("brand_name", config_data.get("BRAND_NAME", "Unknown"))
+        original_score = best_concept.get("score", 0)
+        weaknesses_addressed = best_concept.get("weaknesses", [])
+        
+        # Create comparative judging prompt
+        comparative_prompt = f"""You are an expert ad concept evaluator. You will compare TWO versions of the same ad concept: ORIGINAL and REVISED.
 
 **CONTEXT:**
 - Brand: {brand_name}
@@ -612,88 +619,96 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
 ```
 
 Be objective and analytical. Small differences (±5 points) mean they're roughly equal."""
-            
-            # Call judge LLM with comparative prompt
-            provider_judge, model_judge = judge_model.split("/", 1) if "/" in judge_model else ("anthropic", judge_model)
-            
-            print(f"  → Calling {provider_judge}/{model_judge} for comparative judging...")
-            print(f"  → This may take 30-90 seconds with extended thinking...")
-            
-            try:
-                if provider_judge == "openai":
-                    from execute_llm import call_openai
-                    api_key = os.getenv("OPENAI_API_KEY")
-                    response = call_openai(comparative_prompt, model_judge, api_key, reasoning_effort="high")
-                else:
-                    from execute_llm import call_anthropic
-                    api_key = os.getenv("ANTHROPIC_API_KEY")
-                    # Use proportional thinking: 1000 tokens for revision task (~1k word output)
-                    response = call_anthropic(comparative_prompt, model_judge, api_key, thinking=1000)
-                
-                print(f"  ✓ Comparative judge response received, parsing...")
-                
-                # Parse JSON response
-                if "```json" in response:
-                    json_text = response.split("```json")[1].split("```")[0]
-                elif "```" in response:
-                    json_text = response.split("```")[1].split("```")[0]
-                else:
-                    json_text = response.strip()
-                
-                comparison = json.loads(json_text)
-                
-                revised_evaluation = {
-                    "comparison": comparison,
-                    "judge_model": judge_model,
-                    "method": "comparative"
-                }
-                
-                improvement = comparison.get("improvement", 0)
-                revised_score = comparison.get("revised_score", 0)
-                
-                print(f"  ✓ Original score: {original_score}/100")
-                print(f"  ✓ Revised score:  {revised_score}/100")
-                print(f"  ✓ Winner: {comparison.get('winner', 'unknown').upper()}")
-                if improvement > 0:
-                    print(f"  ✓ Improvement: +{improvement} points 🎉")
-                elif improvement == 0:
-                    print(f"  → No change in score")
-                else:
-                    print(f"  ⚠ Score decreased: {improvement} points")
-                print(f"  → Recommendation: {comparison.get('recommendation', 'N/A')}")
-                
-            except Exception as e:
-                print(f"  ⚠ Comparative judging failed: {str(e)}")
-                print(f"  → Skipping score comparison\n")
-                revised_evaluation = {"error": str(e), "method": "comparative"}
-                improvement = None
-            
-            # Save re-evaluation result
-            rejudge_file = output_dir / f"{concept_name}_revised_evaluation.json"
-            with open(rejudge_file, 'w', encoding='utf-8') as f:
-                json.dump({
-                    "original_evaluation": best_concept,
-                    "revised_evaluation": revised_evaluation,
-                    "improvement": improvement
-                }, f, indent=2)
-            print(f"  ✓ Re-evaluation saved: {rejudge_file}")
-            
-            # Determine which version to use for downstream steps
-            if improvement is not None:
-                winner = comparison.get("winner", "original")
-                if winner == "revised" and improvement > 0:
-                    print(f"  → Using REVISED concept for downstream steps (scored higher)")
-                    final_concept = revised_script
-                    final_concept_file = revised_file
-                else:
-                    print(f"  → Using ORIGINAL concept for downstream steps (scored higher)")
-                    final_concept = concept_content
-                    final_concept_file = concept_file
+        
+        # Call judge LLM with comparative prompt
+        provider_judge, model_judge = judge_model.split("/", 1) if "/" in judge_model else ("anthropic", judge_model)
+        
+        print(f"  → Calling {provider_judge}/{model_judge} for comparative judging...")
+        print(f"  → This may take 30-90 seconds with extended thinking...")
+        
+        try:
+            if provider_judge == "openai":
+                from execute_llm import call_openai
+                api_key = os.getenv("OPENAI_API_KEY")
+                response = call_openai(comparative_prompt, model_judge, api_key, reasoning_effort="high")
             else:
-                # If comparative judging failed, use original
-                print(f"  → Using ORIGINAL concept for downstream steps (judging failed)")
-                final_concept = concept_content
-                final_concept_file = concept_file
+                from execute_llm import call_anthropic
+                api_key = os.getenv("ANTHROPIC_API_KEY")
+                # Use proportional thinking: 1024 tokens minimum for revision task (~1k word output)
+                response = call_anthropic(comparative_prompt, model_judge, api_key, thinking=1024)
+            
+            print(f"  ✓ Comparative judge response received, parsing...")
+            
+            # Parse JSON response
+            if "```json" in response:
+                json_text = response.split("```json")[1].split("```")[0]
+            elif "```" in response:
+                json_text = response.split("```")[1].split("```")[0]
+            else:
+                json_text = response.strip()
+            
+            comparison = json.loads(json_text)
+            
+            revised_evaluation = {
+                "comparison": comparison,
+                "judge_model": judge_model,
+                "method": "comparative"
+            }
+            
+            improvement = comparison.get("improvement", 0)
+            revised_score = comparison.get("revised_score", 0)
+            
+            print(f"  ✓ Original score: {original_score}/100")
+            print(f"  ✓ Revised score:  {revised_score}/100")
+            print(f"  ✓ Winner: {comparison.get('winner', 'unknown').upper()}")
+            if improvement > 0:
+                print(f"  ✓ Improvement: +{improvement} points 🎉")
+            elif improvement == 0:
+                print(f"  → No change in score")
+            else:
+                print(f"  ⚠ Score decreased: {improvement} points")
+            print(f"  → Recommendation: {comparison.get('recommendation', 'N/A')}")
+            
+        except Exception as e:
+            print(f"  ⚠ Comparative judging failed: {str(e)}")
+            print(f"  → Skipping score comparison\n")
+            revised_evaluation = {"error": str(e), "method": "comparative"}
+            improvement = None
+        
+        # Save re-evaluation result (always overwrite)
+        rejudge_file = output_dir / f"{concept_name}_revised_evaluation.json"
+        # Explicitly delete if exists to ensure overwrite
+        if rejudge_file.exists():
+            rejudge_file.unlink()
+        with open(rejudge_file, 'w', encoding='utf-8') as f:
+            json.dump({
+                "original_evaluation": best_concept,
+                "revised_evaluation": revised_evaluation,
+                "improvement": improvement
+            }, f, indent=2)
+        print(f"  ✓ Re-evaluation saved: {rejudge_file}")
+        
+        # Determine which version to use for downstream steps
+        # ALWAYS use revised concept when Step 4 runs (it's the output of this step)
+        if improvement is not None:
+            winner = comparison.get("winner", "original")
+            if winner == "revised" and improvement > 0:
+                print(f"  → Using REVISED concept for downstream steps (scored higher)")
+                final_concept = revised_script
+                final_concept_file = revised_file
+            elif winner == "revised" or improvement >= 0:
+                print(f"  → Using REVISED concept for downstream steps (Step 4 output)")
+                final_concept = revised_script
+                final_concept_file = revised_file
+            else:
+                print(f"  → Using REVISED concept for downstream steps (Step 4 output, despite lower score)")
+                final_concept = revised_script
+                final_concept_file = revised_file
+        else:
+            # If comparative judging failed, still use revised (it's the output of Step 4)
+            print(f"  → Using REVISED concept for downstream steps (Step 4 output)")
+            final_concept = revised_script
+            final_concept_file = revised_file
             
             print()
         step_times["Step 4: Revise Concept"] = time.time() - step4_start
@@ -725,7 +740,9 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
         print(f"  → Running (run_step_5=true) - will overwrite if exists")
         clear_output_folder(universe_output_dir)
         print(f"  → Input: {Path(final_concept_file).name}")
-        universe_chars = generate_universe_and_characters(final_concept, config_data, llm_model)
+        # Use llm_thinking from config, default to 1500 for reasonable speed/quality balance
+        universe_thinking = models_cfg.get("llm_thinking", 1500)
+        universe_chars = generate_universe_and_characters(final_concept, config_data, llm_model, thinking=universe_thinking)
         with open(universe_file, 'w', encoding='utf-8') as f:
             json.dump(universe_chars, f, indent=2)
         step_times["Step 5: Generate Universe"] = time.time() - step5_start
@@ -791,6 +808,7 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
         clip_duration = video_cfg.get("clip_duration")
         num_clips = video_cfg.get("num_clips")
         total_duration = video_cfg.get("total_duration")
+        enable_visual_effects = video_cfg.get("enable_visual_effects", True)  # Default to True if not specified
         # Use total_duration if provided, otherwise use legacy duration
         if total_duration is not None:
             duration = total_duration
@@ -801,7 +819,8 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
             thinking=llm_thinking,
             clip_duration=clip_duration,
             num_clips=num_clips,
-            video_model=video_model
+            video_model=video_model,
+            enable_visual_effects=enable_visual_effects
         )
         with open(scenes_file, 'w', encoding='utf-8') as f:
             json.dump(scene_prompts, f, indent=2)
@@ -855,6 +874,10 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     # Include batch folder for consistency
     video_output_dir = video_outputs_base / batch_folder_name / concept_name
     
+    # Reconstruct first_frames_dir (same logic as Step 8)
+    first_frames_base = Path(output_cfg.get("first_frames_dir", "s8_generate_first_frames/outputs"))
+    first_frames_dir = first_frames_base / batch_folder_name / concept_name
+    
     # Only get scenes if step 7 ran or file exists
     if step_cfg.get("run_step_7", True) or scenes_file.exists():
         scenes = scene_prompts.get("scenes", [])
@@ -879,12 +902,25 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
         
         # Prepare tasks for parallel execution
         tasks = []
+        # Check if first_frames_dir exists before processing
+        if not first_frames_dir.exists():
+            print(f"  ✗ ERROR: First frames directory not found: {first_frames_dir}")
+            print(f"  Please ensure Step 8 completed successfully\n")
+            return
+        
         for scene in scenes:
             scene_num = scene.get("scene_number", 0)
-            first_frame_path = first_frames_dir / f"{concept_name}_p{scene_num}_first_frame.jpg"
+            # Check for .png first (nano-banana-pro), fallback to .jpg (nano-banana)
+            first_frame_path = first_frames_dir / f"{concept_name}_p{scene_num}_first_frame.png"
+            if not first_frame_path.exists():
+                first_frame_path = first_frames_dir / f"{concept_name}_p{scene_num}_first_frame.jpg"
             
             if not first_frame_path.exists():
-                print(f"  ✗ Scene {scene_num}: First frame not found, skipping")
+                print(f"  ✗ Scene {scene_num}: First frame not found at: {first_frame_path}")
+                # List what files actually exist
+                existing = list(first_frames_dir.glob(f"*p{scene_num}*"))
+                if existing:
+                    print(f"    Found similar files: {[f.name for f in existing[:3]]}")
                 continue
             
             output_clip = video_output_dir / f"{concept_name}_p{scene_num}_{model_suffix}.mp4"
@@ -896,6 +932,13 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
                 "video_model": video_model,
                 "aspect_ratio": aspect_ratio
             })
+        
+        if len(tasks) == 0:
+            print(f"  ✗ ERROR: No valid tasks found. All scenes were skipped.")
+            print(f"  First frames directory: {first_frames_dir}")
+            print(f"  Concept name: {concept_name}")
+            print(f"  Please check that Step 8 completed and files exist.\n")
+            return
         
         print(f"  Generating {len(tasks)} video clips in parallel...")
         

@@ -76,6 +76,13 @@ def create_single_judge_prompt(ad_style, brand_name, concept_content, model_name
 **AD STYLE**: {ad_style}
 **STYLE DESCRIPTION**: {style_description}
 
+**AI VIDEO GENERATION CONTEXT**:
+This concept will be produced using advanced AI video generation (Sora 2, Veo 3).
+- These models can generate visuals impossible with traditional filming.
+- "Impossible" visuals, transformations, and reality-bending effects are ENCOURAGED if they serve the story.
+- Do not penalize creative visual concepts as "unrealistic" - they are likely achievable with AI.
+- Reward concepts that leverage this potential for higher Memorability and Visual Impact.
+
 **CONCEPT TO EVALUATE**:
 
 {concept_content}
@@ -103,6 +110,7 @@ def create_single_judge_prompt(ad_style, brand_name, concept_content, model_name
    - Will people remember this concept?
    - Is there a unique element or hook?
    - Does it stand out?
+   - **BONUS**: Does it use AI capabilities for a unique visual hook?
 
 5. **Visual Clarity** (15 points)
    - Can you clearly picture each of the 5 scenes?

@@ -143,8 +143,15 @@ def get_api_key(provider):
     return api_key
 
 
-def generate_universe_and_characters(revised_script, config, model="anthropic/claude-sonnet-4-5-20250929"):
-    """Generate universe (props, locations) and character descriptions for consistency across scenes."""
+def generate_universe_and_characters(revised_script, config, model="anthropic/claude-sonnet-4-5-20250929", thinking=1500):
+    """Generate universe (props, locations) and character descriptions for consistency across scenes.
+    
+    Args:
+        revised_script: The revised 5-scene concept
+        config: Brand configuration dict
+        model: LLM model (format: "provider/model_name")
+        thinking: Thinking budget tokens for Claude (default: 1500, minimum: 1024)
+    """
     
     # Define JSON schema for structured output
     universe_schema = {
@@ -293,9 +300,12 @@ def generate_universe_and_characters(revised_script, config, model="anthropic/cl
             response = call_openai(prompt, model_name, api_key, reasoning_effort="high")
     else:
         # Claude: Add explicit JSON-only instruction + use prompt caching
+        # Ensure thinking is at least 1024 (Claude's minimum)
+        thinking_budget = max(thinking, 1024)
         json_only_prompt = f"{prompt}\n\n**CRITICAL**: Output ONLY the JSON object. Do not include markdown code blocks, explanations, or any text outside the JSON. Start with {{ and end with }}."
         print(f"  → Using Anthropic Prompt Caching to reduce costs and latency...")
-        response = call_anthropic_with_caching(json_only_prompt, model_name, api_key, thinking=10000, max_tokens=16000)
+        print(f"  → Thinking budget: {thinking_budget} tokens (~30-60 seconds)")
+        response = call_anthropic_with_caching(json_only_prompt, model_name, api_key, thinking=thinking_budget, max_tokens=16000)
     
     print(f"  ✓ LLM response received, parsing JSON...")
     
@@ -327,8 +337,17 @@ def generate_universe_and_characters(revised_script, config, model="anthropic/cl
         # Fix common LLM JSON issues:
         # 1. Remove trailing commas before closing brackets/braces
         json_text = re.sub(r',(\s*[}\]])', r'\1', json_text)
-        # 2. Fix unescaped quotes in strings (basic attempt)
-        # 3. Remove comments (// or /* */)
+        # 2. Add missing commas between fields
+        # Pattern: closing quote, newline, whitespace, opening quote (for next key) - missing comma
+        json_text = re.sub(r'"\s*\n\s+"([a-zA-Z_])', r'",\n        "\1', json_text)  # After string value, before next key
+        json_text = re.sub(r'}\s*\n\s+"([a-zA-Z_])', r'},\n        "\1', json_text)  # After object, before string key
+        json_text = re.sub(r']\s*\n\s+"([a-zA-Z_])', r'],\n        "\1', json_text)  # After array, before string key
+        json_text = re.sub(r'true\s*\n\s+"([a-zA-Z_])', r'true,\n        "\1', json_text)  # After true, before string key
+        json_text = re.sub(r'false\s*\n\s+"([a-zA-Z_])', r'false,\n        "\1', json_text)  # After false, before string key
+        json_text = re.sub(r'null\s*\n\s+"([a-zA-Z_])', r'null,\n        "\1', json_text)  # After null, before string key
+        json_text = re.sub(r'(\d+)\s*\n\s+"([a-zA-Z_])', r'\1,\n        "\2', json_text)  # After number, before string key
+        # 3. Fix unescaped quotes in strings (basic attempt)
+        # 4. Remove comments (// or /* */)
         json_text = re.sub(r'//.*?\n', '\n', json_text)
         json_text = re.sub(r'/\*.*?\*/', '', json_text, flags=re.DOTALL)
         

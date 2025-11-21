@@ -94,8 +94,34 @@ def load_config_file(config_path):
         return json.load(f)
 
 
+def load_visual_effects_library():
+    """Load visual effects from markdown file."""
+    # Try to find the file relative to various base paths
+    possible_paths = [
+        BASE_DIR / "s7_generate_scene_prompts" / "inputs" / "visual_effects.md",
+        Path("s7_generate_scene_prompts/inputs/visual_effects.md"),
+        Path("../s7_generate_scene_prompts/inputs/visual_effects.md"),
+        Path("../../s7_generate_scene_prompts/inputs/visual_effects.md")
+    ]
+    
+    for path in possible_paths:
+        try:
+            if path.exists():
+                with open(path, 'r', encoding='utf-8') as f:
+                    return f.read()
+        except Exception:
+            continue
+            
+    return None
+
+
 def revise_script_for_video(concept_content, config, model="anthropic/claude-sonnet-4-5-20250929", duration=30, weaknesses=None):
     """Revise concept based on judge feedback and ensure it can be rendered in specified duration."""
+    
+    visual_effects_lib = load_visual_effects_library()
+    effects_section = ""
+    if visual_effects_lib:
+        effects_section = f"\n\n**AVAILABLE VISUAL EFFECTS LIBRARY:**\n{visual_effects_lib}\n"
     
     weaknesses_section = ""
     if weaknesses and len(weaknesses) > 0:
@@ -131,6 +157,13 @@ The MORE changes you make, the MORE risk you introduce NEW weaknesses. Be surgic
 - Product: {config.get('PRODUCT_DESCRIPTION', 'N/A')}
 - Tagline: {config.get('TAGLINE', 'N/A')}
 
+**AI VIDEO GENERATION CONTEXT:**
+This concept will be produced using advanced AI video generation (Sora 2, Veo 3).
+- These models can generate visuals impossible with traditional filming.
+- "Impossible" visuals, transformations, and reality-bending effects are ENCOURAGED if they serve the story.
+- Do not penalize creative visual concepts as "unrealistic" - they are likely achievable with AI.
+- **OPPORTUNITY**: If the concept lacks visual "wow" factor or Memorability, adding a subtle AI-enabled visual effect (e.g., reflection morphing, seamless transitions, impossible camera moves) can be a great way to address that weakness.
+{effects_section}
 **ORIGINAL CONCEPT:**
 {concept_content}
 {weaknesses_section}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate reference images for universe/characters using Replicate nano-banana.
+Generate reference images for universe/characters using Replicate nano-banana-pro.
 Handles parallel execution for different elements, sequential for multi-version elements.
 """
 
@@ -48,9 +48,9 @@ def slugify(text):
     return text.strip('_')
 
 
-def generate_image(prompt, image_input=None, output_path=None, debug_dir=None, debug_name=None):
+def generate_image(prompt, image_input=None, output_path=None, debug_dir=None, debug_name=None, resolution=None):
     """
-    Generate image using Replicate nano-banana.
+    Generate image using Replicate nano-banana-pro.
     
     Args:
         prompt: Text prompt for image generation
@@ -58,6 +58,7 @@ def generate_image(prompt, image_input=None, output_path=None, debug_dir=None, d
         output_path: Path to save the generated image
         debug_dir: Directory to save debug info (prompts, reference images)
         debug_name: Name for debug files (e.g., "version_1", "version_2")
+        resolution: Image resolution ("480p", "720p", "1080p" -> maps to "2K" for nano-banana-pro)
     
     Returns:
         URL of generated image, or file path if URL not available
@@ -93,10 +94,24 @@ def generate_image(prompt, image_input=None, output_path=None, debug_dir=None, d
                     ref_copy = os.path.join(debug_dir, f"{debug_name}_reference_{i+1}.jpg")
                     shutil.copy2(img_path, ref_copy)
     
+    # Map resolution to nano-banana-pro format
+    # nano-banana-pro supports: "1K", "2K", "4K"
+    # Map 480p/720p -> 2K, 1080p -> 2K (or 4K if available)
+    resolution_map = {
+        "480p": "2K",
+        "720p": "2K",
+        "1080p": "2K"  # Use 2K for all, or "4K" if higher quality needed
+    }
+    nano_resolution = "2K"  # Default
+    if resolution:
+        nano_resolution = resolution_map.get(resolution, "2K")
+    
     input_params = {
         "prompt": prompt,
+        "resolution": nano_resolution,
         "aspect_ratio": "match_input_image" if image_input else "16:9",
-        "output_format": "jpg"
+        "output_format": "png",  # nano-banana-pro uses png
+        "safety_filter_level": "block_only_high"
     }
     
     if image_input:
@@ -116,10 +131,12 @@ def generate_image(prompt, image_input=None, output_path=None, debug_dir=None, d
                 # Already a file object or URL
                 processed_input.append(img)
         input_params["image_input"] = processed_input
+    else:
+        input_params["image_input"] = []
     
     try:
         output = replicate.run(
-            "google/nano-banana",
+            "google/nano-banana-pro",
             input=input_params
         )
         
@@ -252,7 +269,7 @@ def generate_element_images(element, element_type, output_dir, json_prefix):
             is_original = version.get("is_original", False)
             
             # Create output path
-            filename = f"{element_slug}_{version_slug}.jpg"
+            filename = f"{element_slug}_{version_slug}.png"
             filepath = os.path.join(output_dir, json_prefix, element_type, element_slug, filename)
             
             # Get image generation prompt
@@ -328,7 +345,7 @@ def generate_element_images(element, element_type, output_dir, json_prefix):
             return result
         
         # Create output path
-        filename = f"{element_slug}.jpg"
+        filename = f"{element_slug}.png"
         filepath = os.path.join(output_dir, json_prefix, element_type, element_slug, filename)
         
         print(f"    Generating single version...")

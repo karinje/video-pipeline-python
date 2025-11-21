@@ -179,32 +179,29 @@ def call_anthropic(prompt, model, api_key, thinking=None, max_tokens=None, tempe
         raise ValueError(f"Response was truncated at max_tokens={params.get('max_tokens')}. Increase max_tokens parameter to get full response.")
     
     # Handle Claude response - may have thinking blocks when thinking mode is enabled
-    if hasattr(response, 'content') and len(response.content) > 0:
-        # Iterate through all content blocks to find text block
-        for block in response.content:
-            # Check if it's a TextBlock (has 'text' attribute)
-            if hasattr(block, 'text'):
-                return block.text
-            # Check if it's a block with type='text'
-            elif hasattr(block, 'type'):
-                if block.type == 'text' and hasattr(block, 'text'):
-                    return block.text
+    if not response.content or len(response.content) == 0:
+        raise ValueError("Empty response from Anthropic API")
+    
+    # Extract content from response (handle ThinkingBlocks)
+    content_parts = []
+    for block in response.content:
+        # Skip thinking blocks - we only want the actual text response
+        if hasattr(block, 'type') and block.type == 'thinking':
+            continue
         
-        # If no text block found, try to get string representation
-        # This handles edge cases where structure is different
-        first_block = response.content[0]
-        if hasattr(first_block, '__dict__'):
-            # Try to extract any text-like content
-            for attr in ['text', 'content', 'body']:
-                if hasattr(first_block, attr):
-                    val = getattr(first_block, attr)
-                    if isinstance(val, str):
-                        return val
-        
-        # Last resort: convert to string
-        raise ValueError(f"Could not extract text from Claude response. Content blocks: {[type(b).__name__ for b in response.content]}")
-    else:
-        raise ValueError("No content in Claude response")
+        if hasattr(block, 'text'):
+            content_parts.append(block.text)
+        elif hasattr(block, 'content'):
+            content_parts.append(block.content)
+        else:
+            # Fallback: convert to string
+            content_parts.append(str(block))
+    
+    if not content_parts:
+        raise ValueError("No text content found in Anthropic API response (only thinking blocks)")
+    
+    content = '\n'.join(content_parts)
+    return content
 
 
 def generate_concept_filename(prompt_path, output_dir):

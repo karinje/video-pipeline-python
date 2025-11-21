@@ -47,6 +47,7 @@ def generate_sora2_clip(scene_data, first_frame_image_path, output_path, video_m
     video_prompt = scene_data.get("video_prompt", "")
     audio_background = scene_data.get("audio_background", "")
     audio_dialogue = scene_data.get("audio_dialogue")
+    visual_effects = scene_data.get("visual_effects", [])
     
     # Combine prompts
     combined_prompt = video_prompt
@@ -58,6 +59,17 @@ def generate_sora2_clip(scene_data, first_frame_image_path, output_path, video_m
         # audio_dialogue already includes speaker name and voice characteristics
         # Format is: "Character Name: dialogue" or "Narrator (voice): dialogue"
         combined_prompt += f"\n\n{audio_dialogue}"
+    
+    # Add visual effects instructions if present
+    if visual_effects:
+        combined_prompt += "\n\n**VISUAL EFFECTS TO IMPLEMENT:**"
+        for effect in visual_effects:
+            effect_name = effect.get("name", "")
+            effect_desc = effect.get("description", "")
+            effect_timing = effect.get("timing", "")
+            combined_prompt += f"\n- **{effect_name}**: {effect_desc}"
+            if effect_timing:
+                combined_prompt += f" (Timing: {effect_timing})"
     
     # Check if first frame image exists
     if not os.path.exists(first_frame_image_path):
@@ -106,7 +118,14 @@ def generate_sora2_clip(scene_data, first_frame_image_path, output_path, video_m
         f.write("BREAKDOWN:\n")
         f.write(f"Video Prompt: {scene_data.get('video_prompt', '')[:200]}...\n\n")
         f.write(f"Audio Background: {scene_data.get('audio_background', '')}\n\n")
-        f.write(f"Audio Dialogue: {scene_data.get('audio_dialogue', 'None')}\n")
+        f.write(f"Audio Dialogue: {scene_data.get('audio_dialogue', 'None')}\n\n")
+        visual_effects = scene_data.get('visual_effects', [])
+        if visual_effects:
+            f.write(f"Visual Effects ({len(visual_effects)}):\n")
+            for effect in visual_effects:
+                f.write(f"  - {effect.get('name', 'Unknown')}: {effect.get('description', '')} (Timing: {effect.get('timing', 'N/A')})\n")
+        else:
+            f.write("Visual Effects: None\n")
     print(f"    ✓ Saved prompt to: {debug_prompt_file}")
     
     try:
@@ -243,7 +262,7 @@ def main():
     if len(sys.argv) < 4:
         print("Usage: python generate_sora2_clip.py <scene_prompts.json> <scene_number> <first_frame_image_path> [output_path]")
         print("\nExample:")
-        print("  python generate_sora2_clip.py script_generation/.../scene_prompts.json 1 first_frames/.../p1_first_frame.jpg")
+        print("  python generate_sora2_clip.py script_generation/.../scene_prompts.json 1 first_frames/.../p1_first_frame.png")
         sys.exit(1)
     
     scene_prompts_path = sys.argv[1]
