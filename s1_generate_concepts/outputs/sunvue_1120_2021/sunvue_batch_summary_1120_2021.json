@@ -1,0 +1,47 @@
+{
+  "brand_name": "SunVue",
+  "batch_folder": "sunvue_1120_2021",
+  "creative_direction": "Create a 30 second Instagram ad for sunglasses with urban professional style, signature look transformation, and golden hour lighting",
+  "timestamp": "2025-11-20T20:21:39.872153",
+  "total_runs": 4,
+  "successful": 4,
+  "failed": 0,
+  "results": [
+    {
+      "ad_style": "Transformation - Instant Upgrade",
+      "template": "generic",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "status": "SUCCESS",
+      "file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_claude_sonnet_4.5.txt",
+      "prompt_file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_claude_sonnet_4.5_prompt.txt"
+    },
+    {
+      "ad_style": "Transformation - Instant Upgrade",
+      "template": "generic",
+      "provider": "openai",
+      "model": "gpt-5.1",
+      "status": "SUCCESS",
+      "file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_gpt_5.1.txt",
+      "prompt_file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_gpt_5.1_prompt.txt"
+    },
+    {
+      "ad_style": "Transformation - Instant Upgrade",
+      "template": "advanced",
+      "provider": "openai",
+      "model": "gpt-5.1",
+      "status": "SUCCESS",
+      "file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_advanced_gpt_5.1.txt",
+      "prompt_file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_advanced_gpt_5.1_prompt.txt"
+    },
+    {
+      "ad_style": "Transformation - Instant Upgrade",
+      "template": "advanced",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "status": "SUCCESS",
+      "file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_advanced_claude_sonnet_4.5.txt",
+      "prompt_file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_advanced_claude_sonnet_4.5_prompt.txt"
+    }
+  ]
+}

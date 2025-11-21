@@ -1,0 +1,43 @@
+{
+  "json_file": "s5_generate_universe/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_gpt_5.1/sunvue_transformation_instant_upgrade_generic_gpt_5.1_universe_characters.json",
+  "json_prefix": "sunvue_transformation_instant_upgrade_generic_gpt_5.1",
+  "generated_at": "2025-11-20 20:25:40",
+  "elements": [
+    {
+      "element_name": "Protagonist",
+      "element_type": "character",
+      "images": {
+        "Pre-Transformation": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_gpt_5.1/characters/protagonist/protagonist_pre_transformation.png",
+          "is_original": true,
+          "references_original": null
+        },
+        "Post-Transformation": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_gpt_5.1/characters/protagonist/protagonist_post_transformation.png",
+          "is_original": false,
+          "references_original": "Pre-Transformation"
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Aviator Classic Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "Floating Innerlight State": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_gpt_5.1/props/sunvue_aviator_classic_sunglasses/sunvue_aviator_classic_sunglasses_floating_innerlight_state.png",
+          "is_original": true,
+          "references_original": null
+        },
+        "Worn State": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2021/sunvue_transformation_instant_upgrade_generic_gpt_5.1/props/sunvue_aviator_classic_sunglasses/sunvue_aviator_classic_sunglasses_worn_state.png",
+          "is_original": false,
+          "references_original": "Floating Innerlight State"
+        }
+      }
+    }
+  ]
+}

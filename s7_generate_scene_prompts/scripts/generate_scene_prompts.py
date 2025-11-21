@@ -479,20 +479,65 @@ For EACH of the {num_scenes} scenes, create:
    
    **CRITICAL WORKFLOW UNDERSTANDING:**
    - The first_frame_image_prompt will be used FIRST to generate a reference image using image generation models (nano-banana)
+   - Reference images from universe/characters will be attached (showing elements in their CANONICAL state)
    - That generated image will then be used as the FIRST FRAME reference for the video generation model (Veo 3 Fast, Sora 2)
    - The video model will use this first frame image to maintain visual consistency throughout the video
    - **THEREFORE: The first_frame_image_prompt MUST match the video_prompt style EXACTLY** - they are part of the SAME visual sequence
    
    **CRITICAL FOR VIDEO CONTINUITY**: The generated first frame image MUST be stylistically identical to what the video_prompt describes. If they don't match, the video will look inconsistent and jarring.
    
+   **REFERENCE IMAGES HANDLING - CRITICAL:**
+   
+   Reference images will be attached showing elements in their CANONICAL state (from universe_characters JSON below).
+   
+   In your first_frame_image_prompt, you MUST include a "REFERENCE IMAGES ATTACHED:" section that:
+   1. Lists each element from elements_used
+   2. Describes what the reference shows (copy the canonical_state from universe_characters)
+   3. Specifies how to use it: "USE AS-IS" or "MODIFY to: [specific transformation]"
+   
+   **Format:**
+   ```
+   [Style, camera, lighting from video_prompt]
+   
+   REFERENCE IMAGES ATTACHED:
+   - Element Name (shows: [canonical_state from universe_characters]) - USE AS-IS / MODIFY to: [transformation]
+   
+   [Composition details]
+   ```
+   
+   **Example - Scene 1 (before transformation):**
+   ```
+   Modern documentary, wide shot, natural lighting, muted color grade.
+   
+   REFERENCE IMAGES ATTACHED:
+   - Main Character (shows: without sunglasses, neutral expression, casual attire) - USE AS-IS
+   - Urban City Streets (shows: neutral colors, normal atmosphere) - MODIFY to: washed-out, desaturated, lifeless
+   - SunVue Aviators (shows: gold frames on white surface) - Character HOLDING in case, not wearing
+   
+   Character walking through dull city, squinting, clutching sunglasses case, looking tired...
+   ```
+   
+   **Example - Scene 3 (after transformation):**
+   ```
+   Modern documentary, medium shot, golden hour, vibrant color grade.
+   
+   REFERENCE IMAGES ATTACHED:
+   - Main Character (shows: without sunglasses, neutral expression) - MODIFY to: WEARING gold aviators, confident posture, relaxed smile
+   - Urban City Streets (shows: neutral colors) - MODIFY to: saturated vibrant colors, energetic atmosphere
+   - SunVue Aviators (shows: gold frames) - Character WEARING on face, catching light
+   
+   Character striding confidently, aviators prominent, city bursting with color and life...
+   ```
+   
    **MANDATORY REQUIREMENTS - COPY EXACTLY FROM YOUR VIDEO_PROMPT:**
    
    When creating first_frame_image_prompt, you MUST:
-   1. **Copy the ENTIRE "Style:" line** from your video_prompt verbatim (e.g., "Modern documentary style, shot on digital cinema camera with natural grain, warm cinematic color grade with rich amber tones, authentic mountaineering documentary aesthetic")
-   2. **Copy the EXACT "Camera shot:" description** from your video_prompt's Cinematography section (e.g., "Wide establishing shot at eye level showing full mountain backdrop")
-   3. **Copy the EXACT "Lighting:" description** from your video_prompt's Cinematography section (e.g., "Golden hour sunrise from right side casting warm amber light across mountain face and protagonist, creating long dramatic shadows, soft natural glow")
-   4. **Copy the EXACT "Mood:" description** from your video_prompt's Cinematography section (e.g., "Determined yet uncertain, contemplative and resolute, beginning of a journey")
-   5. **Include the EXACT camera type/film style** from your video_prompt (e.g., "shot on digital cinema camera with natural grain")
+   1. **Copy the ENTIRE "Style:" line** from your video_prompt verbatim
+   2. **Copy the EXACT "Camera shot:" description** from your video_prompt's Cinematography section
+   3. **Copy the EXACT "Lighting:" description** from your video_prompt's Cinematography section
+   4. **Copy the EXACT "Mood:" description** from your video_prompt's Cinematography section
+   5. **Include the EXACT camera type/film style** from your video_prompt
+   6. **Add REFERENCE IMAGES section** describing what's attached and how to use/modify each element
    6. **Include the EXACT color grade** from your video_prompt (e.g., "warm cinematic color grade with rich amber tones")
    7. Include all characters/locations from elements_used clearly visible
    8. Add hyper-realistic, photorealistic style keywords for image generation
@@ -501,10 +546,10 @@ For EACH of the {num_scenes} scenes, create:
    
    **The first frame image should look like a still frame FROM the exact video you described in video_prompt - same style, same lighting, same camera, same mood, same everything.**
 
-5. **elements_used**: Characters/props/locations from universe_characters that appear in MULTIPLE scenes.
+5. **elements_used**: List of element names (characters/props/locations) from universe_characters that appear in this scene.
    - Use EXACT names from ALLOWED lists
-   - Include version name if has_multiple_versions: "Name - Version Name"
-   - Only include if scenes_used has 2+ scene numbers
+   - Only include elements that appear in MULTIPLE scenes (2+)
+   - These will have their canonical reference images attached to first frame generation
 {visual_effects_instruction}
 **EXAMPLE OUTPUT STRUCTURE:**
 
@@ -559,12 +604,8 @@ Action: [What happens in this shot]
       "video_prompt": "[Complete self-contained prompt following structure above]",
       "audio_background": "[Music prompt with genre, mood, tempo, instruments]",
       "audio_dialogue": "Speaker Name: [text]" or "Narrator (voice): [text]" or null,
-      "first_frame_image_prompt": "[Hyper-realistic image prompt matching video_prompt style EXACTLY - same camera, lighting, mood, color grade, film style - ready for video generation continuity]",
-      "elements_used": {{
-        "characters": ["Exact Name - Version Name"],
-        "locations": ["Exact Name - Version Name"],
-        "props": ["Exact Name"]
-      }}{visual_effects_example}
+      "first_frame_image_prompt": "[Style/camera/lighting from video_prompt]\n\nREFERENCE IMAGES ATTACHED:\n- Element Name 1 (shows: canonical state) - USE AS-IS / MODIFY to: [...]\n- Element Name 2 (shows: canonical state) - USE AS-IS / MODIFY to: [...]\n\n[Composition details]",
+      "elements_used": ["Element Name 1", "Element Name 2"]{visual_effects_example}
     }}
   ]
 }}
@@ -584,12 +625,8 @@ Action: [What happens in this shot]
         "audio_dialogue": {"type": ["string", "null"]},
         "first_frame_image_prompt": {"type": "string"},
         "elements_used": {
-            "type": "object",
-            "properties": {
-                "characters": {"type": "array", "items": {"type": "string"}},
-                "locations": {"type": "array", "items": {"type": "string"}},
-                "props": {"type": "array", "items": {"type": "string"}}
-            }
+            "type": "array",
+            "items": {"type": "string"}
         }
     }
     

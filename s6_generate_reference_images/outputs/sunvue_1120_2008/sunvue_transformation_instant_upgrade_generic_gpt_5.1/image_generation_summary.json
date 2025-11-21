@@ -1,0 +1,45 @@
+{
+  "json_file": "s5_generate_universe/outputs/sunvue_1120_2008/sunvue_transformation_instant_upgrade_generic_gpt_5.1/sunvue_transformation_instant_upgrade_generic_gpt_5.1_universe_characters.json",
+  "json_prefix": "sunvue_transformation_instant_upgrade_generic_gpt_5.1",
+  "generated_at": "2025-11-20 20:14:43",
+  "elements": [
+    {
+      "element_name": "Car Interior",
+      "element_type": "location",
+      "images": {
+        "default": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2008/sunvue_transformation_instant_upgrade_generic_gpt_5.1/locations/car_interior/car_interior.png"
+        }
+      }
+    },
+    {
+      "element_name": "Young Professional",
+      "element_type": "character",
+      "images": {
+        "Uncertain Version": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2008/sunvue_transformation_instant_upgrade_generic_gpt_5.1/characters/young_professional/young_professional_uncertain_version.png",
+          "is_original": true,
+          "references_original": null
+        },
+        "Confident Version": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2008/sunvue_transformation_instant_upgrade_generic_gpt_5.1/characters/young_professional/young_professional_confident_version.png",
+          "is_original": false,
+          "references_original": "Uncertain Version"
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Aviator Classics Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "default": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2008/sunvue_transformation_instant_upgrade_generic_gpt_5.1/props/sunvue_aviator_classics_sunglasses/sunvue_aviator_classics_sunglasses.png"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "json_file": "s5_generate_universe/outputs/sunvue_1120_2056/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/sunvue_transformation_instant_upgrade_advanced_gpt_5.1_universe_characters.json",
+  "json_prefix": "sunvue_transformation_instant_upgrade_advanced_gpt_5.1",
+  "generated_at": "2025-11-20 21:00:39",
+  "elements": [
+    {
+      "element_name": "SunVue Flagship Store",
+      "element_type": "location",
+      "images": {}
+    },
+    {
+      "element_name": "Main Character",
+      "element_type": "character",
+      "images": {}
+    },
+    {
+      "element_name": "SunVue Aviator Classic Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "default": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2056/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/props/sunvue_aviator_classic_sunglasses/sunvue_aviator_classic_sunglasses.png"
+        }
+      }
+    },
+    {
+      "element_name": "Urban City Street",
+      "element_type": "location",
+      "images": {
+        "default": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2056/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/locations/urban_city_street/urban_city_street.png"
+        }
+      }
+    }
+  ]
+}

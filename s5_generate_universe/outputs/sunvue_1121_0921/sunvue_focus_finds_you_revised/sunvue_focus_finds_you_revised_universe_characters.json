@@ -1,0 +1,43 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Urban City Streets",
+        "scenes_used": [
+          1,
+          3
+        ],
+        "canonical_state": "Modern metropolitan downtown district with wide sidewalks, contemporary glass-and-steel buildings, urban storefronts with large windows, street-level coffee shops and retail spaces, clean concrete pavement with geometric patterns, minimalist street furniture, contemporary architecture mixing mid-rise commercial buildings with occasional high-rises in background, neutral color palette of grays, whites, and muted earth tones, natural daylight with soft shadows, professional business district atmosphere",
+        "image_generation_prompt": "Hyper-realistic, photorealistic urban city street scene, documentary photography style, modern downtown business district, wide clean sidewalks with geometric concrete patterns, contemporary glass-and-steel architecture, mid-rise commercial buildings, street-level retail storefronts with large windows, minimalist urban design, neutral color palette of grays whites and beiges, natural daylight, professional architectural photography, ultra-realistic textures on concrete and glass surfaces, authentic urban environment, lifelike city atmosphere, 8K detail, real world setting"
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Aviator Classic Sunglasses",
+        "scenes_used": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "canonical_state": "Gold metal frame aviator sunglasses with double bridge nose piece, thin temples with subtle branding, teardrop-shaped polarized dark gray-green lenses with subtle gradient, polished gold metal finish with warm undertones, classic proportions approximately 58mm lens width, adjustable nose pads, sleek temple tips, premium construction with visible fine details in metal joints and hinges, iconic timeless aviator silhouette, lenses show subtle reflective quality without heavy mirror coating",
+        "image_generation_prompt": "Hyper-realistic, photorealistic product photography of gold aviator sunglasses, ultra-realistic metallic texture, classic teardrop lens shape, double bridge nose design, thin gold metal temples, dark gray-green polarized lenses with subtle gradient, polished warm gold finish, premium eyewear construction, visible fine details in metal joints and hinges, adjustable nose pads, lifelike metal reflections, professional studio lighting, macro detail showing authentic material textures, real product photography style, 8K resolution, natural metal patina, authentic luxury eyewear design, documentary product photography"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Main Character - Urban Professional",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "canonical_state": "Late 20s to early 30s individual with natural medium-warm skin tone, strong defined facial features with high cheekbones and angular jawline, medium-length dark brown hair styled in modern textured cut with natural wave, clean-shaven or subtle stubble, athletic-lean build approximately 5'10\" to 6'0\", wearing tailored charcoal gray wool blazer over white crisp cotton dress shirt with top button undone, slim-fit dark indigo jeans, minimalist black leather Chelsea boots, confident neutral expression, natural skin texture visible with subtle pores and real human features, professional urban style with effortless refinement, authentic human proportions and realistic body language",
+      "image_generation_prompt": "Hyper-realistic, photorealistic portrait of real person, ultra-realistic human features, late 20s to early 30s adult, natural medium-warm skin tone with authentic skin texture and visible pores, strong defined facial structure with high cheekbones and angular jawline, medium-length dark brown textured hair with natural wave, subtle stubble or clean-shaven, lifelike eyes with natural depth, athletic-lean build, wearing tailored charcoal gray wool blazer with realistic fabric texture, crisp white cotton dress shirt, slim dark indigo denim jeans, black leather Chelsea boots, professional portrait photography style, natural lighting with soft shadows on face, authentic human proportions, real skin details, documentary photography aesthetic, 8K detail, professional headshot quality, genuine person not illustration, photojournalism style, confident neutral expression, urban professional style"
+    }
+  ]
+}

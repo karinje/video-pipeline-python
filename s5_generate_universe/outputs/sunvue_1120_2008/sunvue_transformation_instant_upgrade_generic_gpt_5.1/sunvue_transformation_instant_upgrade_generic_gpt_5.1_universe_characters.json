@@ -1,0 +1,67 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Car Interior",
+        "scenes_used": [
+          1,
+          2
+        ],
+        "has_multiple_versions": false,
+        "description": "Modern urban professional's car interior featuring sleek black leather seats, polished center console with clean minimalist design, soft ambient interior lighting creating warm tones, dashboard with contemporary digital displays, tinted windows showing blurred city traffic outside, premium materials throughout with chrome accents, realistic wear patterns on steering wheel and seats showing daily use",
+        "image_generation_prompt": "Hyper-realistic photorealistic interior of modern luxury car, ultra-realistic black leather seats with natural texture and subtle wear patterns, polished black center console with chrome details, authentic automotive materials, soft ambient lighting creating warm glow, contemporary digital dashboard displays, tinted windows with blurred city backdrop, professional automotive photography style, lifelike material textures, realistic lighting and shadows, documentary photography quality, natural depth of field, 4K photographic detail"
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Aviator Classics Sunglasses",
+        "scenes_used": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Iconic aviator sunglasses with timeless teardrop-shaped lenses, polished gold metal frame with thin temples, perfectly reflective mirror lenses showing crisp skyline reflections, premium bridge design with adjustable nose pads, subtle SunVue branding on temple arms, impeccable craftsmanship with no fingerprints or smudges, luxurious finish catching light beautifully, classic proportions that defined aviation style",
+        "image_generation_prompt": "Hyper-realistic photorealistic aviator sunglasses with perfect teardrop lens shape, ultra-realistic polished gold metal frame with authentic metal texture and subtle wear, mirror-finish lenses reflecting detailed city skyline, lifelike premium materials, professional product photography lighting, natural reflections and highlights on metal surfaces, realistic shadows, documentary photography style, authentic optical precision details, natural depth of field showing crisp foreground and soft background, 4K photographic quality, real product appearance"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Young Professional",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Uncertain Version",
+          "scenes_used": [
+            1,
+            2
+          ],
+          "description": "Late twenties professional, medium skin tone with warm olive undertones, dark brown hair styled conservatively with clean sides, clean-shaven face with naturally anxious expression, soft brown eyes avoiding direct gaze, subtle worry lines on forehead, shoulders slightly hunched forward in defensive posture, wearing crisp charcoal gray business casual button-down shirt with subtle texture, fitted but not tight, natural skin texture showing real pores and slight imperfections, authentic lighting showing contours of face, realistic fabric wrinkles on clothing from sitting position, genuine human vulnerability in expression",
+          "image_generation_prompt": "Hyper-realistic photorealistic portrait of late twenties male professional, real person with medium olive skin tone showing natural skin texture with visible pores and authentic complexion, lifelike dark brown hair with realistic hair texture and natural shine, clean-shaven face with genuine worried expression, soft brown eyes with authentic eye detail looking downward avoiding camera, subtle forehead lines showing real emotion, shoulders hunched in natural defensive body language, wearing charcoal gray business casual button-down shirt with realistic fabric texture and natural wrinkles, professional portrait photography style, ultra-realistic lighting showing natural shadows and highlights on face, documentary photography quality, authentic human features, natural depth of field, 4K photographic realism, real person appearance not AI-generated looking",
+          "is_original": true
+        },
+        {
+          "version_name": "Confident Version",
+          "scenes_used": [
+            3,
+            4,
+            5
+          ],
+          "description": "Same late twenties professional now transformed with confident presence, medium skin tone with warm olive undertones glowing with vitality, same dark brown hair now styled with slightly more volume and movement, clean-shaven face radiating confidence with genuine smile reaching eyes, soft brown eyes now making direct strong eye contact with warmth and boldness, forehead relaxed showing inner peace, shoulders back and squared in powerful open posture, wearing same crisp charcoal gray business casual button-down shirt but now fitting with authority, SunVue Aviator Classics perched perfectly on face catching golden hour light, natural skin texture showing real vitality, authentic confident smile lines, realistic fabric sitting differently on upright confident frame",
+          "image_generation_prompt": "Hyper-realistic photorealistic portrait of late twenties male professional exuding confidence, real person with medium olive skin tone showing natural healthy skin texture with visible pores and warm glow, lifelike dark brown hair with realistic texture and natural volume, clean-shaven face with genuine confident smile showing real emotion, soft brown eyes with authentic detail making direct strong eye contact with camera, relaxed forehead showing inner peace, shoulders squared back in natural powerful posture, wearing charcoal gray business casual button-down shirt with realistic fabric texture, iconic gold aviator sunglasses with mirror lenses reflecting environment, professional portrait photography with golden hour lighting, ultra-realistic lighting showing natural highlights and warm tones on face, documentary photography quality, authentic human confidence and charisma, natural depth of field, 4K photographic realism, real person appearance with lifelike facial features and genuine expression",
+          "is_original": false,
+          "references_original_version": "Uncertain Version"
+        }
+      ]
+    }
+  ]
+}

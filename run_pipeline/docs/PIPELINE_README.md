@@ -6,9 +6,10 @@ Complete guide to the video generation pipeline from brand config (or evaluation
 
 **IMPORTANT: This pipeline is designed specifically for EYEWEAR/SUNGLASSES advertising only.** All steps assume eyewear products and include eyewear-specific fields (frame style, lens type, etc.) in prompts. If fields are not provided in the config, they are passed as blank and the LLM determines appropriate values based on context.
 
-The pipeline can start from two points:
-1. **Brand Config** (Full Pipeline): Generates concepts → Evaluates → Creates video (Steps 1-10)
-2. **Evaluation JSON** (Video Only): Uses existing evaluation → Creates video (Steps 3-10)
+The pipeline can start from three points:
+1. **Direct Concept** (Fast Track): Expand your concept → Optional judge/revise → Creates video (Steps 0a/0b/0c → 5-10)
+2. **Brand Config** (Full Pipeline): Generates concepts → Evaluates → Creates video (Steps 1-10)
+3. **Evaluation JSON** (Video Only): Uses existing evaluation → Creates video (Steps 3-10)
 
 The complete pipeline generates:
 - Multiple ad concepts (generic + advanced prompts, multiple models)
@@ -28,6 +29,99 @@ The complete pipeline generates:
 - Eyewear-specific prompting requirements throughout
 
 ## Pipeline Steps
+
+### Step 0: Expand Concept (Optional - if start_from='direct_concept')
+
+**Fast-track alternative to Steps 1-4.** Takes a high-level concept and expands it into a full scene-by-scene narrative, optionally judges and revises it, then proceeds directly to video generation.
+
+#### Step 0a: Expand Concept
+**Input:**
+- High-level concept text (2-3 sentences describing your ad idea)
+- Brand config file (`config_file` in config)
+- Video settings (`num_clips`, `clip_duration` from config)
+- LLM model (`llm_model` in config)
+
+**Output:** Expanded scene-by-scene narrative
+**What it does:** Takes your concept idea and expands it into detailed scenes:
+- Generates exactly `num_clips` scenes (e.g., 5 scenes)
+- Each scene is `clip_duration` seconds (e.g., 6 seconds)
+- Maintains eyewear focus throughout
+- Uses brand config for frame style, lens type, style persona
+- Output format matches Step 1 (ready for Step 5)
+
+**Files:**
+- Input: Concept text + brand config JSON
+- Output:
+  - `s0_expand_concept/outputs/{brand}_{timestamp}/{concept_name}_expanded.txt`
+  - `s0_expand_concept/outputs/{brand}_{timestamp}/{concept_name}_metadata.json`
+
+**Config parameters:**
+- `video_settings.num_clips`: Number of scenes to generate
+- `video_settings.clip_duration`: Duration per scene in seconds
+- `models.llm_model`: LLM for concept expansion
+
+---
+
+#### Step 0b: Judge Expanded Concept (Optional)
+**Input:** Expanded concept from Step 0a
+**Output:** Evaluation JSON with scores and feedback
+**What it does:** Uses the same judge logic from Step 2 to evaluate your expanded concept. Provides:
+- Score (0-100) based on narrative quality, emotional impact, brand integration, etc.
+- List of strengths to maintain
+- List of weaknesses to address
+
+**Files:**
+- Input: Expanded concept file + metadata
+- Output: `{concept_name}_evaluation.json`
+
+**Config parameters:**
+- `evaluation.judge_model`: LLM model for judging
+
+---
+
+#### Step 0c: Revise Concept (Optional)
+**Input:**
+- Expanded concept from Step 0a
+- Judge evaluation from Step 0b
+- Brand config file
+- Video settings
+
+**Output:** Revised/improved concept
+**What it does:** Revises the concept to address judge-identified weaknesses while maintaining strengths. Produces final script ready for video generation.
+
+**Files:**
+- Input: Expanded concept + evaluation JSON
+- Output:
+  - `{concept_name}_revised.txt`
+  - `{concept_name}_revision_metadata.json`
+
+**Config parameters:**
+- `models.llm_model`: LLM for concept revision
+
+---
+
+**When to use Step 0:**
+- You have a specific creative concept in mind
+- You want to skip multi-concept generation (faster iteration)
+- You're testing a single concept idea
+
+**Pipeline flow with Step 0:**
+```
+Step 0a: Expand concept → 5 scenes
+Step 0b: Judge (optional)
+Step 0c: Revise (optional)
+↓
+Step 5: Generate universe/characters
+Step 6: Generate reference images
+Step 7: Generate scene prompts
+Step 8: Generate first frames
+Step 9: Generate video clips
+Step 10: Merge clips
+```
+
+**Steps 1-4 are skipped** when using Step 0.
+
+---
 
 ### Step 1: Generate Concepts (Optional - if start_from='brand_config')
 **Input:** 
@@ -183,7 +277,7 @@ Images are saved in organized directory structure with an `image_generation_summ
 - Image generation summary (for element name mapping)
 - Duration, resolution, aspect ratio
 - LLM model
-- Visual effects library (from `s7_generate_scene_prompts/inputs/visual_effects.md`)
+- Visual effects library (from `s7_generate_scene_prompts/inputs/visual_effects.md`) - **only loaded if `enable_visual_effects: true`**
 
 **Output:** Scene prompts JSON file  
 **What it does:** Generates detailed video generation prompts for each scene including:
@@ -192,12 +286,31 @@ Images are saved in organized directory structure with an `image_generation_summ
 - **audio_dialogue:** Dialogue with speaker name and voice characteristics (format: "Character Name: dialogue" or "Narrator (voice): dialogue")
 - **first_frame_image_prompt:** Detailed image prompt for first frame
 - **elements_used:** List of characters/locations/props with version names (format: "Element Name - Version Name")
-- **visual_effects:** Array of 1-3 visual effects from library (name, description, timing) - eyewear-specific effects like "Luminous Gaze", "3D Rotation", etc.
+- **visual_effects:** Array of 1-3 visual effects from library (name, description, timing) - **only included if `enable_visual_effects: true`**
+
+**Visual Effects Toggle:**
+The visual effects feature can be enabled or disabled via the `enable_visual_effects` config parameter:
+
+- **When `enable_visual_effects: true` (default):**
+  - Visual effects library is loaded from `s7_generate_scene_prompts/inputs/visual_effects.md`
+  - Full visual effects library and usage instructions are included in the LLM prompt
+  - LLM selects 1-3 appropriate visual effects per scene from the library
+  - `visual_effects` field is included in JSON schema and output
+  - Effects are eyewear-specific (e.g., "Luminous Gaze", "3D Rotation", "Melt Transition", "Glow Trace")
+  - Effects are also passed to video generation API (Step 9) for explicit implementation
+
+- **When `enable_visual_effects: false`:**
+  - Visual effects library is NOT loaded
+  - No visual effects instructions in LLM prompt
+  - `visual_effects` field is excluded from JSON schema and output
+  - Scenes are generated without any visual effects
+  - Smaller prompt size (reduces LLM costs and latency)
+  - Console message: "Visual effects disabled (enable_visual_effects=false)"
 
 **Eyewear-Specific Features:**
 - Includes eyewear requirements: frames visible in every scene, hero shots, light interactions with lenses
 - Uses eyewear specs from config (passed as blank if not provided, LLM determines appropriate values)
-- Selects 1-3 appropriate visual effects per scene from eyewear visual effects library
+- When visual effects enabled: Selects 1-3 appropriate visual effects per scene from eyewear visual effects library
 - Ensures frame style, lens type, and style persona are maintained throughout
 
 **Files:**
@@ -205,11 +318,15 @@ Images are saved in organized directory structure with an `image_generation_summ
 - Output: `{concept_name}_scene_prompts.json` in output directory
 
 **Config parameters:**
-- `video_settings.duration_seconds`: Total duration
+- `video_settings.clip_duration`: Duration per clip in seconds (e.g., 6)
+- `video_settings.num_clips`: Number of clips/scenes to generate (e.g., 5)
+- `video_settings.total_duration`: Total duration in seconds (optional, calculated if not provided)
+- `video_settings.scenes_count`: Fallback number of scenes (used only if total_duration provided without num_clips)
+- `video_settings.enable_visual_effects`: Enable/disable visual effects (default: `true`)
 - `video_settings.resolution`: Video resolution (480p, 720p, 1080p)
 - `video_settings.aspect_ratio`: Aspect ratio (16:9)
-- `video_settings.scenes_count`: Number of scenes (default: 5)
 - `models.llm_model`: LLM for scene prompt generation
+- `models.llm_thinking`: Extended thinking budget for Claude (default: 1500)
 - `advanced.regenerate_scene_prompts`: Force regeneration even if file exists
 
 ---
@@ -295,17 +412,30 @@ Images are saved in organized directory structure with an `image_generation_summ
 
 ## Pipeline Modes
 
-### Mode 1: Full Pipeline (start_from='brand_config')
-Runs Steps 0-9:
+### Mode 1: Direct Concept (start_from='direct_concept') - NEW
+Runs Steps 0a/0b/0c → 5-10:
+- Expands your high-level concept into scenes
+- Optionally judges and revises
+- Generates complete video
+
+**Use when:** You have a specific concept idea and want fast iteration
+
+**Workflow options:**
+- **Fastest**: 0a (expand) → 5-10 (video)
+- **With feedback**: 0a (expand) → 0b (judge) → 5-10 (video)
+- **Full refinement**: 0a (expand) → 0b (judge) → 0c (revise) → 5-10 (video)
+
+### Mode 2: Full Pipeline (start_from='brand_config')
+Runs Steps 1-10:
 - Generates concepts for all AD_STYLE/template/model combinations
 - Evaluates all concepts
 - Selects best concept
 - Generates complete video
 
-**Use when:** Starting fresh with just a brand config
+**Use when:** Starting fresh with just a brand config, want to explore multiple creative directions
 
-### Mode 2: Video Only (start_from='evaluation_json')
-Runs Steps 2-9:
+### Mode 3: Video Only (start_from='evaluation_json')
+Runs Steps 3-10:
 - Uses existing evaluation JSON
 - Selects best concept
 - Generates complete video
@@ -319,11 +449,11 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 **Note:** The YAML format is recommended as it's more human-readable with clear sections and comments explaining each step.
 
 ### `pipeline_mode`
-- `start_from`: "brand_config" or "evaluation_json"
-- `skip_concept_generation`: Skip Step 0 if batch exists
-- `skip_evaluation`: Skip Step 1 if evaluation exists
+- `start_from`: "direct_concept", "brand_config", or "evaluation_json"
+- `skip_concept_generation`: Skip Step 1 if batch exists (brand_config mode only)
+- `skip_evaluation`: Skip Step 2 if evaluation exists (brand_config mode only)
 
-### `concept_generation` (Step 0)
+### `concept_generation` (Step 1)
 - `creative_direction`: Creative direction prompt
 - `ad_styles`: List of AD_STYLE options to generate (FALLBACK ONLY - used if brand config doesn't have `AD_STYLE` field)
 - `templates`: List of [template_path, template_name]
@@ -334,13 +464,15 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 1. **First**: Uses `AD_STYLE` from brand config file (e.g., `sunglasses.json`) if present
 2. **Fallback**: Uses `ad_styles` list from pipeline config if brand config doesn't have `AD_STYLE`
 
-### `evaluation` (Step 1)
+### `evaluation` (Step 2)
 - `judge_model`: LLM model for judging
 - `evaluation_output_dir`: Output directory
 
 ### `input`
-- `evaluation_json`: Path to evaluation JSON file
+- `evaluation_json`: Path to evaluation JSON file (for evaluation_json mode)
 - `config_file`: Path to brand configuration file (eyewear/sunglasses config)
+- `direct_concept_text`: High-level concept text (for direct_concept mode)
+- `direct_concept_file`: Path to concept text file (alternative to direct_concept_text)
 
 **Eyewear Config Fields (all optional, passed as blank if missing):**
 - `FRAME_STYLE`: Frame style (e.g., "Aviator Classic", "Wayfarer")
@@ -358,10 +490,20 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 - `merge_outputs_dir`: Directory for final merged video (Step 10 output, default: `s10_merge_clips/outputs`)
 
 ### `video_settings`
-- `duration_seconds`: Total video duration (default: 30)
+**Duration Configuration (Flexible):**
+- `clip_duration`: Duration per clip in seconds (e.g., 6) - will be rounded to valid values (Veo 3: 4/6/8s, Sora-2: 4/8/12s)
+- `num_clips`: Number of clips/scenes to generate (e.g., 5)
+- `total_duration`: Total duration in seconds (optional, calculated from clip_duration × num_clips if not provided)
+- `scenes_count`: Fallback number of scenes (used only if total_duration provided without num_clips)
+
+**Visual Effects:**
+- `enable_visual_effects`: Enable/disable visual effects in scene prompt generation (default: `true`)
+  - When `true`: Visual effects library loaded, effects included in prompts and JSON output
+  - When `false`: No visual effects, smaller prompts, faster generation
+
+**Video Quality:**
 - `resolution`: Video resolution (480p, 720p, 1080p)
 - `aspect_ratio`: Aspect ratio (16:9)
-- `scenes_count`: Number of scenes (default: 5)
 
 ### `models`
 - `llm_model`: LLM for script/universe/scene generation
@@ -376,6 +518,11 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 - `generate_audio`: Enable audio generation (default: true)
 - `video_parallel_workers`: Parallel workers for video generation
 
+### `pipeline_steps` (for direct_concept mode)
+- `run_concept_expansion`: Enable/disable Step 0a (default: true)
+- `run_concept_judging`: Enable/disable Step 0b (default: true)
+- `run_concept_revision`: Enable/disable Step 0c (default: true)
+
 ### `advanced`
 - `skip_image_generation`: Skip if images exist
 - `skip_first_frames`: Skip if first frames exist
@@ -383,6 +530,36 @@ The pipeline is controlled by `pipeline_config.yaml` (or `pipeline_config.json` 
 - `regenerate_scene_prompts`: Force regeneration of scene prompts
 
 ## Usage
+
+### Direct Concept → Video (NEW - Fastest)
+Edit `pipeline_config.yaml`:
+```yaml
+pipeline_mode:
+  start_from: direct_concept
+
+input:
+  config_file: s1_generate_concepts/inputs/configs/sunglasses.json
+  direct_concept_text: |
+    The World Comes Into Focus
+    A character puts on the stylish eyewear and the previously bland 
+    world is suddenly full of vibrant colors, confident people, and 
+    subtle visual gags. Each lens change shifts the overall vibe 
+    (cool, classy, playful), highlighting different styles while 
+    implying that the right frames change how you see yourself.
+
+pipeline_steps:
+  run_concept_expansion: true   # Step 0a
+  run_concept_judging: true     # Step 0b (optional)
+  run_concept_revision: true    # Step 0c (optional)
+
+video_settings:
+  num_clips: 5
+  clip_duration: 6
+```
+Then run:
+```bash
+python run_pipeline_complete.py
+```
 
 ### Full Pipeline (Brand Config → Video)
 ```bash
@@ -417,7 +594,15 @@ See `pipeline_config.yaml` for a complete example with clear sections and commen
 ## Output Structure
 
 ```
-results/
+s0_expand_concept/outputs/  (Step 0 - direct concept mode)
+  {brand}_{timestamp}/
+    {concept_name}_expanded.txt
+    {concept_name}_metadata.json
+    {concept_name}_evaluation.json
+    {concept_name}_revised.txt
+    {concept_name}_revision_metadata.json
+
+results/  (Step 1 - full pipeline mode)
   {brand}_{timestamp}/
     {brand}_{ad_style}_{template}_{model}.txt  (concept files)
     {brand}_batch_summary_{timestamp}.json
@@ -668,7 +853,8 @@ except json.JSONDecodeError as e:
 - Dialogue format includes speaker names and voice characteristics for audio models
 - All prompts are saved in debug directories for review
 - Parallel execution is used for concept generation, image generation, and video generation where possible
-- You can skip Steps 0-1 if you already have an evaluation JSON
+- You can skip Steps 1-2 if you already have an evaluation JSON
 - You can skip individual steps (image generation, first frames, video clips) if outputs already exist
-- Visual effects library is automatically loaded from `s7_generate_scene_prompts/inputs/visual_effects.md` and integrated into scene prompts
+- Visual effects library is automatically loaded from `s7_generate_scene_prompts/inputs/visual_effects.md` and integrated into scene prompts (when `enable_visual_effects: true`)
+- Visual effects can be disabled by setting `video_settings.enable_visual_effects: false` in pipeline config
 

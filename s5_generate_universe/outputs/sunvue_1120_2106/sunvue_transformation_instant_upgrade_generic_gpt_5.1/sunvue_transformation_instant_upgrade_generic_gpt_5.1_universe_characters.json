@@ -1,0 +1,142 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Modern Glass Office Building Exterior",
+        "scenes_used": [
+          1,
+          2
+        ],
+        "has_multiple_versions": false,
+        "description": "Contemporary corporate office building exterior with floor-to-ceiling glass curtain walls reflecting golden hour sunlight. Sleek steel frames, polished glass panels with subtle reflections, modern architectural design. Visible lobby entrance with glass doors, marble flooring glimpsed through transparency, professional urban setting. Warm amber light washing across glass surfaces creating geometric patterns and bright glare.",
+        "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional architectural photography of modern glass office building exterior at golden hour. Floor-to-ceiling glass curtain walls with sleek steel frames, polished reflective glass panels, contemporary corporate design. Warm amber sunset light creating intense glare on glass surfaces, geometric reflections, natural lighting. Glass entrance doors, glimpse of marble lobby interior. Documentary photography style, lifelike realistic details, authentic urban architecture, natural light photography, professional real estate photography style, ultra-high definition, realistic glass reflections and textures"
+      },
+      {
+        "name": "Urban City Street",
+        "scenes_used": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "has_multiple_versions": true,
+        "versions": [
+          {
+            "version_name": "Golden Hour with Harsh Glare",
+            "scenes_used": [
+              1,
+              2,
+              3
+            ],
+            "description": "Bustling urban street at golden hour with intense, uncomfortable glare. Bright washed-out sunlight creating harsh shadows and overexposed highlights. City environment appears slightly hazy and squint-inducing\u2014buildings with blown-out bright spots, indistinct details in harsh light. Modern urban architecture with glass storefronts, pedestrians in silhouette against bright sky, street elements slightly obscured by intense direct sunlight. Everything has a challenging brightness that forces squinting.",
+            "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic documentary photography of urban city street at golden hour with harsh intense glare. Bright washed-out sunlight creating uncomfortable overexposed highlights, harsh shadows, blown-out bright areas. Modern city buildings with glass storefronts, pedestrians visible, street environment with challenging brightness. Hazy glare effect, squint-inducing light, realistic lens flare, authentic urban setting. Lifelike natural skin texture on people, real architectural details, professional street photography style, ultra-high definition, realistic lighting conditions, natural photographic grain",
+            "is_original": true
+          },
+          {
+            "version_name": "Crystalline Sharp Focus with Polarized View",
+            "scenes_used": [
+              3,
+              4
+            ],
+            "description": "Same urban street transformed into deep, crystalline clarity with polarized vision. Rich saturated colors\u2014deep blues in sky, vibrant reds and oranges in storefronts, vivid greens in urban plantings. Every architectural detail razor-sharp and defined: crisp building edges, clear window reflections, detailed brick textures, sharp signage. Balanced exposure with no glare\u2014shadows retain detail, highlights controlled. City reveals hidden beauty: neon mural colors pop with intensity, jazz musicians' instruments gleam with detail, couples' expressions clearly visible. Everything appears more alive, dimensional, and visually rich.",
+            "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional photography of urban city street with perfect polarized clarity. Rich deeply saturated colors\u2014vibrant blues, intense reds, vivid greens\u2014balanced exposure with no glare. Razor-sharp architectural details, crisp building edges, clear window reflections, detailed textures. Neon murals with intense colors, visible jazz musicians with gleaming instruments, clear human expressions. Perfect balanced lighting, no overexposure, shadows with retained detail. Lifelike natural skin textures, authentic urban environment, documentary photography style, ultra-high definition, professional color grading, realistic depth and dimension, natural photographic quality",
+            "is_original": false,
+            "references_original_version": "Golden Hour with Harsh Glare"
+          }
+        ]
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Aviator Classic Sunglasses",
+        "scenes_used": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "has_multiple_versions": true,
+        "versions": [
+          {
+            "version_name": "Tucked in Professional Bag",
+            "scenes_used": [
+              1
+            ],
+            "description": "Classic gold-toned aviator sunglasses with teardrop-shaped polarized gray-green lenses partially visible tucked inside a high-quality leather professional bag. Thin double-bridge metal frame in warm gold finish, subtle SunVue logo etched on temple. Lenses show slight gradient, premium anti-reflective coating visible. Frames catching ambient golden hour light with metallic gleam, elegant proportions, timeless design.",
+            "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic product photography of classic aviator sunglasses partially tucked in luxury leather bag. Gold-toned thin metal double-bridge frame with warm metallic finish, teardrop-shaped polarized gray-green gradient lenses, subtle SunVue logo etched on temple arm. Premium anti-reflective lens coating, elegant proportions, timeless design. Golden hour ambient lighting creating metallic gleam on frames. Lifelike realistic metal texture, authentic lens reflections, professional commercial product photography style, ultra-high definition, realistic materials and surfaces, natural lighting, documentary product photography",
+            "is_original": true
+          },
+          {
+            "version_name": "Being Worn - Full View",
+            "scenes_used": [
+              2,
+              3,
+              4
+            ],
+            "description": "SunVue Aviator Classic sunglasses worn on face, full side and front views. Gold-toned double-bridge metal frame with thin temples extending to ears, teardrop-shaped polarized lenses perfectly fitted to face. Lenses show sophisticated gray-green gradient with premium coating, slight reflections of urban environment visible. Metal frame catches light with warm gold gleam, nose pads adjusted to face, temples curve naturally around ears. Timeless aviator silhouette, balanced proportions, premium craftsmanship visible in every detail.",
+            "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional photography of classic aviator sunglasses being worn on human face. Gold-toned thin metal double-bridge frame, teardrop-shaped polarized gray-green gradient lenses, perfect fit on face. Warm metallic gold finish catching natural light, premium lens coating with subtle urban reflections visible. Thin temples extending to ears, nose pads properly adjusted, elegant aviator silhouette. Lifelike realistic metal textures, authentic lens reflections and coating, natural skin interaction with frames, professional portrait photography style, ultra-high definition, realistic materials, documentary photography quality, natural lighting",
+            "is_original": false,
+            "references_original_version": "Tucked in Professional Bag"
+          },
+          {
+            "version_name": "Extreme Close-Up Logo Detail",
+            "scenes_used": [
+              5
+            ],
+            "description": "Extreme close-up of SunVue logo etched on temple arm of Aviator Classic sunglasses. Macro detail showing 'SunVue' text in elegant serif font, precisely laser-etched into warm gold-toned metal. Temple surface shows fine brushed metal texture, premium craftsmanship visible in clean etching lines. Behind the temple, polarized lens edge visible with subtle gradient tint, and blurred bokeh of city lights glowing softly in background. Perfect focus on logo, showing dimensional depth of etching catching light.",
+            "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic extreme macro product photography of SunVue logo etched on aviator sunglasses temple. Close-up of 'SunVue' text in elegant serif font, laser-etched into warm gold-toned brushed metal surface. Fine metal texture details, precise clean etching lines, dimensional depth. Polarized lens edge with gradient visible in background, soft bokeh of blurred city lights. Perfect sharp focus on logo, realistic metal surface texture, authentic etching detail, professional commercial macro photography style, ultra-high definition, lifelike materials, natural lighting creating subtle shadows in etched text, documentary product photography quality",
+            "is_original": false,
+            "references_original_version": "Tucked in Professional Bag"
+          }
+        ]
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "The Hero - Urban Professional",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Hesitant Without Sunglasses",
+          "scenes_used": [
+            1
+          ],
+          "description": "Professional in their early 30s with medium build, warm medium-brown skin tone with olive undertones, representing ambiguous ethnic background that could be Mediterranean, Middle Eastern, or Latin American. Thick dark brown hair styled in modern professional cut with natural texture, clean-shaven with defined jawline. Wearing tailored charcoal gray blazer over crisp white dress shirt, top button undone for casual-professional look. Squinting noticeably against harsh sunlight, eyes partially closed, hand reaching toward face in discomfort. Facial expression shows hesitation and uncertainty, slight tension in shoulders. Carrying high-quality tan leather messenger bag. Natural skin texture with slight sheen from warm weather, realistic pores and subtle facial lines.",
+          "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional portrait photography of 30-year-old business professional with warm medium-brown skin tone with olive undertones, Mediterranean or Middle Eastern or Latin American features. Thick dark brown hair in modern professional style, clean-shaven, defined jawline, natural skin texture with realistic pores and subtle lines. Wearing tailored charcoal gray blazer over white dress shirt, top button undone. Squinting intensely against bright sunlight, eyes partially closed, hand near face showing discomfort, hesitant expression. Carrying tan leather messenger bag. Golden hour lighting creating harsh glare on face, realistic skin sheen from heat. Documentary photography style, lifelike natural skin texture, authentic human expression, professional portrait photography, ultra-high definition, real person appearance, natural lighting, photorealistic details",
+          "is_original": true
+        },
+        {
+          "version_name": "Confident Wearing Aviators",
+          "scenes_used": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "description": "Same professional now transformed with confident posture and demeanor, wearing SunVue Aviator Classic sunglasses. Same warm medium-brown skin tone, thick dark brown hair, charcoal blazer and white shirt. Shoulders back, chin slightly raised, smooth relaxed facial expression. Gold aviator frames perfectly fitted, lenses reflecting urban environment with subtle luminous quality. No squinting\u2014face completely relaxed and composed. Eyes subtly visible through lenses with enhanced luminous quality (slightly brighter, more present). Confident subtle smile, ease in movement. Body language shows self-assurance\u2014head turns fluid and purposeful, commanding presence. Same natural skin texture but now appearing more confident and alive.",
+          "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional portrait photography of 30-year-old business professional with warm medium-brown skin tone with olive undertones, Mediterranean or Middle Eastern or Latin American features. Thick dark brown hair, clean-shaven, defined jawline, natural skin texture with realistic pores. Wearing classic gold-toned aviator sunglasses with gray-green polarized lenses, charcoal gray blazer, white dress shirt. Confident posture with shoulders back, chin raised, relaxed composed expression, subtle smile. Eyes subtly visible through lenses with enhanced luminous quality\u2014slightly brighter, more present. Lenses reflecting urban environment. No squinting, completely relaxed face, commanding presence, fluid confident body language. Golden hour lighting on skin, realistic skin texture and sheen. Documentary photography style, lifelike natural appearance, authentic confident human expression, professional portrait photography, ultra-high definition, real person, natural lighting, photorealistic details",
+          "is_original": false,
+          "references_original_version": "Hesitant Without Sunglasses"
+        }
+      ]
+    },
+    {
+      "name": "The Confident Stranger",
+      "scenes_used": [
+        2
+      ],
+      "has_multiple_versions": false,
+      "description": "Striking individual in their late 20s with athletic lean build, deep rich brown skin tone with warm undertones, clearly Black with African features\u2014defined cheekbones, full lips, strong jawline. Natural hair in short textured fade cut showing tight coils. Wearing bold oversized square black acetate statement sunglasses with thick frames, creating dramatic fashionable look. Dressed in elevated streetwear: fitted black turtleneck, tailored camel wool overcoat with perfect drape, dark fitted trousers. Walking with purposeful stride, shoulders back, commanding confident energy. Sunglasses dominate the look\u2014bold, unapologetic style. Facial structure shows strength and poise, natural skin texture with subtle sheen. Embodiment of effortless confidence and personal style.",
+      "image_generation_prompt": "Hyper-realistic photorealistic ultra-realistic professional portrait photography of confident 28-year-old Black person with deep rich brown skin tone with warm undertones, clear African features\u2014defined high cheekbones, full lips, strong jawline, broad nose. Natural short textured fade haircut showing tight coils and kinks. Athletic lean build. Wearing bold oversized square black acetate statement sunglasses with thick dramatic frames. Fitted black turtleneck, tailored camel wool overcoat with perfect drape, dark fitted trousers. Walking with purposeful confident stride, shoulders back, commanding presence and energy. Natural skin texture with realistic pores, subtle healthy sheen, lifelike skin details. Golden hour urban lighting. Documentary photography style, authentic Black features and skin tones, professional fashion portrait photography, ultra-high definition, real person appearance, natural lighting, photorealistic details, street style photography"
+    }
+  ]
+}

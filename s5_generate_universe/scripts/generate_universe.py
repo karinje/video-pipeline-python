@@ -153,19 +153,59 @@ def generate_universe_and_characters(revised_script, config, model="anthropic/cl
         thinking: Thinking budget tokens for Claude (default: 1500, minimum: 1024)
     """
     
-    # Define JSON schema for structured output
+    # Define JSON schema for structured output (simplified - no versions)
     universe_schema = {
         "type": "object",
         "properties": {
             "universe": {
                 "type": "object",
                 "properties": {
-                    "locations": {"type": "array"},
-                    "props": {"type": "array"}
+                    "locations": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "scenes_used": {"type": "array", "items": {"type": "integer"}},
+                                "canonical_state": {"type": "string"},
+                                "image_generation_prompt": {"type": "string"}
+                            },
+                            "required": ["name", "scenes_used", "canonical_state", "image_generation_prompt"],
+                            "additionalProperties": False
+                        }
+                    },
+                    "props": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string"},
+                                "scenes_used": {"type": "array", "items": {"type": "integer"}},
+                                "canonical_state": {"type": "string"},
+                                "image_generation_prompt": {"type": "string"}
+                            },
+                            "required": ["name", "scenes_used", "canonical_state", "image_generation_prompt"],
+                            "additionalProperties": False
+                        }
+                    }
                 },
-                "required": ["locations", "props"]
+                "required": ["locations", "props"],
+                "additionalProperties": False
             },
-            "characters": {"type": "array"}
+            "characters": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "scenes_used": {"type": "array", "items": {"type": "integer"}},
+                        "canonical_state": {"type": "string"},
+                        "image_generation_prompt": {"type": "string"}
+                    },
+                    "required": ["name", "scenes_used", "canonical_state", "image_generation_prompt"],
+                    "additionalProperties": False
+                }
+            }
         },
         "required": ["universe", "characters"],
         "additionalProperties": False
@@ -187,9 +227,9 @@ def generate_universe_and_characters(revised_script, config, model="anthropic/cl
 1. Identify ONLY props/objects that appear in MULTIPLE scenes (2 or more) - these need consistency tracking
 2. Identify ONLY locations that appear in MULTIPLE scenes (2 or more) - these need consistency tracking
 3. Identify ALL characters with detailed physical descriptions (age, appearance, clothing, distinctive features) - characters need consistency even if only in one scene
-4. **CRITICAL**: If an element has MULTIPLE VERSIONS/STATES (e.g., abandoned location → transformed location, young character → old character, early appearance → later appearance), create separate versions with image generation prompts for EACH
-5. For transformed/evolved versions, include a reference to the original version (for image editing workflows)
-6. Each description should be vivid and detailed enough to use directly in AI image/video generation prompts
+4. **NEW APPROACH**: For each element, provide ONE canonical description in its BASE/ORIGINAL state
+5. **NO VERSIONS**: Do NOT create multiple versions - we'll handle transformations later in scene-specific prompts
+6. Each description should be vivid and detailed enough to use directly in AI image generation prompts
 7. DO NOT include props or locations that only appear in a single scene - the video generation model will create those fresh each time
 8. Focus on elements that need visual consistency ACROSS multiple scenes
 
@@ -201,33 +241,16 @@ def generate_universe_and_characters(revised_script, config, model="anthropic/cl
       {{
         "name": "Location Name",
         "scenes_used": [1, 2, 3],
-        "has_multiple_versions": true,
-        "versions": [
-          {{
-            "version_name": "Original/Abandoned/Early",
-            "scenes_used": [1],
-            "description": "Detailed visual description for this version",
-            "image_generation_prompt": "Complete prompt for generating reference image of this version (for nano/banan image generation)",
-            "is_original": true
-          }},
-          {{
-            "version_name": "Transformed/Restored/Later",
-            "scenes_used": [4, 5],
-            "description": "Detailed visual description for this transformed version",
-            "image_generation_prompt": "Complete prompt for generating reference image of this version (for nano/banan image generation)",
-            "is_original": false,
-            "references_original_version": "Original/Abandoned/Early"
-          }}
-        ]
+        "canonical_state": "Detailed visual description in its base/original state",
+        "image_generation_prompt": "Complete prompt for generating reference image of the canonical state (for nano/banana image generation)"
       }}
     ],
     "props": [
       {{
         "name": "Prop Name",
         "scenes_used": [1, 2, 3],
-        "has_multiple_versions": false,
-        "description": "Detailed visual description for AI generation",
-        "image_generation_prompt": "Complete prompt for generating reference image (for nano/banan image generation)"
+        "canonical_state": "Detailed visual description in its base/original state",
+        "image_generation_prompt": "Complete prompt for generating reference image of the canonical state (for nano/banana image generation)"
       }}
     ]
   }},
@@ -235,37 +258,21 @@ def generate_universe_and_characters(revised_script, config, model="anthropic/cl
     {{
       "name": "Character Name",
       "scenes_used": [1, 2, 3, 4, 5],
-      "has_multiple_versions": true,
-      "versions": [
-        {{
-          "version_name": "Early Appearance",
-          "scenes_used": [1, 2, 3],
-          "description": "Detailed physical description for early scenes",
-          "image_generation_prompt": "Complete prompt for generating reference image of this character version (for nano/banan image generation)",
-          "is_original": true
-        }},
-        {{
-          "version_name": "Later Appearance",
-          "scenes_used": [4, 5],
-          "description": "Detailed physical description for later scenes",
-          "image_generation_prompt": "Complete prompt for generating reference image of this character version (for nano/banan image generation)",
-          "is_original": false,
-          "references_original_version": "Early Appearance"
-        }}
-      ]
+      "canonical_state": "Detailed physical description in base/original appearance (age, clothing, features, etc.)",
+      "image_generation_prompt": "Complete prompt for generating reference image of the canonical state (for nano/banana image generation)"
     }}
   ]
 }}
 ```
 
 **IMPORTANT NOTES:**
-- If an element has only ONE version/state across all scenes, use the simple format (no "versions" array, just "description" and "image_generation_prompt")
-- If an element has MULTIPLE versions, use the "versions" array format
+- Each element has ONE canonical description in its base/original state
+- Transformations will be handled later in scene-specific prompts (not here)
+- "canonical_state" should describe the element in its most neutral/original form
 - "image_generation_prompt" should be a complete, detailed prompt ready to feed into image generation models (nano-banana, etc.)
-- For transformed versions, "references_original_version" should match the "version_name" of the original version
 - **CRITICAL: Image prompts must generate HYPER-REALISTIC, PHOTOREALISTIC images that look like real people/photographs**
 - Include these realism keywords in every image_generation_prompt: "hyper-realistic", "photorealistic", "ultra-realistic", "lifelike", "documentary photography style", "real person", "authentic", "natural skin texture", "realistic lighting", "professional portrait photography"
-- **CRITICAL FOR GROUPS**: If describing a group with diversity requirements (e.g., "diverse ethnicities", "2 white, 1 Black, 1 Hispanic"), make diversity the FIRST and MOST PROMINENT part of the prompt. Explicitly describe each person's ethnicity, skin tone, and distinctive features. Example: "Group of 4 chefs: Chef 1 - White male with light skin tone and European features, Chef 2 - Black male with dark brown skin and African features, Chef 3 - Hispanic male with medium olive skin and Latin American features, Chef 4 - White male with light skin and European features. Each person clearly distinguishable with distinct ethnic features and skin tones."
+- **CRITICAL FOR GROUPS**: If describing a group with diversity requirements (e.g., "diverse ethnicities"), make diversity the FIRST and MOST PROMINENT part of the prompt. Explicitly describe each person's ethnicity, skin tone, and distinctive features.
 - Image prompts should include all visual details: lighting, composition, style, specific features, colors, textures, skin details, hair texture, clothing fabric details, etc.
 - Avoid any stylized, artistic, or cartoon-like descriptions - focus on photographic realism"""
     

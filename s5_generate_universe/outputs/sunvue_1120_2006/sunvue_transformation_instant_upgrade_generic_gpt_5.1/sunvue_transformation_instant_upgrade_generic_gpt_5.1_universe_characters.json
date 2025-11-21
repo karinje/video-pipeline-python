@@ -1,0 +1,56 @@
+{
+  "universe": {
+    "locations": [],
+    "props": [
+      {
+        "name": "SunVue Aviator Classic Sunglasses",
+        "scenes_used": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Premium aviator sunglasses with iconic teardrop-shaped lenses and thin gold metal frame. The lenses are perfectly reflective with a subtle golden-amber tint that catches light beautifully. Bridge features delicate double-bar construction with subtle SunVue branding. Temple arms are sleek gold metal with tortoiseshell tips. The frames have impeccable polish and premium weight, with visible anti-reflective coating creating prismatic micro-flares in certain angles. Lenses are large enough to provide full eye coverage with graceful curves that follow the brow line.",
+        "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic product photography of premium aviator sunglasses, iconic teardrop-shaped lenses with golden-amber reflective tint, thin polished gold metal frame with double-bar bridge construction, sleek temple arms with tortoiseshell tips, professional studio lighting creating subtle prismatic flares on anti-reflective coating, lifelike textures showing metal polish and lens clarity, documentary photography style, authentic premium eyewear product shot, natural reflections, real materials with visible grain and texture, professional commercial photography, 8K detail, realistic depth of field"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Young Professional (Main Character)",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Pre-Transformation",
+          "scenes_used": [
+            1,
+            2
+          ],
+          "description": "Late 20s to early 30s male professional with natural medium-brown hair slightly disheveled and lacking style, clean-shaven with visible five o'clock shadow, Mediterranean or Southern European features with olive-toned skin showing signs of fatigue, medium athletic build with noticeably slumped shoulders and tired posture. Wearing a rumpled charcoal grey business suit with slightly loosened tie, white dress shirt with top button undone, visible wrinkles in fabric. His eyes are slightly squinted from glare with visible crow's feet, expression showing exhaustion and stress. Skin has natural texture with visible pores, slight under-eye darkness. Overall appearance is that of someone worn down by long work hours, blending into the urban crowd, unremarkable and fatigued.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic portrait of real person, late 20s to early 30s male professional, Mediterranean olive skin tone with natural texture and visible pores, medium brown disheveled hair lacking style, clean-shaven with visible five o'clock shadow, authentic human features with tired expression, eyes squinted from glare with visible crow's feet, slumped shoulders showing exhausted posture, rumpled charcoal grey business suit with wrinkles, loosened tie, white dress shirt with top button undone, natural skin showing signs of fatigue with slight under-eye darkness, documentary photography style, lifelike details, professional portrait photography, natural lighting showing realistic shadows, authentic businessman appearance, real fabric textures, 8K detail, realistic depth, candid professional photography",
+          "is_original": true
+        },
+        {
+          "version_name": "Post-Transformation",
+          "scenes_used": [
+            3,
+            4,
+            5
+          ],
+          "description": "The same late 20s to early 30s male professional now completely transformed - same Mediterranean olive-toned skin but now glowing with vitality and confidence, same facial structure but expression radiating self-assurance with a knowing smirk. Hair is now perfectly styled with deliberate texture and volume. Clean-shaven jawline now appears sharper and more defined. Posture is completely straightened with shoulders back, chest out, commanding presence. The same charcoal grey suit now appears perfectly tailored and crisp, tie perfectly knotted, shirt immaculately pressed. Colors appear more vibrant and saturated around him. Wearing the SunVue Aviator sunglasses with complete confidence - they sit perfectly on his face as if made for him. Eyes visible when glasses are lowered show clarity and intensity. Skin appears perfected while maintaining natural texture - any fatigue erased, subtle glow suggesting inner confidence. Overall transformation from forgettable to unforgettable, same person but elevated to aspirational status.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic portrait of real person, late 20s to early 30s male professional, Mediterranean olive skin tone with healthy glow and natural texture, perfectly styled medium brown hair with deliberate volume and texture, clean-shaven with sharp defined jawline, authentic human features radiating confidence, knowing smirk expression, straight posture with shoulders back showing commanding presence, perfectly tailored charcoal grey business suit appearing crisp and immaculate, expertly knotted tie, pressed white dress shirt, wearing iconic gold aviator sunglasses with complete confidence, lifelike skin with perfected appearance while maintaining realistic pores and texture, documentary photography style, professional portrait photography, enhanced saturation and vibrancy in colors, natural lighting with subtle golden hour glow, authentic confident businessman appearance, real fabric with sharp details, 8K detail, realistic depth of field, editorial fashion photography quality",
+          "is_original": false,
+          "references_original_version": "Pre-Transformation"
+        }
+      ]
+    }
+  ]
+}

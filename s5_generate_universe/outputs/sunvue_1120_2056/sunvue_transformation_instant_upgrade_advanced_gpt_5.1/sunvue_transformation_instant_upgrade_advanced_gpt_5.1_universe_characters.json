@@ -1,0 +1,77 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Urban City Street",
+        "scenes_used": [
+          1,
+          4
+        ],
+        "has_multiple_versions": false,
+        "description": "Busy metropolitan sidewalk during golden hour with warm amber sunlight creating harsh glare and long shadows. Modern glass office buildings line both sides, their reflective surfaces catching golden light. Street features polished concrete sidewalk with subtle texture, contemporary street furniture including minimalist metal benches and sleek trash receptacles. Traffic moves in background with luxury sedans and SUVs. Pedestrian crossing signals, modern LED streetlights beginning to illuminate. Dense crowd of professionals in business casual attire moving in both directions. Urban trees in modern planters create dappled shadows. Architectural details include steel and glass storefronts, contemporary signage, and clean modernist aesthetic.",
+        "image_generation_prompt": "Hyper-realistic photorealistic documentary photography of busy urban sidewalk at golden hour, warm amber sunlight creating harsh glare, modern glass office buildings with reflective surfaces, polished concrete sidewalk, contemporary street furniture, luxury cars in background, professional portrait photography style, ultra-realistic natural lighting, real architectural details, authentic metropolitan atmosphere, dense crowd of professionals walking, modern planters with trees, steel and glass storefronts, lifelike textures, natural skin tones on pedestrians, realistic shadows and highlights, professional urban photography, 8K quality, authentic city environment"
+      },
+      {
+        "name": "SunVue Flagship Store",
+        "scenes_used": [
+          2,
+          3
+        ],
+        "has_multiple_versions": false,
+        "description": "Premium eyewear boutique with sophisticated minimalist design. Exterior features floor-to-ceiling glass windows with polished chrome frames, ultra-modern lighting creating warm glow that highlights merchandise. Interior visible through glass showcases white marble display pedestals, backlit shelving in warm brass tones, and contemporary track lighting. Large mirrors with LED backlighting for customer try-ons. Sleek white and gold color scheme throughout. Display cases feature individual spotlights creating dramatic pools of light on featured frames. Polished white epoxy flooring reflects ambient light. Architectural details include recessed ceiling with integrated LED strips, floating shelves in brushed gold metal, and minimalist product photography on walls. Modern luxury retail aesthetic combining clean lines with warm metallic accents.",
+        "image_generation_prompt": "Hyper-realistic photorealistic premium eyewear boutique interior and exterior, floor-to-ceiling glass windows with chrome frames, sophisticated minimalist design, white marble display pedestals, backlit shelving in warm brass tones, large LED-backlit mirrors, sleek white and gold color scheme, contemporary track lighting creating dramatic spotlights, polished white epoxy floors with reflections, recessed ceiling with integrated LED strips, floating brushed gold shelves, ultra-realistic natural lighting, lifelike textures on marble and metal, professional retail photography style, authentic luxury store atmosphere, documentary photography quality, real architectural details, 8K resolution, natural material textures"
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Aviator Classic Sunglasses",
+        "scenes_used": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Iconic gold-frame aviator sunglasses with double bridge design. Premium polished gold metal frames with subtle warm rose-gold undertones catching light. Teardrop-shaped G-15 lenses in deep gray-green tone with subtle gradient, exhibiting perfect optical clarity and anti-reflective coating creating rainbow-edge prismatic effects when light hits at angles. Thin adjustable nose pads in clear silicone. Temple arms feature classic ribbed texture near hinges with 'SunVue' etched in microscopic detail on interior. Spring-loaded barrel hinges in matching gold tone. Lenses show subtle polarization effect visible as faint vertical lines when viewed at certain angles. Frame dimensions suggest 58mm lens width, classic aviator proportions. Perfect mirror-like finish on gold metal with no scratches, fingerprint-resistant coating. When reflecting environments, G-15 lenses show crystalline clarity with slight warm color cast.",
+        "image_generation_prompt": "Hyper-realistic photorealistic macro photography of premium gold aviator sunglasses, polished gold metal frame with rose-gold undertones, iconic double-bridge design, teardrop G-15 lenses in gray-green with subtle gradient, perfect optical clarity showing anti-reflective rainbow coating edges, ultra-realistic metal texture with mirror finish, thin clear silicone nose pads, classic ribbed temple texture, microscopic 'SunVue' etching visible, spring-loaded barrel hinges, subtle polarization effect in lenses, documentary product photography style, professional lighting showing every detail, lifelike reflections in lenses, authentic premium material textures, natural light catching gold surfaces, 8K macro detail, professional jewelry photography quality, real metal and glass materials"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Main Character",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Pre-Transformation",
+          "scenes_used": [
+            1,
+            2
+          ],
+          "description": "Late twenties professional individual, Mediterranean or Middle Eastern descent with warm olive skin tone and subtle natural glow. Lean athletic build, approximately 5'10\". Face shows uncertainty with slightly furrowed brow, eyes squinting against harsh sunlight revealing fine laugh lines. Thick dark brown hair styled in modern textured crop, slightly disheveled from city wind. Clean-shaven with defined jawline and high cheekbones. Dressed in elevated business casual: fitted charcoal gray blazer in wool-blend with subtle texture, crisp white cotton button-down with top button undone showing hollow of throat, slim-fit dark indigo jeans with slight distressing at knees, and minimalist white leather sneakers. Silver analog watch on left wrist. Posture slightly hunched, shoulders rolled forward defensively. Hands in pockets suggesting nervous energy. Natural skin texture showing pores, slight shadow under eyes from city stress. Expression reads as lost in thought, blending into surroundings, avoiding eye contact with passersby.",
+          "image_generation_prompt": "Hyper-realistic photorealistic professional portrait of late-twenties Mediterranean male with warm olive skin tone, lean athletic build, squinting against sunlight with uncertain expression, furrowed brow, thick dark brown textured crop hairstyle slightly disheveled, clean-shaven with defined jawline and high cheekbones, natural skin texture with visible pores, slight under-eye shadows, wearing fitted charcoal gray wool blazer, crisp white cotton button-down shirt with top button undone, slim-fit dark indigo jeans, minimalist white leather sneakers, silver watch on left wrist, hands in pockets, hunched posture with shoulders rolled forward, avoiding eye contact, documentary photography style, ultra-realistic natural lighting showing golden hour harshness, authentic urban professional aesthetic, lifelike facial features and skin details, real person photography, professional environmental portrait, 8K quality, natural fabric textures visible",
+          "is_original": true
+        },
+        {
+          "version_name": "Post-Transformation",
+          "scenes_used": [
+            3,
+            4,
+            5
+          ],
+          "description": "Same individual now radiating confidence and unmistakable presence. Warm olive Mediterranean skin now appears luminous and healthy in golden hour light. Same athletic build but posture completely transformed: spine straight, shoulders back and down, chest open. Wearing iconic gold SunVue Aviator Classic sunglasses that perfectly complement facial structure, G-15 lenses reflecting sharp crystalline cityscape. Same outfit (charcoal blazer, white shirt, dark jeans, white sneakers, silver watch) but worn with completely different energy\u2014blazer sits perfectly on squared shoulders, shirt appears crisper. Hair now perfectly tousled with intentional styling, catching golden light. Clean jawline appears more defined with confident set. No more squinting\u2014face relaxed with subtle knowing smile, suggesting inner certainty. Cheekbones catch light dramatically. Hands out of pockets, arms swinging naturally at sides with purposeful movement. Stride lengthened and deliberate. Gold frames create focal point drawing attention to eyes behind G-15 lenses. Subtle glow effect around entire figure as if emanating magnetic energy. Every detail of same clothing now appears elevated and intentional rather than hidden. Expression reads as self-assured urban icon who owns every glance.",
+          "image_generation_prompt": "Hyper-realistic photorealistic professional portrait of late-twenties Mediterranean male with warm olive skin tone appearing luminous and healthy, lean athletic build, wearing iconic gold aviator sunglasses with G-15 lenses reflecting sharp cityscape, confident relaxed expression with subtle knowing smile, thick dark brown perfectly tousled hair catching golden light, clean-shaven with dramatically lit defined jawline and high cheekbones, natural skin texture glowing in golden hour, wearing same charcoal gray wool blazer sitting perfectly on squared shoulders, crisp white cotton button-down, slim-fit dark indigo jeans, white leather sneakers, silver watch, perfect upright posture with shoulders back and chest open, hands at sides in natural purposeful position, spine straight with lengthened stride, subtle glow and magnetic presence, documentary photography style, ultra-realistic golden hour lighting, authentic transformation aesthetic, lifelike facial features with perfect bone structure highlighted, real person photography with cinematic quality, professional environmental portrait, 8K quality, natural confident energy radiating from subject",
+          "is_original": false,
+          "references_original_version": "Pre-Transformation"
+        }
+      ]
+    }
+  ]
+}

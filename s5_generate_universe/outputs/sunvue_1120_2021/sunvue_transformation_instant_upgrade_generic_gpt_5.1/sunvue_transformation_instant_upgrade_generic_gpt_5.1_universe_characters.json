@@ -1,0 +1,75 @@
+{
+  "universe": {
+    "locations": [],
+    "props": [
+      {
+        "name": "SunVue Aviator Classic Sunglasses",
+        "scenes_used": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "has_multiple_versions": true,
+        "versions": [
+          {
+            "version_name": "Floating Innerlight State",
+            "scenes_used": [
+              2
+            ],
+            "description": "Classic aviator sunglasses suspended in midair, teardrop-shaped lenses with double bridge design, thin gold metal frames with polished finish. Lenses emit an ethereal, soft golden-white glow from within\u2014not a reflection but an impossible internal luminescence, as if powered by captured sunlight. The glow pulses gently, creating a halo effect around the frames. Gradient tint from golden amber at top to subtle gray at bottom. Premium materials with visible craftsmanship details: riveted hinges, adjustable nose pads, temple tips with subtle SunVue logo engraving.",
+            "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic product photography of classic aviator sunglasses floating in dark space. Lifelike gold metal frames with teardrop-shaped lenses, double bridge design. Natural skin texture quality materials. The lenses emit an ethereal soft golden-white glow from within, internal luminescence effect, impossible magical lighting emanating from inside the glass. Professional commercial photography style, authentic premium materials, realistic metal texture with polished gold finish, gradient tint lenses from amber to gray, visible craftsmanship details including rivets and hinges. Soft halo effect around frames. Documentary photography style lighting, real product photography, sharp focus on frames, 8K detail, professional studio setup with dramatic presentation",
+            "is_original": true
+          },
+          {
+            "version_name": "Worn State",
+            "scenes_used": [
+              3,
+              4,
+              5
+            ],
+            "description": "Same SunVue Aviator Classic sunglasses now positioned on a human face, teardrop-shaped polarized lenses reflecting surrounding environments, thin gold metal frames conforming to facial structure. Lenses show deep gray-gradient tint with premium anti-reflective coating, catching and reflecting light naturally. Temple arms extend behind ears with slight curve, nose pads rest on bridge. In golden hour lighting, frames gleam with warm metallic highlights. Surface reflections on lenses show layered worlds and environments with crystalline clarity.",
+            "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic close-up of classic aviator sunglasses worn on human face. Lifelike gold metal frames with teardrop-shaped polarized lenses, natural skin texture visible around frames. Professional portrait photography style, authentic premium materials, realistic metal texture with polished gold finish catching golden hour light. Polarized gradient lenses from dark gray to lighter gray showing natural reflections and multiple layered environments within the glass. Documentary photography style, real person wearing real sunglasses, sharp focus on frames and face, natural skin pores and texture, 8K detail, professional cinematography lighting with warm highlights on metal, realistic depth of field",
+            "is_original": false,
+            "references_original_version": "Floating Innerlight State"
+          }
+        ]
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Protagonist",
+      "scenes_used": [
+        1,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Pre-Transformation",
+          "scenes_used": [
+            1
+          ],
+          "description": "Early 30s professional, ambiguous ethnicity suggesting mixed heritage, medium complexion with warm olive undertones. Slender athletic build, approximately 5'10\". Soft facial features with subtle signs of disconnection: distant unfocused eyes, slight slouch in shoulders, jaw carrying tension. Wearing muted business casual\u2014charcoal gray blazer over simple white t-shirt, dark indigo jeans, minimalist leather sneakers. Hair is short-medium length, slightly disheveled, dark brown with natural texture. Clean-shaven with defined cheekbones. Expression reads as someone going through motions, present but not engaged. Natural skin texture with slight shadows under eyes suggesting urban fatigue. Standing isolated despite crowd, hands in pockets, weight shifted to one leg in passive stance.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic, lifelike portrait of early 30s professional person, mixed heritage appearance, warm olive medium skin tone, natural skin texture with visible pores and authentic complexion. Documentary photography style, real person, slender athletic build, 5'10\" height. Soft facial features with distant unfocused eyes showing disconnection, slight slouch in shoulders, tension in jaw. Professional portrait photography with natural lighting. Wearing charcoal gray blazer over white t-shirt and dark indigo jeans, minimalist leather sneakers. Short-medium length dark brown hair slightly disheveled with natural texture, clean-shaven face with defined cheekbones. Realistic skin details including slight shadows under eyes. Hands in pockets, passive body language, weight on one leg. Shot in realistic subway platform environment with authentic urban lighting, crowd blurred in background. 8K detail, authentic documentary style, real human features, natural expression, professional cinematography",
+          "is_original": true
+        },
+        {
+          "version_name": "Post-Transformation",
+          "scenes_used": [
+            3,
+            4,
+            5
+          ],
+          "description": "Same person transformed: early 30s, mixed heritage, medium olive complexion now radiating confidence. Athletic build appears more commanding with corrected posture\u2014shoulders back, spine elongated, chin level. Facial transformation: jaw unclenched and defined, eyes sharp and focused with intensity, subtle smile playing at corners of mouth. Same charcoal blazer now sits perfectly on squared shoulders, white t-shirt crisp, jeans appear more tailored on confident stance. Hair somehow looks intentionally styled though unchanged. Wearing SunVue Aviator Classics that catch golden hour light. Expression reads as someone who has remembered their power\u2014direct gaze, magnetic presence. Skin appears vibrant, shadows under eyes less pronounced. Standing with weight balanced evenly, arms relaxed but ready, occupying space with authority. Every detail identical to pre-transformation but energy completely shifted.",
+          "image_generation_prompt": "Hyper-realistic, photorealistic, ultra-realistic, lifelike portrait of same early 30s professional person with mixed heritage, warm olive medium skin tone, natural skin texture with visible authentic pores and healthy complexion. Documentary photography style, real person, slender athletic build with commanding confident posture, shoulders back, spine straight. Professional portrait photography with golden hour lighting. Sharp focused eyes showing intensity and clarity, unclenched defined jaw, subtle confident smile. Wearing classic aviator sunglasses with gold frames catching warm light. Same charcoal gray blazer sitting perfectly on squared shoulders, white t-shirt, dark indigo jeans. Short-medium dark brown hair now appearing intentionally styled. Clean-shaven with defined cheekbones, vibrant skin appearance. Realistic skin texture and details, natural lighting creating warm highlights. Balanced stance with even weight distribution, arms relaxed, confident body language, magnetic presence. Shot with authentic cinematography, real human transformation, natural features enhanced by confidence, 8K detail, professional commercial photography style, lifelike depth and dimension",
+          "is_original": false,
+          "references_original_version": "Pre-Transformation"
+        }
+      ]
+    }
+  ]
+}

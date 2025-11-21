@@ -1,0 +1,60 @@
+pipeline_mode:
+  start_from: direct_concept
+
+input:
+  config_file: s1_generate_concepts/inputs/configs/sunglasses.json
+  # Using existing concept from Step 0
+  direct_concept_file: s0_expand_concept/outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised.txt
+
+pipeline_steps:
+  # Skip Step 0 - already done
+  run_concept_expansion: false
+  run_concept_judging: false
+  run_concept_revision: false
+  
+  # Run Steps 5-10 one at a time
+  run_step_5: true   # Generate universe/characters
+  run_step_6: false  # Generate reference images (do next)
+  run_step_7: false  # Generate scene prompts (do next)
+  run_step_8: false  # Generate first frames (do next)
+  run_step_9: false  # Generate video clips (do next)
+  run_step_10: false # Merge clips (do last)
+
+output:
+  step0_output_dir: s0_expand_concept/outputs
+  base_output_dir: s4_revise_concept/outputs
+  universe_images_dir: s6_generate_reference_images/outputs
+  first_frames_dir: s8_generate_first_frames/outputs
+  video_outputs_dir: s9_generate_video_clips/outputs
+  merge_outputs_dir: s10_merge_clips/outputs
+
+video_settings:
+  num_clips: 5
+  clip_duration: 6
+  resolution: "1080p"
+  aspect_ratio: "16:9"
+  enable_visual_effects: true
+
+models:
+  llm_model: openai/gpt-5.1
+  video_model: google/veo-3-fast
+  image_model: replicate/nano-banana
+  llm_thinking: 1500
+
+evaluation:
+  judge_model: anthropic/claude-sonnet-4-5-20250929
+
+image_generation:
+  max_reference_images: 5
+  image_parallel_workers: 4
+
+video_generation:
+  generate_audio: true
+  video_parallel_workers: 2
+
+advanced:
+  skip_image_generation: false
+  skip_first_frames: false
+  skip_video_clips: false
+  regenerate_scene_prompts: false
+

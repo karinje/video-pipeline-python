@@ -1,0 +1,27 @@
+{
+  "json_file": "s5_generate_universe/outputs/sunvue_1120_2106/sunvue_transformation_instant_upgrade_generic_gpt_5.1/sunvue_transformation_instant_upgrade_generic_gpt_5.1_universe_characters.json",
+  "json_prefix": "sunvue_transformation_instant_upgrade_generic_gpt_5.1",
+  "generated_at": "2025-11-20 22:20:29",
+  "elements": [
+    {
+      "element_name": "Modern Glass Office Building Exterior",
+      "element_type": "location",
+      "images": {}
+    },
+    {
+      "element_name": "Urban City Street",
+      "element_type": "location",
+      "images": {}
+    },
+    {
+      "element_name": "The Hero - Urban Professional",
+      "element_type": "character",
+      "images": {}
+    },
+    {
+      "element_name": "SunVue Aviator Classic Sunglasses",
+      "element_type": "prop",
+      "images": {}
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+# Eyewear Ad Concept Generator
+
+You are an eyewear advertising specialist. Create a simple 5-sentence elevator pitch for a 30-second commercial that makes glasses/sunglasses the style hero.
+
+**Brand**: SunVue
+**Product**: Iconic sunglasses combining timeless style with optical precision. From classic Aviators to bold Wayfarers, each frame features premium materials, UV protection, and distinctive design that has defined cool for generations.
+**Frame Style**: Aviator Classic
+**Lens Type**: Polarized Sunglasses
+**Style Persona**: Timeless Cool - Classic rebel with effortless confidence
+**Wearing Occasion**: Driving, Beach, City Life, Travel, Everyday Style
+**Tagline**: Never Hide
+**Ad Style**: Transformation - Instant Upgrade
+**Creative Direction**: Create a 30 second Instagram ad for sunglasses with urban professional style, signature look transformation, and golden hour lighting
+
+## **AI VIDEO GENERATION CONTEXT**
+
+This concept will be produced using advanced AI video generation (Sora 2, Veo 3), which can create visuals that would be expensive or impossible with traditional filming. You don't have to use these capabilities, but knowing what's possible can inspire creative storytelling.
+
+### **EXAMPLES FROM OTHER INDUSTRIES (For Inspiration Only):**
+
+**Recent AI-Generated Ads That Went Viral:**
+- **Coca-Cola Holiday**: Santa morphing through different art styles seamlessly
+- **Toys"R"Us**: Store transforming into dreamscape, childhood imagination visualized
+- **Nike "Infinite Zoom"**: Camera zooming from athlete's eye to cosmic scale in one shot
+- **Maybelline**: Surreal mascara applied by giant brushes on trains/buses
+- **McDonald's**: Food assembling in reverse slow-motion with impossible physics
+- **Volvo**: Parents aging in reverse to show safety across generations
+- **Secret Escapes**: Locations morphing from office to paradise
+- **Under Armour**: Multiple versions of same athlete training simultaneously
+
+**What Made These Work:**
+- Impossible visuals that stopped scrolling
+- Emotional story enhanced (not replaced) by effects
+- "How did they do that?" moments
+- Brand message amplified by unique visualization
+
+**AVAILABLE VISUAL EFFECTS FOR YOUR CONCEPT (Use Only If They Serve Your Story):**
+
+**HERO EYEWEAR EFFECTS:**
+Eyes In • Luminous Gaze • Glow Trace • 3D Rotation • Diamond • Innerlight
+
+**TRANSFORMATION EFFECTS:**
+Freezing • Morphskin • Duplicate • Clone Explosion • Multiverse • Roll Transition • Melt Transition
+
+**STYLE EFFECTS:**
+Hair Style • Illustration Scene • Collage • Color Rain • Group Photo
+
+**LUXURY EFFECTS:**
+Money Rain • Saint Glow • Sakura Petals • Ice Rose • Northern Lights
+
+**TECH EFFECTS:**
+Turning Metal • Glitch • Cyborg • Wireframe • Point Cloud • Polygon • X-Ray
+
+**ADVENTURE EFFECTS:**
+Hero Flight • Fast Sprint • Water Element • Explosion • Atomic • Splash Transition
+
+**ATMOSPHERIC EFFECTS:**
+Cotton Cloud • Firework • Glowing Fish • Nature Bloom • Mystification • Shadow Smoke
+
+**TRANSITION EFFECTS:**
+Column Wipe • Hole Transition • Portal • Display Transition • Jump Transition • Flame Transition
+
+**CREATIVE TECHNIQUES AVAILABLE (Not Required):**
+- **Reality Bending**: Looking through lenses reveals different world
+- **Impossible Morphing**: Frames shifting between 100 styles fluidly
+- **Time Manipulation**: Different time speeds in/out of lenses
+- **Scale Play**: Tiny person on giant glasses or massive frames as building
+- **Camera Magic**: Flying through the lens, 360° while zooming
+- **Style Shifting**: Photorealistic → painting → sketch in one scene
+- **Physics Defying**: Frames assembling from light particles
+
+### **IMPORTANT GUIDELINES:**
+
+**DO:**
+✓ Focus on emotional story first
+✓ Use effects only if they enhance brand message
+✓ Think "would this stop someone scrolling?"
+✓ Consider platform (vertical for TikTok, square for Instagram)
+✓ Create one memorable "signature moment"
+
+**DON'T:**
+✗ Force effects just because they're available
+✗ Let effects overshadow the product (frames must be hero)
+✗ Describe technical execution (save for script phase)
+✗ Create complexity without purpose
+
+**REMEMBER:** 
+- Simple powerful story > Complex effects
+- Effects should feel natural to the narrative
+- Best AI ads use impossible visuals to amplify human emotions
+- If traditional filming could achieve it easily, consider pushing further (but only if it serves the story)
+
+**Example Integration (Subtle):**
+Instead of: "Character walks to work"
+Consider: "Character walks to work as city reflects in their lenses, each reflection showing different mood"
+
+But also perfectly fine: "Character walks to work confidently in new frames" (if that serves the story better)
+
+The goal is capturing attention and driving brand recall through whatever approach best serves your concept - whether that's emotional simplicity or visual innovation.
+
+Create a concise 5-scene ad concept where the eyewear drives the story. Focus 70% on style/confidence/lifestyle transformation and 30% on practical benefits. Each sentence should be simple (15-20 words max) and describe what visually happens in that scene.
+
+**EYEWEAR AD ESSENTIALS:**
+- Frames must be clearly visible in at least 3 scenes
+- Include one "putting on glasses" transformation moment
+- Show how the frames elevate the wearer's style/confidence
+- Make viewers think "I need those frames" not just "I need glasses"
+
+**AD STYLE GUIDE:**
+- **Humor**: Style mishaps, wrong frames comedy, personality changes with different glasses
+- **Sentiment**: Frames through life moments, generational handoff, signature style stories
+- **Achievement**: Glasses as confidence builder, power accessory, signature look discovery
+- **Adventure**: Lifestyle frames, journey enabler, iconic moments in iconic glasses
+- **Transformation**: Instant style upgrade, invisible to memorable, frames change everything
+- **Perspective**: World through the lenses, POV transformation, vision meets style
+- **Cinematic**: High-style visual feast, music video aesthetic, pure eyewear glamour
+- **Mystique**: Frames as identity, power through mystery, signature look as character
+
+**OUTPUT FORMAT:**
+
+Write 5 simple scenes that could be explained in 1-2 minutes:
+
+**SCENE 1**: [What happens - frames absent or problem setup]
+
+**SCENE 2**: [What happens - discovery or challenge moment]
+
+**SCENE 3**: [What happens - trying on or transformation beginning]
+
+**SCENE 4**: [What happens - peak style moment or confidence transformation]
+
+**SCENE 5**: [What happens - brand frames as solution, tagline moment]
+
+Remember: The glasses are the hero that transforms the wearer's style and confidence, not just a functional tool.

@@ -1,0 +1,33 @@
+pipeline_mode:
+  start_from: direct_concept
+
+input:
+  config_file: s1_generate_concepts/inputs/configs/sunglasses.json
+  direct_concept_file: s0_expand_concept/outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised.txt
+
+pipeline_steps:
+  run_concept_expansion: false
+  run_concept_judging: false
+  run_concept_revision: false
+  run_step_5: false
+  run_step_6: false
+  run_step_7: true   # Generate scene prompts
+  run_step_8: false
+  run_step_9: false
+  run_step_10: false
+
+output:
+  step0_output_dir: s0_expand_concept/outputs
+  universe_images_dir: s6_generate_reference_images/outputs
+
+video_settings:
+  num_clips: 5
+  clip_duration: 6
+  resolution: "1080p"
+  aspect_ratio: "16:9"
+  enable_visual_effects: true
+
+models:
+  llm_model: anthropic/claude-sonnet-4-5-20250929
+  llm_thinking: 1500
+

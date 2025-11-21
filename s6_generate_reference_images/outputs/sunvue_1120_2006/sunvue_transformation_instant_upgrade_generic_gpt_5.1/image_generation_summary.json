@@ -1,0 +1,35 @@
+{
+  "json_file": "s5_generate_universe/outputs/sunvue_1120_2006/sunvue_transformation_instant_upgrade_generic_gpt_5.1/sunvue_transformation_instant_upgrade_generic_gpt_5.1_universe_characters.json",
+  "json_prefix": "sunvue_transformation_instant_upgrade_generic_gpt_5.1",
+  "generated_at": "2025-11-20 20:11:38",
+  "elements": [
+    {
+      "element_name": "SunVue Aviator Classic Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "default": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2006/sunvue_transformation_instant_upgrade_generic_gpt_5.1/props/sunvue_aviator_classic_sunglasses/sunvue_aviator_classic_sunglasses.png"
+        }
+      }
+    },
+    {
+      "element_name": "Young Professional (Main Character)",
+      "element_type": "character",
+      "images": {
+        "Pre-Transformation": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2006/sunvue_transformation_instant_upgrade_generic_gpt_5.1/characters/young_professional_main_character/young_professional_main_character_pre_transformation.png",
+          "is_original": true,
+          "references_original": null
+        },
+        "Post-Transformation": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_2006/sunvue_transformation_instant_upgrade_generic_gpt_5.1/characters/young_professional_main_character/young_professional_main_character_post_transformation.png",
+          "is_original": false,
+          "references_original": "Pre-Transformation"
+        }
+      }
+    }
+  ]
+}

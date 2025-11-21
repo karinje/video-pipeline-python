@@ -41,6 +41,7 @@ except ImportError:
 
 # Add step directories to path
 BASE_DIR = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(BASE_DIR / "s0_expand_concept" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s1_generate_concepts" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s2_judge_concepts" / "scripts"))
 sys.path.insert(0, str(BASE_DIR / "s4_revise_concept" / "scripts"))
@@ -61,6 +62,10 @@ from generate_video_script import (
     load_evaluation_json, load_concept_file, load_config_file,
     revise_script_for_video
 )
+# Import step 0 functions (direct concept)
+from expand_concept import expand_concept
+from judge_concept import judge_expanded_concept
+from revise_concept import revise_concept
 # Import step 3 function
 sys.path.insert(0, str(BASE_DIR / "s3_extract_best_concept" / "scripts"))
 from extract_best_concept import extract_best_concept as extract_best_concept_step3
@@ -352,8 +357,9 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
     Run the complete video generation pipeline.
     
     Pipeline modes:
-    - start_from='brand_config': Steps 0-9 (generate concepts → evaluate → video)
-    - start_from='evaluation_json': Steps 2-9 (use existing evaluation → video)
+    - start_from='direct_concept': Steps 0a/0b/0c → 5-10 (expand concept → optional judge/revise → video)
+    - start_from='brand_config': Steps 1-10 (generate concepts → evaluate → video)
+    - start_from='evaluation_json': Steps 3-10 (use existing evaluation → video)
     """
     print("=" * 80)
     print("COMPLETE VIDEO GENERATION PIPELINE")
@@ -391,9 +397,132 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
     
     evaluation_path = None
     batch_folder_name = None
+    concept_file = None
+    concept_content = None
     
+    # Step 0: Expand Concept (if starting from direct_concept)
+    if start_from == "direct_concept":
+        print("=" * 80)
+        print("MODE: Direct Concept → Video")
+        print("=" * 80)
+        print("Steps: 0a (expand) → 0b (judge, optional) → 0c (revise, optional) → 5-10 (video)\n")
+        
+        # Get concept text
+        concept_text = input_cfg.get("direct_concept_text")
+        if not concept_text:
+            concept_file_input = input_cfg.get("direct_concept_file")
+            if concept_file_input:
+                with open(concept_file_input, 'r', encoding='utf-8') as f:
+                    concept_text = f.read()
+            else:
+                raise ValueError("direct_concept_text or direct_concept_file required for direct_concept mode")
+        
+        # Get video settings for expansion
+        video_settings = {
+            "num_clips": video_cfg.get("num_clips", 5),
+            "clip_duration": video_cfg.get("clip_duration", 6)
+        }
+        
+        llm_model = models_cfg.get("llm_model", "openai/gpt-5.1")
+        judge_model = eval_cfg.get("judge_model", "anthropic/claude-sonnet-4-5-20250929")
+        
+        # Step 0a: Expand Concept
+        if step_cfg.get("run_concept_expansion", True):
+            print("=" * 80)
+            print("STEP 0a: Expand Concept")
+            print("=" * 80)
+            step0a_start = time.time()
+            
+            output_dir = output_cfg.get("step0_output_dir", "s0_expand_concept/outputs")
+            if not os.path.isabs(output_dir):
+                output_dir = str(BASE_DIR / output_dir)
+            
+            expanded_file, metadata = expand_concept(
+                concept_text, config_file, video_settings, llm_model, output_dir
+            )
+            
+            concept_file = expanded_file
+            concept_content = load_concept_file(concept_file)
+            metadata_file = Path(expanded_file).parent / f"{metadata['concept_name']}_metadata.json"
+            
+            step_times["Step 0a: Expand Concept"] = time.time() - step0a_start
+            print(f"  ✓ Expanded concept: {expanded_file}\n")
+        else:
+            raise ValueError("run_concept_expansion must be true for direct_concept mode")
+        
+        # Step 0b: Judge Concept (optional)
+        evaluation_file = None
+        if step_cfg.get("run_concept_judging", True):
+            print("=" * 80)
+            print("STEP 0b: Judge Expanded Concept")
+            print("=" * 80)
+            step0b_start = time.time()
+            
+            output_dir_0b = str(Path(concept_file).parent)
+            evaluation_file, evaluation_data = judge_expanded_concept(
+                concept_file, str(metadata_file), judge_model, output_dir_0b
+            )
+            
+            step_times["Step 0b: Judge Concept"] = time.time() - step0b_start
+            print(f"  ✓ Evaluation: {evaluation_file}\n")
+        else:
+            print("=" * 80)
+            print("STEP 0b: Judge Expanded Concept")
+            print("=" * 80)
+            print("  ⏭  Skipped (run_concept_judging=false)\n")
+            step_times["Step 0b: Judge Concept"] = 0.0
+        
+        # Step 0c: Revise Concept (optional)
+        if step_cfg.get("run_concept_revision", True) and evaluation_file:
+            print("=" * 80)
+            print("STEP 0c: Revise Concept")
+            print("=" * 80)
+            step0c_start = time.time()
+            
+            output_dir_0c = str(Path(concept_file).parent)
+            revised_file, revision_metadata = revise_concept(
+                concept_file, evaluation_file, config_file, 
+                video_settings, llm_model, output_dir_0c
+            )
+            
+            # Use revised concept
+            concept_file = revised_file
+            concept_content = load_concept_file(concept_file)
+            
+            step_times["Step 0c: Revise Concept"] = time.time() - step0c_start
+            print(f"  ✓ Revised concept: {revised_file}\n")
+        else:
+            print("=" * 80)
+            print("STEP 0c: Revise Concept")
+            print("=" * 80)
+            if not evaluation_file:
+                print("  ⏭  Skipped (no evaluation from Step 0b)\n")
+            else:
+                print("  ⏭  Skipped (run_concept_revision=false)\n")
+            step_times["Step 0c: Revise Concept"] = 0.0
+        
+        # Set batch folder name and concept name for output organization
+        batch_folder_name = Path(concept_file).parent.name
+        # Use concept name from metadata (without _revised suffix)
+        concept_name = metadata.get('concept_name', Path(concept_file).stem.replace('_revised', ''))
+        
+        # Skip to Step 5 (universe generation)
+        print("=" * 80)
+        print("Skipping Steps 1-4 (using direct concept)")
+        print("=" * 80)
+        print("  ⏭  Step 1: Generate Concepts (not needed)")
+        print("  ⏭  Step 2: Judge Concepts (not needed)")
+        print("  ⏭  Step 3: Extract Best (not needed)")
+        print("  ⏭  Step 4: Revise Concept (done in Step 0c)")
+        print()
+        
+        step_times["Step 1: Generate Concepts"] = 0.0
+        step_times["Step 2: Judge/Evaluate Concepts"] = 0.0
+        step_times["Step 3: Extract Best Concept"] = 0.0
+        step_times["Step 4: Revise Concept"] = 0.0
+        
     # Step 1: Generate Concepts (if starting from brand_config)
-    if start_from == "brand_config":
+    elif start_from == "brand_config":
         step1_start = time.time()
         if step_cfg.get("run_step_1", True):
             print("  → Running (run_step_1=true)")
@@ -474,48 +603,49 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
         if not evaluation_path or not os.path.exists(evaluation_path):
             raise FileNotFoundError(f"Evaluation file not found: {evaluation_path}")
     
-    # Step 3: Extract best concept from evaluation
-    print("=" * 80)
-    print("STEP 3: Extract Best Concept from Evaluation")
-    print("=" * 80)
-    step3_start = time.time()
+    # Step 3: Extract best concept from evaluation (skip if using direct_concept)
+    if start_from != "direct_concept":
+        print("=" * 80)
+        print("STEP 3: Extract Best Concept from Evaluation")
+        print("=" * 80)
+        step3_start = time.time()
+        
+        if step_cfg.get("run_step_3", True):
+            print(f"  → Running (run_step_3=true)")
+            # Use step 3's extract_best_concept function to save output
+            step3_output_dir = output_cfg.get("step3_output_dir", "s3_extract_best_concept/outputs")
+            # Resolve path relative to BASE_DIR if not absolute
+            if not os.path.isabs(step3_output_dir):
+                step3_output_dir = str(BASE_DIR / step3_output_dir)
+            
+            best_concept_metadata_file = extract_best_concept_step3(evaluation_path, step3_output_dir)
+            
+            # Also load for use in pipeline
+            best_concept, best_score = load_evaluation_json(evaluation_path)
+            concept_file = best_concept.get("file")
+            if not concept_file or not os.path.exists(concept_file):
+                raise FileNotFoundError(f"Concept file not found: {concept_file}")
+            
+            concept_content = load_concept_file(concept_file)
+            
+            print(f"  ✓ Best concept: {os.path.basename(concept_file)}")
+            print(f"  ✓ Score: {best_score}/100")
+            print(f"  ✓ Model: {best_concept.get('model')}")
+            print(f"  ✓ Template: {best_concept.get('template')}")
+            print(f"  ✓ Metadata saved: {best_concept_metadata_file}\n")
+            step_times["Step 3: Extract Best Concept"] = time.time() - step3_start
+        else:
+            print(f"  ⏭  Skipped (run_step_3=false)")
+            # Load existing best concept metadata
+            # (This would need to be cached somewhere for this to work)
+            print(f"  ⚠  Warning: Step 3 skip not fully implemented - always run this step\n")
+            best_concept, best_score = load_evaluation_json(evaluation_path)
+            concept_file = best_concept.get("file")
+            concept_content = load_concept_file(concept_file)
+            print(f"  ✓ Using: {os.path.basename(concept_file)} ({best_score}/100)\n")
+            step_times["Step 3: Extract Best Concept"] = 0.0
     
-    if step_cfg.get("run_step_3", True):
-        print(f"  → Running (run_step_3=true)")
-        # Use step 3's extract_best_concept function to save output
-        step3_output_dir = output_cfg.get("step3_output_dir", "s3_extract_best_concept/outputs")
-        # Resolve path relative to BASE_DIR if not absolute
-        if not os.path.isabs(step3_output_dir):
-            step3_output_dir = str(BASE_DIR / step3_output_dir)
-        
-        best_concept_metadata_file = extract_best_concept_step3(evaluation_path, step3_output_dir)
-        
-        # Also load for use in pipeline
-        best_concept, best_score = load_evaluation_json(evaluation_path)
-        concept_file = best_concept.get("file")
-        if not concept_file or not os.path.exists(concept_file):
-            raise FileNotFoundError(f"Concept file not found: {concept_file}")
-        
-        concept_content = load_concept_file(concept_file)
-        
-        print(f"  ✓ Best concept: {os.path.basename(concept_file)}")
-        print(f"  ✓ Score: {best_score}/100")
-        print(f"  ✓ Model: {best_concept.get('model')}")
-        print(f"  ✓ Template: {best_concept.get('template')}")
-        print(f"  ✓ Metadata saved: {best_concept_metadata_file}\n")
-        step_times["Step 3: Extract Best Concept"] = time.time() - step3_start
-    else:
-        print(f"  ⏭  Skipped (run_step_3=false)")
-        # Load existing best concept metadata
-        # (This would need to be cached somewhere for this to work)
-        print(f"  ⚠  Warning: Step 3 skip not fully implemented - always run this step\n")
-        best_concept, best_score = load_evaluation_json(evaluation_path)
-        concept_file = best_concept.get("file")
-        concept_content = load_concept_file(concept_file)
-        print(f"  ✓ Using: {os.path.basename(concept_file)} ({best_score}/100)\n")
-        step_times["Step 3: Extract Best Concept"] = 0.0
-    
-    # Determine output directory
+    # Determine output directory (concept_file already set from Step 0 if direct_concept mode)
     if batch_folder_name:
         output_base = output_cfg.get("base_output_dir", "s4_revise_concept/outputs")
         # Resolve relative to BASE_DIR if not absolute
@@ -536,43 +666,44 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
         concept_name = Path(concept_file).stem
         output_dir = output_base / batch_folder_name / concept_name
     
-    # Step 4: Revise concept based on judge feedback
-    print("=" * 80)
-    print("STEP 4: Revise Concept Based on Judge Feedback")
-    print("=" * 80)
-    step4_start = time.time()
-    # Get duration - use total_duration if provided, otherwise legacy duration_seconds
-    total_duration = video_cfg.get("total_duration")
-    duration = total_duration if total_duration is not None else video_cfg.get("duration_seconds", 30)
-    llm_model = models_cfg.get("llm_model", "anthropic/claude-sonnet-4-5-20250929")
-    revised_file = output_dir / f"{concept_name}_revised.txt"
-    
-    # Extract weaknesses from judge evaluation for the best concept
-    weaknesses = best_concept.get("weaknesses", [])
-    
-    if step_cfg.get("run_step_4", True):
-        print(f"  → Running (run_step_4=true) - will overwrite if exists")
-        clear_output_folder(output_dir)
-        print(f"Output directory: {output_dir}\n")
-        print(f"  → Addressing {len(weaknesses)} judge weaknesses")
-        revised_script = revise_script_for_video(concept_content, config_data, llm_model, duration, weaknesses)
-        with open(revised_file, 'w', encoding='utf-8') as f:
-            f.write(revised_script)
-        print(f"  ✓ Saved: {revised_file}")
+    # Step 4: Revise concept based on judge feedback (skip if using direct_concept - already done in Step 0c)
+    if start_from != "direct_concept":
+        print("=" * 80)
+        print("STEP 4: Revise Concept Based on Judge Feedback")
+        print("=" * 80)
+        step4_start = time.time()
+        # Get duration - use total_duration if provided, otherwise legacy duration_seconds
+        total_duration = video_cfg.get("total_duration")
+        duration = total_duration if total_duration is not None else video_cfg.get("duration_seconds", 30)
+        llm_model = models_cfg.get("llm_model", "anthropic/claude-sonnet-4-5-20250929")
+        revised_file = output_dir / f"{concept_name}_revised.txt"
         
-        # Comparative re-judging: judge sees both concepts side-by-side
-        # ALWAYS runs when Step 4 is enabled - no file existence checks, always overwrites
-        print(f"  → Comparative judging: comparing original vs revised...")
-        judge_model = eval_cfg.get("judge_model", "anthropic/claude-sonnet-4-5-20250929")
+        # Extract weaknesses from judge evaluation for the best concept
+        weaknesses = best_concept.get("weaknesses", [])
         
-        # Extract info from best_concept
-        ad_style = best_concept.get("ad_style", config_data.get("AD_STYLE", "Unknown"))
-        brand_name = best_concept.get("brand_name", config_data.get("BRAND_NAME", "Unknown"))
-        original_score = best_concept.get("score", 0)
-        weaknesses_addressed = best_concept.get("weaknesses", [])
-        
-        # Create comparative judging prompt
-        comparative_prompt = f"""You are an expert ad concept evaluator. You will compare TWO versions of the same ad concept: ORIGINAL and REVISED.
+        if step_cfg.get("run_step_4", True):
+            print(f"  → Running (run_step_4=true) - will overwrite if exists")
+            clear_output_folder(output_dir)
+            print(f"Output directory: {output_dir}\n")
+            print(f"  → Addressing {len(weaknesses)} judge weaknesses")
+            revised_script = revise_script_for_video(concept_content, config_data, llm_model, duration, weaknesses)
+            with open(revised_file, 'w', encoding='utf-8') as f:
+                f.write(revised_script)
+            print(f"  ✓ Saved: {revised_file}")
+            
+            # Comparative re-judging: judge sees both concepts side-by-side
+            # ALWAYS runs when Step 4 is enabled - no file existence checks, always overwrites
+            print(f"  → Comparative judging: comparing original vs revised...")
+            judge_model = eval_cfg.get("judge_model", "anthropic/claude-sonnet-4-5-20250929")
+            
+            # Extract info from best_concept
+            ad_style = best_concept.get("ad_style", config_data.get("AD_STYLE", "Unknown"))
+            brand_name = best_concept.get("brand_name", config_data.get("BRAND_NAME", "Unknown"))
+            original_score = best_concept.get("score", 0)
+            weaknesses_addressed = best_concept.get("weaknesses", [])
+            
+            # Create comparative judging prompt
+            comparative_prompt = f"""You are an expert ad concept evaluator. You will compare TWO versions of the same ad concept: ORIGINAL and REVISED.
 
 **CONTEXT:**
 - Brand: {brand_name}
@@ -619,112 +750,117 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
 ```
 
 Be objective and analytical. Small differences (±5 points) mean they're roughly equal."""
-        
-        # Call judge LLM with comparative prompt
-        provider_judge, model_judge = judge_model.split("/", 1) if "/" in judge_model else ("anthropic", judge_model)
-        
-        print(f"  → Calling {provider_judge}/{model_judge} for comparative judging...")
-        print(f"  → This may take 30-90 seconds with extended thinking...")
-        
-        try:
-            if provider_judge == "openai":
-                from execute_llm import call_openai
-                api_key = os.getenv("OPENAI_API_KEY")
-                response = call_openai(comparative_prompt, model_judge, api_key, reasoning_effort="high")
+            
+            # Call judge LLM with comparative prompt
+            provider_judge, model_judge = judge_model.split("/", 1) if "/" in judge_model else ("anthropic", judge_model)
+            
+            print(f"  → Calling {provider_judge}/{model_judge} for comparative judging...")
+            print(f"  → This may take 30-90 seconds with extended thinking...")
+            
+            try:
+                if provider_judge == "openai":
+                    from execute_llm import call_openai
+                    api_key = os.getenv("OPENAI_API_KEY")
+                    response = call_openai(comparative_prompt, model_judge, api_key, reasoning_effort="high")
+                else:
+                    from execute_llm import call_anthropic
+                    api_key = os.getenv("ANTHROPIC_API_KEY")
+                    # Use proportional thinking: 1024 tokens minimum for revision task (~1k word output)
+                    response = call_anthropic(comparative_prompt, model_judge, api_key, thinking=1024)
+                
+                print(f"  ✓ Comparative judge response received, parsing...")
+                
+                # Parse JSON response
+                if "```json" in response:
+                    json_text = response.split("```json")[1].split("```")[0]
+                elif "```" in response:
+                    json_text = response.split("```")[1].split("```")[0]
+                else:
+                    json_text = response.strip()
+                
+                comparison = json.loads(json_text)
+                
+                revised_evaluation = {
+                    "comparison": comparison,
+                    "judge_model": judge_model,
+                    "method": "comparative"
+                }
+                
+                improvement = comparison.get("improvement", 0)
+                revised_score = comparison.get("revised_score", 0)
+                
+                print(f"  ✓ Original score: {original_score}/100")
+                print(f"  ✓ Revised score:  {revised_score}/100")
+                print(f"  ✓ Winner: {comparison.get('winner', 'unknown').upper()}")
+                if improvement > 0:
+                    print(f"  ✓ Improvement: +{improvement} points 🎉")
+                elif improvement == 0:
+                    print(f"  → No change in score")
+                else:
+                    print(f"  ⚠ Score decreased: {improvement} points")
+                print(f"  → Recommendation: {comparison.get('recommendation', 'N/A')}")
+                
+            except Exception as e:
+                print(f"  ⚠ Comparative judging failed: {str(e)}")
+                print(f"  → Skipping score comparison\n")
+                revised_evaluation = {"error": str(e), "method": "comparative"}
+                improvement = None
+            
+            # Save re-evaluation result (always overwrite)
+            rejudge_file = output_dir / f"{concept_name}_revised_evaluation.json"
+            # Explicitly delete if exists to ensure overwrite
+            if rejudge_file.exists():
+                rejudge_file.unlink()
+            with open(rejudge_file, 'w', encoding='utf-8') as f:
+                json.dump({
+                    "original_evaluation": best_concept,
+                    "revised_evaluation": revised_evaluation,
+                    "improvement": improvement
+                }, f, indent=2)
+            print(f"  ✓ Re-evaluation saved: {rejudge_file}")
+            
+            # Determine which version to use for downstream steps
+            # ALWAYS use revised concept when Step 4 runs (it's the output of this step)
+            if improvement is not None:
+                winner = comparison.get("winner", "original")
+                if winner == "revised" and improvement > 0:
+                    print(f"  → Using REVISED concept for downstream steps (scored higher)")
+                    final_concept = revised_script
+                    final_concept_file = revised_file
+                elif winner == "revised" or improvement >= 0:
+                    print(f"  → Using REVISED concept for downstream steps (Step 4 output)")
+                    final_concept = revised_script
+                    final_concept_file = revised_file
+                else:
+                    print(f"  → Using REVISED concept for downstream steps (Step 4 output, despite lower score)")
+                    final_concept = revised_script
+                    final_concept_file = revised_file
             else:
-                from execute_llm import call_anthropic
-                api_key = os.getenv("ANTHROPIC_API_KEY")
-                # Use proportional thinking: 1024 tokens minimum for revision task (~1k word output)
-                response = call_anthropic(comparative_prompt, model_judge, api_key, thinking=1024)
-            
-            print(f"  ✓ Comparative judge response received, parsing...")
-            
-            # Parse JSON response
-            if "```json" in response:
-                json_text = response.split("```json")[1].split("```")[0]
-            elif "```" in response:
-                json_text = response.split("```")[1].split("```")[0]
-            else:
-                json_text = response.strip()
-            
-            comparison = json.loads(json_text)
-            
-            revised_evaluation = {
-                "comparison": comparison,
-                "judge_model": judge_model,
-                "method": "comparative"
-            }
-            
-            improvement = comparison.get("improvement", 0)
-            revised_score = comparison.get("revised_score", 0)
-            
-            print(f"  ✓ Original score: {original_score}/100")
-            print(f"  ✓ Revised score:  {revised_score}/100")
-            print(f"  ✓ Winner: {comparison.get('winner', 'unknown').upper()}")
-            if improvement > 0:
-                print(f"  ✓ Improvement: +{improvement} points 🎉")
-            elif improvement == 0:
-                print(f"  → No change in score")
-            else:
-                print(f"  ⚠ Score decreased: {improvement} points")
-            print(f"  → Recommendation: {comparison.get('recommendation', 'N/A')}")
-            
-        except Exception as e:
-            print(f"  ⚠ Comparative judging failed: {str(e)}")
-            print(f"  → Skipping score comparison\n")
-            revised_evaluation = {"error": str(e), "method": "comparative"}
-            improvement = None
-        
-        # Save re-evaluation result (always overwrite)
-        rejudge_file = output_dir / f"{concept_name}_revised_evaluation.json"
-        # Explicitly delete if exists to ensure overwrite
-        if rejudge_file.exists():
-            rejudge_file.unlink()
-        with open(rejudge_file, 'w', encoding='utf-8') as f:
-            json.dump({
-                "original_evaluation": best_concept,
-                "revised_evaluation": revised_evaluation,
-                "improvement": improvement
-            }, f, indent=2)
-        print(f"  ✓ Re-evaluation saved: {rejudge_file}")
-        
-        # Determine which version to use for downstream steps
-        # ALWAYS use revised concept when Step 4 runs (it's the output of this step)
-        if improvement is not None:
-            winner = comparison.get("winner", "original")
-            if winner == "revised" and improvement > 0:
-                print(f"  → Using REVISED concept for downstream steps (scored higher)")
-                final_concept = revised_script
-                final_concept_file = revised_file
-            elif winner == "revised" or improvement >= 0:
+                # If comparative judging failed, still use revised (it's the output of Step 4)
                 print(f"  → Using REVISED concept for downstream steps (Step 4 output)")
                 final_concept = revised_script
                 final_concept_file = revised_file
-            else:
-                print(f"  → Using REVISED concept for downstream steps (Step 4 output, despite lower score)")
-                final_concept = revised_script
-                final_concept_file = revised_file
-        else:
-            # If comparative judging failed, still use revised (it's the output of Step 4)
-            print(f"  → Using REVISED concept for downstream steps (Step 4 output)")
-            final_concept = revised_script
-            final_concept_file = revised_file
             
             print()
-        step_times["Step 4: Revise Concept"] = time.time() - step4_start
-    else:
-        print(f"  ⏭  Skipped (run_step_4=false)")
-        step_times["Step 4: Revise Concept"] = 0.0
-        # When skipping, check if revised file exists, otherwise use original
-        if revised_file.exists():
-            with open(revised_file, 'r', encoding='utf-8') as f:
-                final_concept = f.read()
-            final_concept_file = revised_file
-            print(f"  ✓ Using existing revised: {revised_file}\n")
+            step_times["Step 4: Revise Concept"] = time.time() - step4_start
         else:
-            final_concept = concept_content
-            final_concept_file = concept_file
-            print(f"  ✓ Using original: {concept_file}\n")
+            print(f"  ⏭  Skipped (run_step_4=false)")
+            step_times["Step 4: Revise Concept"] = 0.0
+            # When skipping, check if revised file exists, otherwise use original
+            if revised_file.exists():
+                with open(revised_file, 'r', encoding='utf-8') as f:
+                    final_concept = f.read()
+                final_concept_file = revised_file
+                print(f"  ✓ Using existing revised: {revised_file}\n")
+            else:
+                final_concept = concept_content
+                final_concept_file = concept_file
+                print(f"  ✓ Using original: {concept_file}\n")
+    else:
+        # direct_concept mode: Step 4 already done in Step 0c
+        final_concept = concept_content
+        final_concept_file = concept_file
+        print("  ✓ Using concept from Step 0 (revision already done in Step 0c if enabled)\n")
     
     # Step 5: Generate universe and characters
     print("=" * 80)

@@ -1,0 +1,45 @@
+{
+  "json_file": "s5_generate_universe/outputs/sunvue_1120_1958/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/sunvue_transformation_instant_upgrade_advanced_gpt_5.1_universe_characters.json",
+  "json_prefix": "sunvue_transformation_instant_upgrade_advanced_gpt_5.1",
+  "generated_at": "2025-11-20 20:05:00",
+  "elements": [
+    {
+      "element_name": "Urban Crosswalk/Sidewalk",
+      "element_type": "location",
+      "images": {
+        "default": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_1958/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/locations/urban_crosswalksidewalk/urban_crosswalksidewalk.png"
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Aviator Classic Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "default": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_1958/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/props/sunvue_aviator_classic_sunglasses/sunvue_aviator_classic_sunglasses.png"
+        }
+      }
+    },
+    {
+      "element_name": "Rising Creative Director",
+      "element_type": "character",
+      "images": {
+        "Without Sunglasses - Overlooked": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_1958/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/characters/rising_creative_director/rising_creative_director_without_sunglasses_overlooked.png",
+          "is_original": true,
+          "references_original": null
+        },
+        "With Aviators - Commanding Presence": {
+          "url": null,
+          "filepath": "s6_generate_reference_images/outputs/sunvue_1120_1958/sunvue_transformation_instant_upgrade_advanced_gpt_5.1/characters/rising_creative_director/rising_creative_director_with_aviators_commanding_presence.png",
+          "is_original": false,
+          "references_original": "Without Sunglasses - Overlooked"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+**CONCEPT TITLE**: Golden Hour Switch  
+
+**INPUTS CONFIRMED**:  
+- **FRAME_STYLE**: Aviator Classic  
+- **LENS_TYPE**: Polarized Sunglasses  
+- **AD_STYLE**: Transformation - Instant Upgrade  
+
+**GENRE USED**: G - Transformation  
+
+**STYLE FOCUS**: PRIMARY: Urban professional signature look in golden hour city light. SECONDARY: Polarized G-15 clarity, UV protection, all-day comfort.  
+
+**5-SCENE AD CONCEPT**:  
+
+**SCENE 1**: Young professional in muted outfit checks reflection in office window, blending into bustling city crowd, eyes squinting.  
+
+**SCENE 2**: They pause at boutique window; SunVue Aviator Classics glow in golden light, gold frame around G-15 green polarized lenses.  
+
+**SCENE 3**: In-store mirror close-up as they slide on gold Aviators with acetate tips; glare vanishes, city reflections sharpen, posture straightens.  
+
+**SCENE 4**: Now striding through golden streets, lenses catching skyline; coworkers double-take, doors open, cab ride view crisp and comfortable.  
+
+**SCENE 5**: On rooftop at sunset, close-up of Aviators on table; they smile, friends nod, screen fades to SunVue "Never Hide".  
+
+---
+
+**AUDIENCE JOURNEY**: Viewers imagine stepping out of anonymity into a defined, unforgettable city persona the instant they put on these Aviators.  
+
+**WHY THIS WORKS FOR EYEWEAR**: The SunVue Aviator Classic becomes the turning point from generic professional to iconic urban cool, making the frames a personal signature. Polarized G-15 lenses, 100% UV protection, and anti-reflective comfort are woven into aspirational city moments, proving style and performance arrive together. The rebellious-yet-classic attitude aligns with "Never Hide," positioning the frames as an attitude, not just an accessory.  
+
+**TAGLINE/END CARD**: Hero shot of SunVue Aviator Classic floating against a glowing city skyline, G-15 green lenses reflecting sunset; SunVue logo appears with bold tagline: **"Never Hide."**  
+
+---
+
+**QUALITY CHECKLIST**
+
+**EYEWEAR FOCUS**:  
+- [x] Frames are the hero (not just present)  
+- [x] Style benefit clear and aspirational  
+- [x] Frames visible in at least 3 scenes  
+- [x] Includes putting on/adjusting frames moment  
+- [x] Makes viewers want THESE specific frames  
+
+**BRAND ALIGNMENT**:  
+- [x] Matches input FRAME_STYLE  
+- [x] Fits STYLE_PERSONA  
+- [x] Appropriate for WEARING_OCCASION  
+- [x] Embodies BRAND_PERSONALITY  
+- [x] Delivers VALUE_PROPOSITION  
+
+**QUALITY**:  
+- [x] Would make viewers feel something  
+- [x] Story is simple but memorable  
+- [x] Style transformation is believable  
+- [x] Brand integration feels natural  
+- [x] Concept feels fresh for eyewear

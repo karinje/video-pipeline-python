@@ -1,0 +1,37 @@
+{
+  "json_file": "../../s5_generate_universe/outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised/sunvue_focus_finds_you_revised_universe_characters.json",
+  "json_prefix": "sunvue_focus_finds_you_revised",
+  "generated_at": "2025-11-21 11:47:57",
+  "elements": [
+    {
+      "element_name": "SunVue Aviator Classic Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "canonical": {
+          "filepath": "../outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised/props/sunvue_aviator_classic_sunglasses/sunvue_aviator_classic_sunglasses_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "Main Character - Urban Professional",
+      "element_type": "character",
+      "images": {
+        "canonical": {
+          "filepath": "../outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised/characters/main_character_urban_professional/main_character_urban_professional_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "Urban City Streets",
+      "element_type": "location",
+      "images": {
+        "canonical": {
+          "filepath": "../outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised/locations/urban_city_streets/urban_city_streets_canonical.png",
+          "url": null
+        }
+      }
+    }
+  ]
+}

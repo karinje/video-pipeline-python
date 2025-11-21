@@ -96,13 +96,12 @@ def generate_image(prompt, image_input=None, output_path=None, debug_dir=None, d
     
     # Map resolution to nano-banana-pro format
     # nano-banana-pro supports: "1K", "2K", "4K"
-    # Map 480p/720p -> 2K, 1080p -> 2K (or 4K if available)
     resolution_map = {
-        "480p": "2K",
+        "480p": "1K",
         "720p": "2K",
-        "1080p": "2K"  # Use 2K for all, or "4K" if higher quality needed
+        "1080p": "2K"
     }
-    nano_resolution = "2K"  # Default
+    nano_resolution = "1K"  # Default
     if resolution:
         nano_resolution = resolution_map.get(resolution, "2K")
     
@@ -226,19 +225,19 @@ def generate_image(prompt, image_input=None, output_path=None, debug_dir=None, d
         return None
 
 
-def generate_element_images(element, element_type, output_dir, json_prefix):
+def generate_element_images(element, element_type, output_dir, json_prefix, resolution="480p"):
     """
-    Generate images for a single element (character, location, or prop).
-    Handles both single-version and multi-version elements.
+    Generate canonical image for a single element (character, location, or prop).
     
     Args:
         element: Element dict from JSON
         element_type: 'characters', 'locations', or 'props'
         output_dir: Base output directory
-        json_prefix: Prefix for folder naming (e.g., "rolex_achievement_inspirational_advanced_claude_sonnet_4.5")
+        json_prefix: Prefix for folder naming
+        resolution: Image resolution - "480p" (1K), "720p" (2K), or "1080p" (2K) for nano-banana-pro
     
     Returns:
-        Dict with element name and generated image paths/URLs
+        Dict with element_name, element_type, and images dict containing canonical image info
     """
     element_name = element.get("name", "unknown")
     element_slug = slugify(element_name)
@@ -254,131 +253,53 @@ def generate_element_images(element, element_type, output_dir, json_prefix):
     # Debug directory for this element - place inside output_dir
     debug_base_dir = os.path.join(output_dir, "debug", "nano-banana-prompts", json_prefix, element_type, element_slug)
     
-    # Check if element has multiple versions
-    has_multiple_versions = element.get("has_multiple_versions", False)
+    # Single canonical version per element
+    print(f"    Generating canonical version...")
     
-    if has_multiple_versions and "versions" in element:
-        # Sequential generation for multi-version elements
-        versions = element["versions"]
-        previous_image_url = None  # URL from Replicate (preferred)
-        previous_image_path = None  # Local file path (fallback for upload)
-        
-        for version in versions:
-            version_name = version.get("version_name", "unknown")
-            version_slug = slugify(version_name)
-            is_original = version.get("is_original", False)
-            
-            # Create output path
-            filename = f"{element_slug}_{version_slug}.png"
-            filepath = os.path.join(output_dir, json_prefix, element_type, element_slug, filename)
-            
-            # Get image generation prompt
-            image_prompt = version.get("image_generation_prompt", "")
-            if not image_prompt:
-                print(f"    ⚠ Skipping {version_name}: No image_generation_prompt found")
-                continue
-            
-            print(f"    Generating: {version_name} {'(original)' if is_original else '(transformed)'}")
-            
-            # For transformed versions, use previous image as input
-            image_input = None
-            if not is_original:
-                # Prefer URL from previous generation (if available)
-                if previous_image_url:
-                    image_input = [previous_image_url]
-                    print(f"      Using previous version URL: {previous_image_url}")
-                # Fallback: pass file path - Replicate SDK will handle upload automatically
-                elif previous_image_path and os.path.exists(previous_image_path):
-                    # Pass file path - Replicate Python SDK accepts file paths and handles upload
-                    image_input = [previous_image_path]
-                    print(f"      Using previous version file path: {previous_image_path}")
-                    print(f"      (Replicate SDK will upload automatically)")
-            
-            # Debug directory for this version
-            version_slug = slugify(version_name)
-            debug_dir = os.path.join(debug_base_dir, version_slug)
-            debug_name = version_slug
-            
-            # Generate image
-            image_url = generate_image(
-                prompt=image_prompt,
-                image_input=image_input,
-                output_path=filepath,
-                debug_dir=debug_dir,
-                debug_name=debug_name
-            )
-            
-            if filepath and os.path.exists(filepath):
-                result["images"][version_name] = {
-                    "url": image_url if image_url else None,
+    # Create output path
+    filename = f"{element_slug}_canonical.png"
+    filepath = os.path.join(output_dir, json_prefix, element_type, element_slug, filename)
+    
+    # Get image generation prompt
+    image_prompt = element.get("image_generation_prompt", "")
+    if not image_prompt:
+        print(f"    ⚠ Skipping: No image_generation_prompt found")
+        return []
+    
+    # Generate image (no reference images for canonical version)
+    print(f"      Prompt: {image_prompt[:100]}...")
+    image_url = generate_image(
+        prompt=image_prompt,
+        image_input=None,  # No reference for canonical
+        output_path=filepath,
+        debug_dir=debug_base_dir,
+        debug_name="canonical",
+        resolution=resolution
+    )
+    
+    # Check if file was actually saved (generate_image returns None if no URL but file saved)
+    if os.path.exists(filepath):
+        print(f"  ✓ Saved: {filepath}")
+        return {
+            "element_name": element_name,
+            "element_type": element_type[:-1],  # Remove 's' from plural
+            "images": {
+                "canonical": {
                     "filepath": filepath,
-                    "is_original": is_original,
-                    "references_original": version.get("references_original_version")
+                    "url": image_url if isinstance(image_url, str) and image_url.startswith('http') else None
                 }
-                # For next version: we need a URL for image_input
-                # If we got a URL from Replicate, use it
-                if image_url and (image_url.startswith('http://') or image_url.startswith('https://')):
-                    previous_image_url = image_url
-                    previous_image_path = filepath
-                    print(f"      ✓ Image saved with URL: {image_url}")
-                else:
-                    # No URL from Replicate - we'll need to upload the file
-                    # But for now, store the path and we'll handle upload in next iteration
-                    previous_image_url = None
-                    previous_image_path = filepath
-                    print(f"      ✓ Image saved to: {filepath}")
-                    print(f"      ⚠ No URL from Replicate - will try file object for next version")
-            else:
-                print(f"    ⚠ Image saved but no URL available (can't be used as reference for next version)")
-                previous_image_url = None
-                previous_image_path = None
-    
-    else:
-        # Single version - simple generation
-        image_prompt = element.get("image_generation_prompt", "")
-        if not image_prompt:
-            # Try description as fallback
-            image_prompt = element.get("description", "")
-        
-        if not image_prompt:
-            print(f"    ⚠ Skipping: No image_generation_prompt or description found")
-            return result
-        
-        # Create output path
-        filename = f"{element_slug}.png"
-        filepath = os.path.join(output_dir, json_prefix, element_type, element_slug, filename)
-        
-        print(f"    Generating single version...")
-        
-        # Debug directory for single version
-        debug_dir = os.path.join(debug_base_dir, "default")
-        debug_name = element_slug
-        
-        # Generate image
-        image_url = generate_image(
-            prompt=image_prompt,
-            output_path=filepath,
-            debug_dir=debug_dir,
-            debug_name=debug_name
-        )
-        
-        if filepath and os.path.exists(filepath):
-            result["images"]["default"] = {
-                "url": image_url if image_url else None,
-                "filepath": filepath
             }
-            if image_url:
-                print(f"      ✓ Image saved with URL: {image_url}")
-            else:
-                print(f"      ✓ Image saved to: {filepath}")
-                print(f"      ⚠ No URL from Replicate")
-        else:
-            print(f"    ⚠ Image generation failed - file not found: {filepath}")
-    
-    return result
+        }
+    else:
+        print(f"    ❌ Failed to generate canonical image")
+        return {
+            "element_name": element_name,
+            "element_type": element_type[:-1],
+            "images": {}
+        }
 
 
-def generate_all_images(json_path, output_base_dir="universe_characters", max_workers=5):
+def generate_all_images(json_path, output_base_dir="universe_characters", max_workers=5, resolution="480p"):
     """
     Main function: Generate all images from universe_characters.json.
     
@@ -386,6 +307,7 @@ def generate_all_images(json_path, output_base_dir="universe_characters", max_wo
         json_path: Path to universe_characters.json file
         output_base_dir: Base directory for output images
         max_workers: Number of parallel workers for image generation (default: 5)
+        resolution: Image resolution - "480p" (1K), "720p" (2K), or "1080p" (2K) for nano-banana-pro
     """
     print(f"\n{'='*80}")
     print("UNIVERSE/CHARACTERS IMAGE GENERATOR")
@@ -444,7 +366,8 @@ def generate_all_images(json_path, output_base_dir="universe_characters", max_wo
                 element,
                 element_type,
                 output_base_dir,
-                json_prefix
+                json_prefix,
+                resolution
             ): (element_type, element.get("name", "unknown"))
             for element_type, element in tasks
         }
@@ -481,11 +404,17 @@ def generate_all_images(json_path, output_base_dir="universe_characters", max_wo
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python generate_universe_images.py <universe_characters.json>")
-        print("Example: python generate_universe_images.py script_generation/rolex_1115_1833/rolex_achievement_inspirational_advanced_claude_sonnet_4.5/rolex_achievement_inspirational_advanced_claude_sonnet_4.5_universe_characters.json")
+        print("Usage: python generate_universe_images.py <universe_characters.json> [output_base_dir] [max_workers] [resolution]")
+        print("Example: python generate_universe_images.py ../../s5_generate_universe/outputs/batch/concept/concept_universe_characters.json ../outputs/batch 5 480p")
+        print("Default output_base_dir: ../outputs")
+        print("Default max_workers: 5")
+        print("Default resolution: 480p (1K)")
         sys.exit(1)
     
     json_path = sys.argv[1]
+    output_base_dir = sys.argv[2] if len(sys.argv) > 2 else "../outputs"
+    max_workers = int(sys.argv[3]) if len(sys.argv) > 3 else 5
+    resolution = sys.argv[4] if len(sys.argv) > 4 else "480p"
     
     if not os.path.exists(json_path):
         print(f"ERROR: File not found: {json_path}")
@@ -498,5 +427,5 @@ if __name__ == "__main__":
         print(f"ERROR: {e}")
         sys.exit(1)
     
-    generate_all_images(json_path)
+    generate_all_images(json_path, output_base_dir, max_workers, resolution)
 

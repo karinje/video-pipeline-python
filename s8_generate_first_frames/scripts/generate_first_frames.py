@@ -33,66 +33,41 @@ from generate_universe_images import generate_image, get_replicate_token, slugif
 
 def find_reference_images_for_scene(scene_data, universe_chars, universe_images_dir, max_images=5, image_summary=None):
     """
-    Find reference image file paths for elements used in MULTIPLE scenes only.
+    Find canonical reference image file paths for elements used in this scene.
     Uses image_generation_summary.json to map element names to actual file paths.
     Prioritizes: characters > props > locations
     Limits to max_images (nano-banana maximum is 5).
     
-    Returns tuple of (list of image paths, list of element names for prompt).
+    Returns tuple of (list of image paths, list of element names).
     """
     reference_images = []
     element_names = []  # Track which elements we're providing
-    elements_used = scene_data.get("elements_used", {})
+    elements_used = scene_data.get("elements_used", [])  # Simple list of element names
     scene_num = scene_data.get("scene_number", 1)
     
-    # Map character/location/prop names to their image files
-    # Parse version names from elements_used (format: "Element Name - Version Name")
-    def parse_element_name(element_str):
-        """Parse element name and version from string like 'Element Name - Version Name' or just 'Element Name'."""
-        if " - " in element_str:
-            base_name, version_name = element_str.split(" - ", 1)
-            return base_name.strip(), version_name.strip()
-        return element_str.strip(), None
+    # Separate elements by type (infer from universe_chars)
+    characters = []
+    props = []
+    locations = []
     
-    characters = elements_used.get("characters", [])
-    props = elements_used.get("props", [])
-    locations = elements_used.get("locations", [])
+    for elem_name in elements_used:
+        # Check if it's a character
+        if any(char.get('name') == elem_name for char in universe_chars.get('characters', [])):
+            characters.append(elem_name)
+        # Check if it's a prop
+        elif any(prop.get('name') == elem_name for prop in universe_chars.get('universe', {}).get('props', [])):
+            props.append(elem_name)
+        # Check if it's a location
+        elif any(loc.get('name') == elem_name for loc in universe_chars.get('universe', {}).get('locations', [])):
+            locations.append(elem_name)
     
     # Helper to find image path using image_summary (actual generated files)
-    def find_image_path_via_summary(element_name, element_type, scene_num, expected_version_name=None):
-        """Find image path using image_generation_summary.json (most reliable)."""
+    def find_image_path_via_summary(element_name, element_type):
+        """Find canonical image path using image_generation_summary.json."""
         if not image_summary:
             return (None, None)
         
-        # First, find the matching universe element
-        matching_universe_element = None
-        for element in (universe_chars.get("characters", []) if element_type == "character" else 
-                       universe_chars.get("universe", {}).get("locations", []) if element_type == "location" else
-                       universe_chars.get("universe", {}).get("props", [])):
-            universe_element_name = element.get("name", "")
-            universe_base_name = universe_element_name.split("(")[0].strip() if "(" in universe_element_name else universe_element_name
-            element_name_base = element_name.split("(")[0].strip() if "(" in element_name else element_name
-            
-            # Match by: exact name, base name, or if scene element name appears in universe name
-            if (universe_element_name == element_name or 
-                universe_base_name == element_name_base or 
-                element_name in universe_element_name or
-                element_name_base in universe_base_name or
-                universe_base_name in element_name_base):
-                matching_universe_element = element
-                break
-        
-        if not matching_universe_element:
-            return (None, None)
-        
-        scenes_used = matching_universe_element.get("scenes_used", [])
-        if len(scenes_used) < 2:
-            return (None, None)  # Skip single-scene elements
-        
-        # Debug: print what we're looking for
-        # print(f"DEBUG: Looking for {element_name} ({element_type}), found universe element: {matching_universe_element.get('name')}")
-        
-        # Now find the matching summary element by checking if it matches the universe element
+        # Find matching element in image summary
         for element_data in image_summary.get("elements", []):
             summary_element_name = element_data.get("element_name", "")
             summary_element_type = element_data.get("element_type", "")
@@ -107,262 +82,47 @@ def find_reference_images_for_scene(scene_data, universe_chars, universe_images_
             if not type_match:
                 continue
             
-            # Match summary element to universe element by name similarity
-            summary_base = summary_element_name.split("(")[0].strip() if "(" in summary_element_name else summary_element_name
-            universe_base = matching_universe_element.get("name", "").split("(")[0].strip() if "(" in matching_universe_element.get("name", "") else matching_universe_element.get("name", "")
-            
-            # Normalize for comparison (handle plurals word-by-word)
-            def normalize_words(name):
-                words = name.lower().strip().split()
-                normalized = []
-                for word in words:
-                    # Remove common plural endings
-                    if word.endswith('s') and len(word) > 3:
-                        normalized.append(word[:-1])
-                    else:
-                        normalized.append(word)
-                return ' '.join(normalized)
-            
-            summary_norm = normalize_words(summary_base)
-            universe_norm = normalize_words(universe_base)
-            
-            # Check if they refer to the same element (strict matching for name variations)
-            # Only match if names are actually similar, not just sharing common words
-            exact_match = summary_element_name == matching_universe_element.get("name")
-            base_match = summary_base.lower() == universe_base.lower()
-            normalized_match = summary_norm == universe_norm
-            set_match = set(summary_norm.split()) == set(universe_norm.split())  # Same words (order-independent)
-            
-            # Only use substring matching if most words match (not just one word like "chef")
-            words1 = set(summary_norm.split())
-            words2 = set(universe_norm.split())
-            common_words = words1 & words2
-            # Require at least 2 words in common, or if one name is very short, require all words
-            word_overlap = len(common_words) >= 2 or (min(len(words1), len(words2)) <= 2 and len(common_words) == min(len(words1), len(words2)))
-            
-            if (exact_match or base_match or normalized_match or set_match or word_overlap):
-                
-                # Find the version used in this scene
+            # Simple name matching
+            if summary_element_name.lower().strip() == element_name.lower().strip():
+                # Found match - get canonical image
                 images = element_data.get("images", {})
-                if matching_universe_element.get("has_multiple_versions") and "versions" in matching_universe_element:
-                    # If expected_version_name is provided from elements_used, use it for exact matching
-                    # Otherwise, find version by scene_num
-                    matching_version = None
-                    if expected_version_name:
-                        # Look for version with matching name
-                        for version in matching_universe_element.get("versions", []):
-                            if (slugify(version.get("version_name", "")) == slugify(expected_version_name) or
-                                version.get("version_name", "").lower().strip() == expected_version_name.lower().strip()):
-                                matching_version = version
-                                break
-                    else:
-                        # Fallback: find version by scene_num
-                        for version in matching_universe_element.get("versions", []):
-                            version_scenes = version.get("scenes_used", [])
-                            if scene_num in version_scenes:
-                                matching_version = version
-                                break
-                    
-                    if matching_version:
-                        version_name = matching_version.get("version_name", "")
-                        is_original = matching_version.get("is_original", True)
-                        # Match image by exact version name match
-                        exact_match = None
-                        fallback_match = None
-                        
-                        # First pass: look for exact matches only (strict matching)
-                        for img_name, img_data in images.items():
-                            filepath = img_data.get("filepath")
-                            
-                            if not filepath or not os.path.exists(filepath):
-                                continue
-                            
-                            # STRICT exact match: slug match or exact string match (case-insensitive)
-                            if (slugify(img_name) == slugify(version_name) or 
-                                version_name.lower().strip() == img_name.lower().strip()):
-                                exact_match = (filepath, summary_element_name)
-                                break  # Found exact match, use it immediately
-                        
-                        # If exact match found, return it immediately
-                        if exact_match:
-                            return exact_match
-                        
-                        # Second pass: fallback to is_original matching (only if no exact match)
-                        for img_name, img_data in images.items():
-                            img_is_original = img_data.get("is_original", True)
-                            filepath = img_data.get("filepath")
-                            
-                            if not filepath or not os.path.exists(filepath):
-                                continue
-                            
-                            # Fallback: match by is_original status
-                            if img_is_original == is_original:
-                                fallback_match = (filepath, summary_element_name)
-                                break  # Found fallback match, use it
-                        
-                        # Return fallback match if found
-                        if fallback_match:
-                            return fallback_match
-                else:
-                    # Single version - use first available image
-                    for img_name, img_data in images.items():
-                        filepath = img_data.get("filepath")
-                        if filepath and os.path.exists(filepath):
-                            return (filepath, summary_element_name)
+                
+                # Look for canonical version
+                canonical_img = images.get("canonical", {})
+                filepath = canonical_img.get("filepath")
+                
+                if filepath and os.path.exists(filepath):
+                    return (filepath, summary_element_name)
         
         return (None, None)
     
-    # Helper to find image path and check if element appears in multiple scenes
-    def find_image_path(element_name, element_type, scene_num):
-        # First try using image_summary (most reliable - uses actual generated files)
-        img_path, element_name_found = find_image_path_via_summary(element_name, element_type, scene_num)
-        if img_path:
-            return (img_path, element_name_found)
-        # Find element in universe_chars
-        if element_type == "character":
-            elements_list = universe_chars.get("characters", [])
-        elif element_type == "prop":
-            elements_list = universe_chars.get("universe", {}).get("props", [])
-        else:  # location
-            elements_list = universe_chars.get("universe", {}).get("locations", [])
-        
-        for element in elements_list:
-            # Match by exact name or by base name (e.g., "Main Chef" matches "Main Chef (Protagonist)")
-            element_full_name = element.get("name", "")
-            element_base_name = element_full_name.split("(")[0].strip() if "(" in element_full_name else element_full_name
-            if element.get("name") == element_name or element_base_name == element_name or element_name in element_full_name:
-                # ONLY include if element appears in MULTIPLE scenes
-                scenes_used = element.get("scenes_used", [])
-                if len(scenes_used) < 2:
-                    # Skip - only appears in one scene, no need for reference
-                    continue
-                
-                # Use the element's full name from universe for slug
-                element_slug = slugify(element_full_name)
-                
-                # Check which version is used in this scene
-                has_multiple_versions = element.get("has_multiple_versions", False)
-                
-                if has_multiple_versions and "versions" in element:
-                    # Find version used in this scene
-                    for version in element.get("versions", []):
-                        version_scenes = version.get("scenes_used", [])
-                        if scene_num in version_scenes:
-                            version_name = version.get("version_name", "")
-                            version_slug = slugify(version_name)
-                            
-                            # Construct image path - try multiple possible directory names
-                            image_filename = f"{element_slug}_{version_slug}.jpg"
-                            possible_dirs = [
-                                element_slug,  # Try exact slug
-                                slugify(element_name),  # Try scene's element name
-                                slugify(element_base_name),  # Try base name without parentheses
-                            ]
-                            
-                            for dir_name in possible_dirs:
-                                image_path = os.path.join(
-                                    universe_images_dir,
-                                    "characters" if element_type == "character" else "locations",
-                                    dir_name,
-                                    image_filename
-                                )
-                                if os.path.exists(image_path):
-                                    return (image_path, element_full_name)
-                            
-                            # Also try with just version slug as filename (if directory structure is different)
-                            alt_filename = f"{dir_name}_{version_slug}.jpg"
-                            for dir_name in possible_dirs:
-                                alt_path = os.path.join(
-                                    universe_images_dir,
-                                    "characters" if element_type == "character" else "locations",
-                                    dir_name,
-                                    alt_filename
-                                )
-                                if os.path.exists(alt_path):
-                                    return (alt_path, element_full_name)
-                else:
-                    # Single version element - try multiple possible directory names
-                    image_filename = f"{element_slug}.jpg"
-                    possible_dirs = [
-                        element_slug,  # Try exact slug
-                        slugify(element_name),  # Try scene's element name
-                        slugify(element_base_name),  # Try base name without parentheses
-                    ]
-                    
-                    # Props might be in different location
-                    if element_type == "prop":
-                        for dir_name in possible_dirs:
-                            image_path = os.path.join(universe_images_dir, "props", dir_name, image_filename)
-                            if os.path.exists(image_path):
-                                return (image_path, element_full_name)
-                    else:
-                        for dir_name in possible_dirs:
-                            image_path = os.path.join(
-                                universe_images_dir,
-                                "characters" if element_type == "character" else "locations",
-                                dir_name,
-                                image_filename
-                            )
-                            if os.path.exists(image_path):
-                                return (image_path, element_full_name)
-                        
-                        # Also try with dir_name as prefix in filename
-                        for dir_name in possible_dirs:
-                            alt_filename = f"{dir_name}.jpg"
-                            alt_path = os.path.join(
-                                universe_images_dir,
-                                "characters" if element_type == "character" else "locations",
-                                dir_name,
-                                alt_filename
-                            )
-                            if os.path.exists(alt_path):
-                                return (alt_path, element_full_name)
-        
-        return (None, None)
-    
-    # PRIORITY 1: Collect reference images for characters (appearing in multiple scenes)
+    # Collect canonical reference images for each element type
     character_images = []
     character_names = []
     seen_paths = set()  # Track seen image paths to avoid duplicates
-    for char_str in characters:
-        base_name, version_name = parse_element_name(char_str)
-        img_path, element_name = find_image_path_via_summary(base_name, "character", scene_num, version_name)
-        if not img_path:
-            # Fallback to old method if summary lookup fails
-            img_path, element_name = find_image_path(char_str, "character", scene_num)
-        if img_path:
-            if img_path not in seen_paths:
+    
+    for char_name in characters:
+        img_path, element_name = find_image_path_via_summary(char_name, "character")
+        if img_path and img_path not in seen_paths:
                 character_images.append(img_path)
                 character_names.append(element_name)
                 seen_paths.add(img_path)
-            else:
-                print(f"    DEBUG: Duplicate path for {char_str}: {img_path}")
-        else:
-            print(f"    DEBUG: No image found for {char_str} (character, scene {scene_num})")
     
-    # PRIORITY 2: Collect reference images for props (appearing in multiple scenes)
+    # Collect props
     prop_images = []
     prop_names = []
-    for prop_str in props:
-        base_name, version_name = parse_element_name(prop_str)
-        img_path, element_name = find_image_path_via_summary(base_name, "prop", scene_num, version_name)
-        if not img_path:
-            # Fallback to old method if summary lookup fails
-            img_path, element_name = find_image_path(prop_str, "prop", scene_num)
+    for prop_name in props:
+        img_path, element_name = find_image_path_via_summary(prop_name, "prop")
         if img_path and img_path not in seen_paths:
             prop_images.append(img_path)
             prop_names.append(element_name)
             seen_paths.add(img_path)
     
-    # PRIORITY 3: Collect reference images for locations (appearing in multiple scenes)
+    # Collect locations
     location_images = []
     location_names = []
-    for loc_str in locations:
-        base_name, version_name = parse_element_name(loc_str)
-        img_path, element_name = find_image_path_via_summary(base_name, "location", scene_num, version_name)
-        if not img_path:
-            # Fallback to old method if summary lookup fails
-            img_path, element_name = find_image_path(loc_str, "location", scene_num)
+    for loc_name in locations:
+        img_path, element_name = find_image_path_via_summary(loc_name, "location")
         if img_path and img_path not in seen_paths:
             location_images.append(img_path)
             location_names.append(element_name)
@@ -418,20 +178,15 @@ def generate_single_first_frame(scene_data, universe_chars, universe_images_dir,
         print(f"  ⚠ Scene {scene_num}: No first_frame_image_prompt found, skipping")
         return (scene_num, None)
     
-    # Find reference images for elements appearing in MULTIPLE scenes only
+    # Find canonical reference images for elements
     # Limit to 5 images (nano-banana maximum)
     # Priority: characters > props > locations
-    # Use image_summary to map element names to actual file paths
     reference_images, element_names = find_reference_images_for_scene(scene_data, universe_chars, universe_images_dir, max_images=5, image_summary=image_summary)
     
-    # Enhance prompt to mention which reference images are provided
-    reference_info = ""
-    if element_names:
-        reference_info = f"\n\nREFERENCE IMAGES PROVIDED ({len(element_names)}): {', '.join(element_names)}\nCRITICAL: Use these reference images as visual references for character/location consistency. Blend them seamlessly and naturally into the scene - do NOT literally insert them as-is. Integrate the visual style, appearance, and key features from the references into the complete scene composition. You don't need to show all reference elements if the scene doesn't require it - focus on the gist and natural integration. The final image should look like a cohesive, natural scene, not a composite of separate images."
-    else:
-        reference_info = "\n\nNO REFERENCE IMAGES: Generate the scene from scratch following the prompt description."
-    
-    enhanced_prompt = f"{first_frame_prompt}{reference_info}"
+    # The first_frame_prompt already contains reference image handling instructions
+    # (Step 7 includes "REFERENCE IMAGES ATTACHED:" section with canonical states and modifications)
+    # Just pass it directly with the reference images
+    enhanced_prompt = first_frame_prompt
     
     # Create output filename (nano-banana-pro outputs PNG)
     first_frame_filename = f"{base_name}_p{scene_num}_first_frame.png"

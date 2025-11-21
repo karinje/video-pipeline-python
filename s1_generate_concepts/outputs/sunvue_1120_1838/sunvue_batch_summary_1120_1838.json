@@ -1,0 +1,45 @@
+{
+  "brand_name": "SunVue",
+  "batch_folder": "sunvue_1120_1838",
+  "creative_direction": "Create a 30 second Instagram ad for sunglasses with urban professional style, signature look transformation, and golden hour lighting",
+  "timestamp": "2025-11-20T18:39:04.600735",
+  "total_runs": 4,
+  "successful": 2,
+  "failed": 2,
+  "results": [
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "advanced",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "status": "ERROR",
+      "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'thinking.enabled.budget_tokens: Input should be greater than or equal to 1024'}, 'request_id': 'req_011CVL6q2bABPdgK8CeYnEbs'}"
+    },
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "generic",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "status": "ERROR",
+      "error": "Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'thinking.enabled.budget_tokens: Input should be greater than or equal to 1024'}, 'request_id': 'req_011CVL6q2ZAzRJT8XYoDzh1R'}"
+    },
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "generic",
+      "provider": "openai",
+      "model": "gpt-5.1",
+      "status": "SUCCESS",
+      "file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_1838/sunvue_achievement_inspirational_generic_gpt_5.1.txt",
+      "prompt_file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_1838/sunvue_achievement_inspirational_generic_gpt_5.1_prompt.txt"
+    },
+    {
+      "ad_style": "Achievement - Inspirational",
+      "template": "advanced",
+      "provider": "openai",
+      "model": "gpt-5.1",
+      "status": "SUCCESS",
+      "file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_1838/sunvue_achievement_inspirational_advanced_gpt_5.1.txt",
+      "prompt_file": "/Users/sanjaykarinje/git/video-gen/s1_generate_concepts/outputs/sunvue_1120_1838/sunvue_achievement_inspirational_advanced_gpt_5.1_prompt.txt"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+pipeline_mode:
+  start_from: direct_concept
+
+input:
+  config_file: s1_generate_concepts/inputs/configs/sunglasses.json
+  direct_concept_text: |
+    Accidental Style Icon
+    A totally average person keeps getting mistaken for a celebrity, 
+    influencer, or fashion model everywhere they go—just because of 
+    their eyewear. Paparazzi, VIP treatment, and red-carpet moments 
+    pile up, while the character insists they're just running errands.
+
+pipeline_steps:
+  run_concept_expansion: true
+  run_concept_judging: true
+  run_concept_revision: true
+  # Skip video generation for now
+  run_step_5: false
+  run_step_6: false
+  run_step_7: false
+  run_step_8: false
+  run_step_9: false
+  run_step_10: false
+
+output:
+  step0_output_dir: s0_expand_concept/outputs
+
+video_settings:
+  num_clips: 5
+  clip_duration: 6
+  resolution: "1080p"
+  aspect_ratio: "16:9"
+  enable_visual_effects: true
+
+models:
+  llm_model: openai/gpt-5.1
+  llm_thinking: 1500
+
+evaluation:
+  judge_model: anthropic/claude-sonnet-4-5-20250929
+

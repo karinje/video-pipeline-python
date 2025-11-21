@@ -1,0 +1,88 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Glass Corporate Tower Exterior",
+        "scenes_used": [
+          1,
+          2
+        ],
+        "has_multiple_versions": false,
+        "description": "Modern glass corporate tower exterior during golden hour, floor-to-ceiling reflective glass panels creating mirror-like surface, chrome and steel framework, urban professional district setting, intense warm sunlight creating blinding reflections and glare off glass surfaces, polished granite plaza entrance, contemporary architectural design with sharp geometric lines",
+        "image_generation_prompt": "hyper-realistic photorealistic ultra-realistic documentary photography style, modern corporate glass tower exterior during golden hour, floor-to-ceiling reflective glass facade creating intense mirror reflections, chrome steel framework, authentic urban business district, natural golden hour lighting creating blinding glare off glass panels, real architectural photography, polished granite entrance plaza, sharp geometric contemporary design, professional commercial photography style, lifelike natural lighting, real glass reflections and lens flare effects, 4K detail, authentic corporate architecture"
+      },
+      {
+        "name": "Urban City Environment",
+        "scenes_used": [
+          1,
+          4,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Metropolitan business district with glass skyscrapers and reflective surfaces, modern urban cityscape during golden hour transitioning to sunset, professional corporate environment with polished stone walkways, contemporary architecture with floor-to-ceiling windows, city corridors with reflective glass walls, warm golden-to-orange sunset lighting casting long shadows, urban skyline visible in background",
+        "image_generation_prompt": "hyper-realistic photorealistic ultra-realistic documentary photography style, metropolitan business district at golden hour sunset, modern glass skyscrapers with reflective surfaces, authentic urban cityscape, professional corporate environment, real polished stone walkways, contemporary architecture with massive windows, city corridors with glass walls, natural warm golden orange sunset lighting, long dramatic shadows, lifelike urban skyline background, real city atmosphere, professional architectural photography, natural skin texture on any people present, realistic lighting and reflections, 4K cinematic detail"
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Aviator Sunglasses",
+        "scenes_used": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Classic aviator sunglasses with gold metal frame, double bridge design, teardrop-shaped polarized grey-tinted lenses with subtle gradient, thin adjustable nose pads, straight temple arms with subtle SunVue branding, premium materials with polished finish, lenses show environment reflections including skyline and golden hour light, iconic timeless design combining vintage military styling with modern optical precision",
+        "image_generation_prompt": "hyper-realistic photorealistic ultra-realistic product photography, classic aviator sunglasses with gold metal frame, double bridge teardrop design, polarized grey gradient lenses, lifelike metal texture with authentic polished finish, thin adjustable nose pads, straight temple arms with premium craftsmanship, real light reflections across lenses showing environment and skyline, authentic luxury eyewear materials, professional studio lighting, natural metal reflections, real glass lens material with subtle gradient, 4K macro detail, documentary style product shot, true-to-life colors and textures"
+      },
+      {
+        "name": "Merger Pitch Folder",
+        "scenes_used": [
+          1,
+          4
+        ],
+        "has_multiple_versions": false,
+        "description": "Professional black leather portfolio folder with executive design, sleek rectangular shape approximately 9x12 inches, smooth genuine leather texture with subtle grain, small embossed company logo on front, contains important business documents visible at edges, slight wear suggesting frequent high-stakes use, portfolio held firmly suggesting importance of contents",
+        "image_generation_prompt": "hyper-realistic photorealistic ultra-realistic professional product photography, executive black leather portfolio folder, sleek rectangular shape 9x12 inches, authentic genuine leather texture with natural grain, lifelike material detail, small embossed company logo, real business documents visible at edges, subtle wear patterns from authentic use, professional lighting showing leather texture detail, natural skin texture on hands holding it, realistic shadows and reflections, documentary photography style, 4K detail, real leather material properties"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Main Executive",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Pre-Transformation (Uncertain)",
+          "scenes_used": [
+            1,
+            2
+          ],
+          "description": "Professional executive in early 40s, athletic build approximately 6'0\" tall, sharp facial features with defined jawline, short dark brown hair styled in professional businessman cut with slight grey at temples, clean-shaven with natural skin texture showing slight stress lines, olive-medium skin tone, wearing impeccably tailored charcoal grey three-piece suit with white crisp dress shirt and burgundy silk tie, black leather oxford shoes, posture shows tension with shoulders slightly hunched forward, eyes squinting against harsh glare with visible crow's feet, head tilted down slightly avoiding direct light, gripping black leather folder tightly with white knuckles, facial expression shows uncertainty and stress before high-stakes moment, natural worry lines on forehead",
+          "image_generation_prompt": "hyper-realistic photorealistic ultra-realistic professional portrait photography, real person male executive in early 40s, athletic build 6 feet tall, sharp defined jawline, authentic short dark brown hair with natural grey at temples professional businessman haircut, clean-shaven with lifelike skin texture showing authentic stress lines, olive-medium natural skin tone with realistic pores and texture, impeccably tailored charcoal grey three-piece suit with real fabric texture, crisp white dress shirt authentic cotton texture, burgundy silk tie with natural sheen, black leather oxford shoes, documentary photography style, shoulders slightly hunched showing tension in real body language, eyes naturally squinting against harsh light with authentic crow's feet wrinkles, head tilted down avoiding glare, gripping black leather folder with visible white knuckles and hand tension, facial expression showing genuine uncertainty and stress, natural worry lines on forehead, real human emotions, golden hour lighting, professional corporate photography, natural skin detail, authentic fabric textures, 4K lifelike detail",
+          "is_original": true
+        },
+        {
+          "version_name": "Post-Transformation (Confident)",
+          "scenes_used": [
+            3,
+            4,
+            5
+          ],
+          "description": "Same executive now transformed with commanding presence, same early 40s professional with athletic build 6'0\" tall, identical facial features and defined jawline now set with determination, same short dark brown hair with grey temples perfectly groomed, same clean-shaven olive-medium skin tone but now appearing vibrant and energized, wearing same impeccable charcoal grey three-piece suit now worn with absolute confidence, same burgundy tie, wearing gold-frame SunVue Aviator sunglasses with grey polarized lenses through which eyes are clearly visible showing intensity and power, shoulders back with perfect confident posture, spine straight showing command, jaw firmly set, chin slightly raised, direct unwavering gaze through sunglasses making piercing eye contact, 'Luminous Gaze' effect shows eyes glowing with confidence and presence through lenses rather than hidden, facial muscles relaxed but determined, commanding body language, powerful stance",
+          "image_generation_prompt": "hyper-realistic photorealistic ultra-realistic professional portrait photography, real person same male executive from previous image now transformed, early 40s athletic build 6 feet tall, identical sharp defined jawline now set with determination, same authentic short dark brown hair with natural grey temples perfectly groomed, same clean-shaven olive-medium natural skin tone now vibrant and energized with lifelike texture, same impeccable charcoal grey three-piece suit real fabric texture worn with absolute confidence, same burgundy silk tie, wearing classic gold-frame aviator sunglasses with grey polarized lenses, eyes clearly VISIBLE through lenses showing intensity and power with subtle glow effect, documentary photography style, shoulders back with perfect confident posture authentic body language, spine straight showing command, jaw firmly set, chin slightly raised, direct unwavering eye contact through sunglasses, luminous gaze effect with eyes glowing through lenses rather than hidden, facial muscles relaxed but determined with natural skin detail, commanding presence in real body language, powerful stance, sunset golden hour lighting, professional corporate photography, natural skin texture and pores, authentic fabric details, real glass lens reflections, 4K lifelike cinematic detail, real human confidence transformation",
+          "is_original": false,
+          "references_original_version": "Pre-Transformation (Uncertain)"
+        }
+      ]
+    }
+  ]
+}

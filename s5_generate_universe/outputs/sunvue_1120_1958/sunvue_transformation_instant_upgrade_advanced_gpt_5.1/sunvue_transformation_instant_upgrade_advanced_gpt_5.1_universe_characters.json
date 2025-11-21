@@ -1,0 +1,65 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Urban Crosswalk/Sidewalk",
+        "scenes_used": [
+          1,
+          4
+        ],
+        "has_multiple_versions": false,
+        "description": "Bustling downtown city crosswalk at golden hour with white painted crosswalk stripes, modern glass buildings reflecting warm sunset light, urban professionals walking past, traffic signals visible, wide pedestrian walkway with concrete pavement, metropolitan energy, warm amber and orange sunset glow casting long shadows across the street",
+        "image_generation_prompt": "Hyper-realistic photorealistic downtown city crosswalk at golden hour, ultra-realistic urban scene, documentary photography style, white painted crosswalk stripes on dark asphalt, modern glass skyscrapers reflecting warm amber sunset light, real pedestrians in business casual attire walking past, authentic city traffic signals, wide concrete sidewalk, natural warm golden hour lighting, realistic shadows, professional street photography, lifelike metropolitan atmosphere, natural skin texture on pedestrians, authentic urban environment"
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Aviator Classic Sunglasses",
+        "scenes_used": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "has_multiple_versions": false,
+        "description": "Iconic gold-framed aviator sunglasses with G-15 polarized lenses in deep green tint, teardrop lens shape, double bridge nose piece, thin gold metal temples with subtle branding, classic tortoise temple tips, premium metal construction with brushed gold finish catching warm light, lenses reflecting golden hour sunset and city skyline with crystal clarity",
+        "image_generation_prompt": "Hyper-realistic photorealistic product photography of gold aviator sunglasses, ultra-realistic metal texture, documentary style close-up, classic teardrop-shaped G-15 green polarized lenses with deep forest green tint, brushed gold metal frame with double bridge, thin gold temples, authentic metal reflections, natural warm golden hour lighting reflecting in lenses, realistic city skyline reflection visible in lens surface, professional commercial product photography, lifelike metal finish with subtle wear, natural light interactions, premium eyewear detail shot"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Rising Creative Director",
+      "scenes_used": [
+        1,
+        3,
+        4,
+        5
+      ],
+      "has_multiple_versions": true,
+      "versions": [
+        {
+          "version_name": "Without Sunglasses - Overlooked",
+          "scenes_used": [
+            1
+          ],
+          "description": "Mid-30s creative professional with sharp features, 5'11\" athletic build, wearing impeccably tailored charcoal grey suit with white dress shirt unbuttoned at collar, no tie for creative edge, brown leather dress shoes, dark brown hair styled in modern textured cut, clean-shaven with defined jawline, squinting uncomfortably through harsh sunset glare, eyes partially closed, facial expression showing strain and discomfort, shoulders slightly hunched, walking posture lacking confidence, blending into crowd despite sharp clothing, skin showing natural texture with warm golden hour lighting",
+          "image_generation_prompt": "Hyper-realistic photorealistic portrait of mid-30s male creative professional, ultra-realistic real person, documentary photography style, sharp facial features with defined jawline, athletic build 5'11\" tall, natural skin texture with visible pores, dark brown textured modern hairstyle, clean-shaven face, lifelike brown eyes squinting uncomfortably in bright light, authentic facial strain expression, wearing perfectly tailored charcoal grey suit with white dress shirt unbuttoned at collar showing casual creative style, realistic fabric texture on suit, warm golden hour sunset lighting casting natural shadows, professional portrait photography, real human subject walking through city, natural body language showing slight discomfort, authentic urban professional appearance",
+          "is_original": true
+        },
+        {
+          "version_name": "With Aviators - Commanding Presence",
+          "scenes_used": [
+            3,
+            4,
+            5
+          ],
+          "description": "Same mid-30s creative professional now wearing gold SunVue Aviator Classics with G-15 green lenses, eyes relaxed and protected behind polarized lenses, face showing complete comfort and confidence, jaw set with self-assured expression, shoulders back with commanding posture, same charcoal grey suit now appearing more powerful, stride confident and purposeful cutting through crowds, presence radiating magnetic energy, facial muscles relaxed showing the comfort of UV protection, subtle confident smirk, gold frames catching warm light against skin, green lenses reflecting city scenes and golden hour glow, entire demeanor transformed from invisible to unforgettable",
+          "image_generation_prompt": "Hyper-realistic photorealistic portrait of mid-30s male creative professional wearing gold aviator sunglasses, ultra-realistic real person, documentary photography style, same sharp facial features with defined jawline now showing confident expression, athletic build 5'11\" tall, natural skin texture with visible pores and warm tone, dark brown textured modern hairstyle, clean-shaven face, wearing classic gold-framed aviator sunglasses with G-15 green polarized lenses reflecting golden sunset, lifelike relaxed facial expression showing confidence, subtle smirk, jaw set with self-assurance, same perfectly tailored charcoal grey suit with white dress shirt unbuttoned at collar, realistic fabric texture, shoulders back with commanding posture, warm golden hour lighting, professional portrait photography, authentic urban professional with magnetic presence, natural confident body language, real human subject with transformed demeanor, gold frame catching natural light against skin tone",
+          "is_original": false,
+          "references_original_version": "Without Sunglasses - Overlooked"
+        }
+      ]
+    }
+  ]
+}
