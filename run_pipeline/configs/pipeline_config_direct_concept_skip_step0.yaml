@@ -1,0 +1,66 @@
+# Pipeline Configuration - Direct Concept Mode (Skip Step 0, Use Existing Revised Concept)
+# Use this when you already have a revised concept from Step 0 and want to go directly to Step 5
+
+pipeline_mode:
+  start_from: direct_concept  # Skip Steps 1-4, use existing concept
+
+input:
+  config_file: s1_generate_concepts/inputs/configs/sunglasses_concept1_funny.json
+  
+  # Use existing revised concept file (skip Step 0)
+  direct_concept_file: s0_expand_concept/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised.txt
+
+pipeline_steps:
+  # Step 0 - SKIP ALL (we already have the revised concept)
+  run_concept_expansion: false    # Skip Step 0a (already expanded)
+  run_concept_judging: false      # Skip Step 0b (already judged)
+  run_concept_revision: false     # Skip Step 0c (already revised)
+  
+  # Steps 1-4 automatically skipped in direct_concept mode
+  
+  # Steps 5-10 (video generation) - Run one at a time
+  run_step_5: false  # Generate universe/characters (already completed)
+  run_step_6: false  # Generate reference images (already completed)
+  run_step_7: false  # Generate scene prompts (already completed)
+  run_step_8: false  # Generate first frames (already completed)
+  run_step_9: false  # Generate video clips (already completed)
+  run_step_10: true  # Merge clips (MERGE STANDARD VEO 3.1 CLIPS)
+
+output:
+  step0_output_dir: s0_expand_concept/outputs
+  base_output_dir: s4_revise_concept/outputs
+  universe_images_dir: s6_generate_reference_images/outputs
+  first_frames_dir: s8_generate_first_frames/outputs
+  video_outputs_dir: s9_generate_video_clips/outputs
+  merge_outputs_dir: s10_merge_clips/outputs
+
+video_settings:
+  num_clips: 5          # Number of scenes
+  clip_duration: 8     # Duration per scene in seconds
+  resolution: "720p"
+  aspect_ratio: "16:9"
+  enable_visual_effects: true
+
+models:
+  llm_model: anthropic/claude-opus-4-1-20250805  # For Steps 5, 7
+  video_model: google/veo-3.1                    # For Step 9 (options: google/veo-3.1 or google/veo-3.1-fast)
+  image_model: replicate/nano-banana-pro          # For Steps 6, 8
+  llm_thinking: 5000                               # Extended thinking budget (5k for reasoning)
+
+evaluation:
+  judge_model: anthropic/claude-opus-4-1-20250805  # Not used when skipping Step 0
+
+image_generation:
+  max_reference_images: 5
+  image_parallel_workers: 4
+
+video_generation:
+  generate_audio: true
+  video_parallel_workers: 2
+
+advanced:
+  skip_image_generation: false
+  skip_first_frames: false
+  skip_video_clips: false
+  regenerate_scene_prompts: false
+

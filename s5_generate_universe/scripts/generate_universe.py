@@ -37,33 +37,10 @@ def call_anthropic_with_caching(prompt, model, api_key, thinking=None, max_token
     
     client = Anthropic(api_key=api_key)
     
-    # Split prompt into cacheable (schema/instructions) and dynamic (content) parts
-    # Find where the actual concept content starts
-    if "**5-SCENE CONCEPT:**" in prompt:
-        parts = prompt.split("**5-SCENE CONCEPT:**")
-        cacheable_part = parts[0] + "**5-SCENE CONCEPT:**"
-        dynamic_part = parts[1]
-    else:
-        # Fallback: cache everything up to the concept
-        cacheable_part = prompt[:len(prompt)//2]
-        dynamic_part = prompt[len(prompt)//2:]
-    
-    # Build system messages with cache control
-    system = [
-        {
-            "type": "text",
-            "text": cacheable_part.strip(),
-            "cache_control": {"type": "ephemeral"}  # Cache this part
-        }
-    ]
-    
-    # Build request parameters
+    # NO CACHING - Use simple messages structure like Step 7 (caching causes issues)
     params = {
         "model": model,
-        "system": system,
-        "messages": [
-            {"role": "user", "content": dynamic_part.strip()}
-        ]
+        "messages": [{"role": "user", "content": prompt}]
     }
     
     # Add thinking parameter for extended thinking mode
@@ -79,8 +56,9 @@ def call_anthropic_with_caching(prompt, model, api_key, thinking=None, max_token
             params["thinking"] = {"type": "enabled", "budget_tokens": budget_tokens}
         
         # max_tokens must be greater than budget_tokens
+        # Universe JSON is typically ~800-1200 tokens, so 2500 total is plenty
         if max_tokens is None:
-            params["max_tokens"] = budget_tokens + 4000  # Buffer for JSON output
+            params["max_tokens"] = budget_tokens + 2000  # Buffer for JSON output (~800 tokens + safety margin)
         else:
             params["max_tokens"] = max_tokens
         
@@ -89,31 +67,25 @@ def call_anthropic_with_caching(prompt, model, api_key, thinking=None, max_token
         params["max_tokens"] = max_tokens if max_tokens else 4000
         params["temperature"] = 0.75
     
+    # Call API without streaming (like Step 7)
     response = client.messages.create(**params)
     
-    # Extract content from response
-    if not response.content or len(response.content) == 0:
-        raise ValueError("Empty response from Anthropic API")
-    
-    # Handle different content types (text blocks, thinking blocks, etc.)
-    content_parts = []
-    for block in response.content:
-        # Skip thinking blocks - we only want the actual text response
-        if hasattr(block, 'type') and block.type == 'thinking':
-            continue
+    # Extract content using .text property (like Step 7) - automatically handles thinking blocks
+    try:
+        content = response.text
+    except AttributeError:
+        # Fallback to manual extraction if .text doesn't exist
+        content_parts = []
+        for block in response.content:
+            if hasattr(block, 'type') and block.type == 'thinking':
+                continue
+            if hasattr(block, 'text'):
+                content_parts.append(block.text)
         
-        if hasattr(block, 'text'):
-            content_parts.append(block.text)
-        elif hasattr(block, 'content'):
-            content_parts.append(block.content)
-        else:
-            # Fallback: convert to string
-            content_parts.append(str(block))
-    
-    if not content_parts:
-        raise ValueError("No text content found in Anthropic API response (only thinking blocks)")
-    
-    content = '\n'.join(content_parts)
+        if not content_parts:
+            raise ValueError("No text content found in Anthropic API response (only thinking blocks)")
+        
+        content = '\n'.join(content_parts)
     
     # Print cache usage stats if available
     usage = getattr(response, 'usage', None)
@@ -312,7 +284,12 @@ def generate_universe_and_characters(revised_script, config, model="anthropic/cl
         json_only_prompt = f"{prompt}\n\n**CRITICAL**: Output ONLY the JSON object. Do not include markdown code blocks, explanations, or any text outside the JSON. Start with {{ and end with }}."
         print(f"  → Using Anthropic Prompt Caching to reduce costs and latency...")
         print(f"  → Thinking budget: {thinking_budget} tokens (~30-60 seconds)")
-        response = call_anthropic_with_caching(json_only_prompt, model_name, api_key, thinking=thinking_budget, max_tokens=16000)
+        # Universe JSON is small: typically ~800-1200 tokens
+        # With thinking budget from config (e.g., 5000), need: thinking + response buffer
+        # max_tokens must be > thinking.budget_tokens (Claude requirement)
+        response_buffer = 2500
+        max_tokens_total = thinking_budget + response_buffer if thinking_budget else 2500
+        response = call_anthropic_with_caching(json_only_prompt, model_name, api_key, thinking=thinking_budget, max_tokens=max_tokens_total)
     
     print(f"  ✓ LLM response received, parsing JSON...")
     

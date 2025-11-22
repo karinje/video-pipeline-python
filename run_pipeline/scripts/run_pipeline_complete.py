@@ -412,6 +412,9 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
         if not concept_text:
             concept_file_input = input_cfg.get("direct_concept_file")
             if concept_file_input:
+                # Resolve path relative to project root
+                if not os.path.isabs(concept_file_input):
+                    concept_file_input = str(BASE_DIR / concept_file_input)
                 with open(concept_file_input, 'r', encoding='utf-8') as f:
                     concept_text = f.read()
             else:
@@ -448,7 +451,44 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
             step_times["Step 0a: Expand Concept"] = time.time() - step0a_start
             print(f"  ✓ Expanded concept: {expanded_file}\n")
         else:
-            raise ValueError("run_concept_expansion must be true for direct_concept mode")
+            # Skip Step 0a - use provided concept file directly
+            print("=" * 80)
+            print("STEP 0a: Expand Concept")
+            print("=" * 80)
+            print("  ⏭  Skipped (using existing concept file)\n")
+            
+            # Load concept from file
+            concept_file_input = input_cfg.get("direct_concept_file")
+            if not concept_file_input:
+                raise ValueError("direct_concept_file required when run_concept_expansion=false")
+            
+            if not os.path.isabs(concept_file_input):
+                concept_file_input = str(BASE_DIR / concept_file_input)
+            
+            if not os.path.exists(concept_file_input):
+                raise ValueError(f"Concept file not found: {concept_file_input}")
+            
+            concept_file = concept_file_input
+            concept_content = load_concept_file(concept_file)
+            
+            # Try to find metadata file in same directory
+            concept_name = Path(concept_file).stem.replace('_revised', '').replace('_expanded', '')
+            revised_file = concept_file  # Set for summary output
+            metadata_file = Path(concept_file).parent / f"{concept_name}_metadata.json"
+            if metadata_file.exists():
+                import json
+                with open(metadata_file, 'r') as f:
+                    metadata = json.load(f)
+            else:
+                # Create minimal metadata
+                metadata = {
+                    "concept_name": concept_name,
+                    "brand_name": brand_name,
+                    "timestamp": datetime.now().isoformat()
+                }
+            
+            step_times["Step 0a: Expand Concept"] = 0.0
+            print(f"  ✓ Using existing concept: {concept_file}\n")
         
         # Step 0b: Judge Concept (optional)
         evaluation_file = None
@@ -500,6 +540,8 @@ def run_pipeline_complete(config_path="pipeline_config.json"):
             else:
                 print("  ⏭  Skipped (run_concept_revision=false)\n")
             step_times["Step 0c: Revise Concept"] = 0.0
+            # Use expanded concept as revised when revision is skipped
+            revised_file = concept_file
         
         # Set batch folder name and concept name for output organization
         batch_folder_name = Path(concept_file).parent.name
@@ -867,8 +909,8 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     print("STEP 5: Generate Universe and Characters")
     print("=" * 80)
     step5_start = time.time()
-    # Step 5 has its own output directory
-    universe_output_base = Path("s5_generate_universe/outputs")
+    # Step 5 has its own output directory (use BASE_DIR for correct path)
+    universe_output_base = BASE_DIR / "s5_generate_universe" / "outputs"
     universe_output_dir = universe_output_base / batch_folder_name / concept_name
     universe_file = universe_output_dir / f"{concept_name}_universe_characters.json"
     
@@ -877,7 +919,7 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
         clear_output_folder(universe_output_dir)
         print(f"  → Input: {Path(final_concept_file).name}")
         # Use llm_thinking from config, default to 1500 for reasonable speed/quality balance
-        universe_thinking = models_cfg.get("llm_thinking", 1500)
+        universe_thinking = models_cfg.get("universe_thinking", models_cfg.get("llm_thinking", 1500))
         universe_chars = generate_universe_and_characters(final_concept, config_data, llm_model, thinking=universe_thinking)
         with open(universe_file, 'w', encoding='utf-8') as f:
             json.dump(universe_chars, f, indent=2)
@@ -900,7 +942,8 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     print("STEP 6: Generate Reference Images for Universe/Characters")
     print("=" * 80)
     step6_start = time.time()
-    universe_images_base = Path(output_cfg.get("universe_images_dir", "s6_generate_reference_images/outputs"))
+    # Use BASE_DIR for correct path resolution
+    universe_images_base = BASE_DIR / output_cfg.get("universe_images_dir", "s6_generate_reference_images/outputs")
     # generate_all_images adds json_prefix (concept_name) to output_base_dir
     # So we pass: {base}/{batch} and it creates: {base}/{batch}/{concept}
     output_base_dir_for_step6 = universe_images_base / batch_folder_name
@@ -927,14 +970,14 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     print("STEP 7: Generate Scene Prompts")
     print("=" * 80)
     step7_start = time.time()
-    # Step 7 has its own output directory
-    scene_prompts_output_base = Path("s7_generate_scene_prompts/outputs")
+    # Step 7 has its own output directory (use BASE_DIR for correct path)
+    scene_prompts_output_base = BASE_DIR / "s7_generate_scene_prompts" / "outputs"
     scene_prompts_output_dir = scene_prompts_output_base / batch_folder_name / concept_name
     scenes_file = scene_prompts_output_dir / f"{concept_name}_scene_prompts.json"
     
     resolution = video_cfg.get("resolution", "720p")
     image_summary_path = universe_images_dir / "image_generation_summary.json"
-    llm_thinking = models_cfg.get("llm_thinking", 0)  # Default to 0 (disabled) for speed
+    llm_thinking = models_cfg.get("scene_prompts_thinking", models_cfg.get("llm_thinking", 0))  # Default to 0 (disabled) for speed
     video_model = models_cfg.get("video_model", "google/veo-3-fast")  # Get video model early for step 7
     
     if step_cfg.get("run_step_7", True):
@@ -946,8 +989,7 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
         total_duration = video_cfg.get("total_duration")
         enable_visual_effects = video_cfg.get("enable_visual_effects", True)  # Default to True if not specified
         # Use total_duration if provided, otherwise use legacy duration
-        if total_duration is not None:
-            duration = total_duration
+        duration = total_duration if total_duration is not None else video_cfg.get("duration_seconds", 30)
         scene_prompts = generate_scene_prompts(
             final_concept, universe_chars, config_data,
             duration, llm_model, resolution,
@@ -978,7 +1020,8 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     print("STEP 8: Generate First Frame Images")
     print("=" * 80)
     step8_start = time.time()
-    first_frames_base = Path(output_cfg.get("first_frames_dir", "s8_generate_first_frames/outputs"))
+    # Use BASE_DIR for correct path resolution
+    first_frames_base = BASE_DIR / output_cfg.get("first_frames_dir", "s8_generate_first_frames/outputs")
     # Include batch folder to match reference images location
     first_frames_dir = first_frames_base / batch_folder_name / concept_name
     
@@ -1006,12 +1049,13 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     print("=" * 80)
     step9_start = time.time()
     # video_model already defined above for step 7
-    video_outputs_base = Path(output_cfg.get("video_outputs_dir", "s9_generate_video_clips/outputs"))
+    # Use BASE_DIR for correct path resolution
+    video_outputs_base = BASE_DIR / output_cfg.get("video_outputs_dir", "s9_generate_video_clips/outputs")
     # Include batch folder for consistency
     video_output_dir = video_outputs_base / batch_folder_name / concept_name
     
-    # Reconstruct first_frames_dir (same logic as Step 8)
-    first_frames_base = Path(output_cfg.get("first_frames_dir", "s8_generate_first_frames/outputs"))
+    # Reconstruct first_frames_dir (same logic as Step 8) - use BASE_DIR
+    first_frames_base = BASE_DIR / output_cfg.get("first_frames_dir", "s8_generate_first_frames/outputs")
     first_frames_dir = first_frames_base / batch_folder_name / concept_name
     
     # Only get scenes if step 7 ran or file exists
@@ -1131,8 +1175,8 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     print("=" * 80)
     step10_start = time.time()
     
-    # Create output directory for merged video (separate from video clips)
-    merge_outputs_base = Path(output_cfg.get("merge_outputs_dir", "s10_merge_clips/outputs"))
+    # Create output directory for merged video (separate from video clips) - use BASE_DIR
+    merge_outputs_base = BASE_DIR / output_cfg.get("merge_outputs_dir", "s10_merge_clips/outputs")
     merge_output_dir = merge_outputs_base / batch_folder_name / concept_name
     merge_output_dir.mkdir(parents=True, exist_ok=True)
     
@@ -1187,7 +1231,10 @@ Be objective and analytical. Small differences (±5 points) mean they're roughly
     print("=" * 80)
     print(f"Finished: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
     print("Generated Files:")
-    print(f"  - Revised script: {revised_file}")
+    if 'revised_file' in locals():
+        print(f"  - Revised script: {revised_file}")
+    else:
+        print(f"  - Concept script: {concept_file if 'concept_file' in locals() else 'N/A'}")
     print(f"  - Universe/Characters: {universe_file}")
     print(f"  - Scene prompts: {scenes_file}")
     print(f"  - Reference images: {universe_images_dir}")

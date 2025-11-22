@@ -1,0 +1,37 @@
+{
+  "json_file": "/Users/sanjaykarinje/git/video-gen/s5_generate_universe/outputs/sunvue_1122_0132/sunvue_celebrity_by_accident_revised/sunvue_celebrity_by_accident_revised_universe_characters.json",
+  "json_prefix": "sunvue_celebrity_by_accident_revised",
+  "generated_at": "2025-11-22 01:50:27",
+  "elements": [
+    {
+      "element_name": "Grocery Store",
+      "element_type": "location",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1122_0132/sunvue_celebrity_by_accident_revised/locations/grocery_store/grocery_store_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Aviators",
+      "element_type": "prop",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1122_0132/sunvue_celebrity_by_accident_revised/props/sunvue_aviators/sunvue_aviators_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "Office Worker/Protagonist",
+      "element_type": "character",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1122_0132/sunvue_celebrity_by_accident_revised/characters/office_workerprotagonist/office_workerprotagonist_canonical.png",
+          "url": null
+        }
+      }
+    }
+  ]
+}

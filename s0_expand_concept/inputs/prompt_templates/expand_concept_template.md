@@ -26,6 +26,10 @@ You are an elite creative director specializing in eyewear advertising.
 
 **TARGET_AUDIENCE**: {{TARGET_AUDIENCE}}
 
+**AD_STYLE**: {{AD_STYLE}}
+
+**CREATIVE_DIRECTION**: {{CREATIVE_DIRECTION}}
+
 ---
 
 ## EYEWEAR SPECIFICATIONS
@@ -61,6 +65,7 @@ Expand the high-level concept into exactly **{{num_clips}} scenes**. Each scene 
 - Show the frames as the **style hero**
 - Build a clear **narrative arc**
 - Make the eyewear **aspirational**
+- Match the **AD_STYLE**: {{AD_STYLE}} (if specified)
 
 ### EYEWEAR ESSENTIALS
 

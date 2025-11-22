@@ -1,0 +1,12 @@
+{
+  "concept_name": "sunvue_reality_upgrade_mode",
+  "brand_name": "SunVue",
+  "timestamp": "2025-11-21T18:27:19.378504",
+  "llm_model": "anthropic/claude-opus-4-1-20250805",
+  "video_settings": {
+    "num_clips": 5,
+    "clip_duration": 8
+  },
+  "original_concept": "A character puts on the stylish eyewear and the previously bland world is suddenly full of vibrant colors, confident people, and subtle visual gags. Each lens change shifts the overall vibe (cool, classy, playful), highlighting different styles while implying that the right frames change how you see yourself.",
+  "expanded_file": "/Users/sanjaykarinje/git/video-gen/s0_expand_concept/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_expanded.txt"
+}

@@ -1,0 +1,55 @@
+---
+
+**CONCEPT TITLE**: Mistaken VIP Life
+
+**EYEWEAR FOCUS**:
+- Frame Style: Aviators, Wayfarers, Cat-Eyes
+- Lens Type: Premium tinted lenses with UV protection
+- Style Persona: Effortlessly iconic, celebrity-worthy confidence
+
+**5-SCENE AD CONCEPT**:
+
+**SCENE 1**: Office worker grabs coffee, puts on SunVue Aviators. Barista gasps, whispers urgently to coworker, starts making "special VIP order."
+
+**SCENE 2**: Walking dog in Wayfarers, suddenly surrounded by photographers. Dog gets treats from "fans" while owner awkwardly waves, confused.
+
+**SCENE 3**: Grocery shopping in Cat-Eyes, security rope off frozen foods aisle. Manager appears with champagne, other shoppers take selfies.
+
+**SCENE 4**: At car wash, attendants roll out literal red carpet. Everyone bows while they just wanted basic wash package.
+
+**SCENE 5**: Takes off sunglasses at home, doorbell rings. Opens door—nobody there. Puts SunVue back on, instant crowd appears.
+
+---
+
+**AUDIENCE JOURNEY**: Viewers laugh at the absurd power of perfect frames while secretly wanting that same magnetic presence.
+
+**WHY THIS WORKS FOR EYEWEAR**: SunVue frames don't just accessorize—they transform ordinary people into extraordinary presences. The humor makes premium style approachable while showcasing how the right frames command attention and elevate any moment, proving great eyewear changes everything.
+
+**TAGLINE/END CARD**: Logo appears as character shrugs in mirror wearing all three styles. "SunVue. Never Hide."
+
+---
+
+## QUALITY CHECKLIST
+
+Before submitting, verify:
+
+**EYEWEAR FOCUS**:
+- [✓] Frames are the hero (not just present)
+- [✓] Style benefit clear and aspirational
+- [✓] Frames visible in at least 3 scenes
+- [✓] Includes putting on/adjusting frames moment
+- [✓] Makes viewers want THESE specific frames
+
+**BRAND ALIGNMENT**:
+- [✓] Matches input FRAME_STYLE
+- [✓] Fits STYLE_PERSONA
+- [✓] Appropriate for WEARING_OCCASION
+- [✓] Embodies BRAND_PERSONALITY
+- [✓] Delivers VALUE_PROPOSITION
+
+**NARRATIVE QUALITY**:
+- [✓] Would make viewers feel something
+- [✓] Story is simple but memorable
+- [✓] Style transformation is believable
+- [✓] Brand integration feels natural
+- [✓] Concept feels fresh for eyewear

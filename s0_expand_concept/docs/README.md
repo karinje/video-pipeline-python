@@ -45,6 +45,56 @@ Step 0 consists of three sub-steps:
 
 ## Usage
 
+### Option 0: Complete Pipeline (Recommended - All Steps in One)
+
+Run all three steps (expand, judge, revise) in sequence with a single command:
+
+```bash
+cd s0_expand_concept/scripts
+
+python run_step0_complete.py \
+  inputs/concepts/world_comes_into_focus.txt \
+  ../../s1_generate_concepts/inputs/configs/sunglasses.json \
+  anthropic/claude-opus-4-1-20250805
+```
+
+**Or with concept text directly:**
+```bash
+python run_step0_complete.py \
+  "The World Comes Into Focus. A character puts on the stylish eyewear..." \
+  ../../s1_generate_concepts/inputs/configs/sunglasses.json \
+  anthropic/claude-opus-4-1-20250805
+```
+
+**With custom video settings:**
+```bash
+python run_step0_complete.py \
+  inputs/concepts/world_comes_into_focus.txt \
+  ../../s1_generate_concepts/inputs/configs/sunglasses.json \
+  anthropic/claude-opus-4-1-20250805 \
+  --num-clips 5 \
+  --clip-duration 8
+```
+
+**Features:**
+- Runs Step 0a, 0b, and 0c sequentially
+- Uses the same LLM model for all steps (default: Opus 4.1)
+- Automatically passes outputs between steps
+- Provides summary with original score and all file paths
+- Configurable video settings via CLI flags
+
+**Output**: Refined concept ready for video generation (go to Step 5)
+
+**Arguments:**
+- `concept_text_or_file`: High-level concept text or path to concept file
+- `brand_config` (optional): Path to brand config JSON (default: `../../s1_generate_concepts/inputs/configs/sunglasses.json`)
+- `llm_model` (optional): LLM model for all steps (default: `anthropic/claude-opus-4-1-20250805`)
+- `output_dir` (optional): Output directory (default: `s0_expand_concept/outputs/`)
+- `--num-clips N` (optional): Number of scenes/clips to generate (default: 5)
+- `--clip-duration N` (optional): Duration per clip in seconds (default: 8)
+
+---
+
 ### Option 1: Expand Only (Fastest)
 ```bash
 cd s0_expand_concept/scripts
@@ -101,16 +151,34 @@ python revise_concept.py \
 
 ### Video Settings
 
-Both expansion and revision use video settings from config:
+Both expansion and revision use video settings that can be configured via CLI arguments:
 
+**Default values:**
 ```python
 video_settings = {
     "num_clips": 5,        # Number of scenes to generate
-    "clip_duration": 6     # Duration per scene in seconds
+    "clip_duration": 8     # Duration per scene in seconds
 }
 ```
 
-These are dynamically inserted into prompts, so the LLM generates the correct number of scenes with appropriate pacing.
+**Customize via CLI:**
+```bash
+python run_step0_complete.py concept.txt config.json model --num-clips 4 --clip-duration 6
+```
+
+These are dynamically inserted into prompts, so the LLM generates the correct number of scenes with appropriate pacing. Note: Duration values are used to guide the LLM but are not written into the final concept output file.
+
+### Temperature Settings
+
+**Current temperature settings:**
+- **Step 0a (Expand)**: `temperature=1.0` - Higher temperature for more creative variation
+- **Step 0b (Judge)**: `temperature=1.0` - Higher temperature for more creative evaluation
+- **Step 0c (Revise)**: `temperature=1.0` - Higher temperature for more creative revision
+
+These settings are hardcoded in the scripts. To change them, edit:
+- `s0_expand_concept/scripts/expand_concept.py` (line 144)
+- `s2_judge_concepts/scripts/judge_concepts.py` (line 216)
+- `s0_expand_concept/scripts/revise_concept.py` (line 158)
 
 ### Brand Config
 
@@ -205,8 +273,34 @@ look they didn't know they were missing.
 
 ---
 
+## Quick Reference
+
+### Complete Script (All Steps)
+```bash
+python run_step0_complete.py <concept_file_or_text> [brand_config] [llm_model]
+```
+
+### Individual Steps
+```bash
+# Step 0a: Expand
+python expand_concept.py <concept_text_or_file> [brand_config] [llm_model] [output_dir]
+# Default: 5 clips, 8 seconds each
+
+# Step 0b: Judge
+python judge_concept.py <expanded_file> <metadata_file> [judge_model] [output_dir]
+# Uses temperature=1.0 for evaluation
+
+# Step 0c: Revise
+python revise_concept.py <expanded_file> <evaluation_file> [brand_config] [llm_model] [output_dir]
+# Default: 5 clips, 8 seconds each
+```
+
+---
+
 ## Notes
 
+- **Complete script available**: Use `run_step0_complete.py` to run all three steps with one command
+- **Same model for all steps**: The complete script uses the same LLM model for expand, judge, and revise
 - **No hardcoded values**: All scene counts and durations come from config
 - **Reuses judge logic**: Step 0b uses the same evaluation criteria as Step 2
 - **Same output format**: Step 0 outputs match Step 1 format, so Step 5+ works unchanged

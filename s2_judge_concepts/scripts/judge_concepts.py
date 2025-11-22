@@ -213,7 +213,7 @@ def call_anthropic_judge(prompt, model):
     response = client.messages.create(
         model=model,
         max_tokens=2000,
-        temperature=0.3,  # Lower temperature for consistent judging
+        temperature=1.0,  # Higher temperature for more creative evaluation
         system="You are an expert advertising judge. Respond only with valid JSON.",
         messages=[
             {"role": "user", "content": prompt}

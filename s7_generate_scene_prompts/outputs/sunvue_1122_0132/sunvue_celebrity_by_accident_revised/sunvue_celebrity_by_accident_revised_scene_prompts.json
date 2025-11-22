@@ -1,0 +1,205 @@
+{
+  "scenes": [
+    {
+      "scene_number": 1,
+      "duration_seconds": 6,
+      "video_summary": "Office Worker grabs SunVue Aviators from desk and heads to lunch, reality subtly transforms as frames slide on",
+      "audio_summary": "Ambient office sounds shift to luxurious atmosphere with building orchestral strings as transformation begins",
+      "visual_effect": {
+        "name": "Innerlight",
+        "description": "A radiant glow builds from within the lenses, shining through. Feels powerful or magical\u2014perfect for smart glasses or transformations",
+        "timing": "4-6 seconds as aviators slide onto face"
+      },
+      "00:00-00:02": {
+        "visual": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, oval face, light olive skin, wearing grey button-down shirt tucked into navy slacks) sitting at mundane office desk reaching for black SunVue Aviator sunglasses case on cluttered desk surface. NOT wearing any sunglasses - face fully visible showing tired expression. Fluorescent office lighting harsh overhead, beige cubicle walls with pinned documents. Computer monitor glowing, coffee mug half-empty. Hand grasping case handle with purposeful motion.",
+        "cinematography": "Camera shot: Medium shot at eye level, subject center-frame. Lens & Depth: 50mm standard lens, f/2.8 shallow depth creating soft background blur. Camera motion: Slow push-in at 2cm/sec toward protagonist. Composition: Foreground: desk edge with papers. Midground: Office Worker reaching for case. Background: blurred office cubicles. Lighting: Key light: harsh fluorescent overhead at 90\u00b0. Fill light: computer monitor glow on face. Style: Corporate documentary, slightly desaturated cool tones. Mood: Mundane transitioning to anticipation",
+        "dialogue": null,
+        "sfx": "case being picked up from desk, keyboard click stopping",
+        "ambience": "fluorescent light hum, distant office chatter, printer whirring",
+        "music": "subtle ambient pad begins, very quiet, 70 BPM, minimal presence"
+      },
+      "00:02-00:04": {
+        "visual": "Office Worker/Protagonist stands from desk chair, opens SunVue Aviator case revealing gold-framed aviators with green-grey tinted lenses catching overhead light. Still NOT wearing any sunglasses - face fully visible. Case interior shows black velvet lining with SunVue logo embossed. Beginning to lift aviators from case with right hand. Office environment remains completely mundane - harsh fluorescent lights unchanged, beige cubicle walls unchanged, no transformation yet. Expression shifting from tired to curious anticipation. No magical effects or environmental shifts occur until glasses are actually worn.",
+        "cinematography": "Camera shot: Medium close-up on hands and case. Lens & Depth: 50mm f/2.8, case and aviators sharp. Camera motion: Subtle handheld drift following upward movement. Composition: Foreground: case edge. Midground: aviators being lifted. Background: office remains mundane. Lighting: Key light remains harsh fluorescent overhead - NO warming yet. Fill light: case reflection only. Style: Documentary realism - no elegance yet. Mood: Discovery and anticipation building, but environment stays mundane",
+        "dialogue": "Office Worker/Protagonist: Time for lunch...",
+        "sfx": "case opening click, aviator frames lifting from velvet, fabric rustle",
+        "ambience": "office sounds remain unchanged - fluorescent hum, distant chatter, printer whirring - NO muffling or softening yet",
+        "music": "orchestral strings enter very subtly, building slowly but staying quiet, music ducks under dialogue - NO transformation in music yet"
+      },
+      "00:04-00:06": {
+        "visual": "Office Worker/Protagonist slides SunVue Aviators onto face and frames settle on nose bridge (NOW WEARING SunVue Aviators on face - glasses fully positioned). ONLY AFTER glasses are fully worn and settled, the transformation begins: office walls visibly transform from beige to deep velvet texture, fluorescent lights shift to warm golden chandelier-like glow. Innerlight effect radiates from lenses ONLY after glasses are on. Protagonist's posture straightens, shoulders back, confident smile emerging. WEARING aviators prominently, lenses showing magical golden reflection. Background cubicles morphing into elegant panels. Transformation sequence: first glasses on, THEN environment changes.",
+        "cinematography": "Camera shot: Medium shot pulling back to reveal transformation. Lens & Depth: 50mm f/2.8, face and environment both visible. Camera motion: Slow pull-back at 3cm/sec revealing changed space. Composition: Foreground: transformed elegant desk. Midground: Protagonist wearing aviators. Background: office becoming luxurious. Lighting: Key light: warm golden from above left 45\u00b0. Fill light: ambient gold bounce. Rim light: halo effect from transformation. Style: Cinematic with rich saturated golds. Mood: Magical transformation and confidence",
+        "dialogue": null,
+        "sfx": "aviators sliding onto face and settling on nose bridge, THEN subtle magical shimmer sound, velvet texture whoosh",
+        "ambience": "office sounds remain for brief moment after glasses go on, THEN elegant space ambience replaces office sounds, soft classical undertone",
+        "music": "strings swell to confident melody ONLY after glasses are fully on, brass enters subtly, preparing transition to next scene"
+      },
+      "first_frame_image_prompt": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, oval face, light olive skin, wearing grey button-down shirt tucked into navy slacks) sitting at mundane office desk reaching for black SunVue Aviator sunglasses case on cluttered desk surface. NOT wearing any sunglasses - face fully visible showing tired expression.\n\nCamera shot: Medium shot at eye level, subject center-frame. Lens & Depth: 50mm standard lens, f/2.8 shallow depth creating soft background blur. Composition: Foreground: desk edge with papers. Midground: Office Worker reaching for case. Background: blurred office cubicles. Lighting: Key light: harsh fluorescent overhead at 90\u00b0. Fill light: computer monitor glow on face. Style: Corporate documentary, slightly desaturated cool tones. Mood: Mundane transitioning to anticipation.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Office Worker/Protagonist [CHARACTER REFERENCE] (reference image shows: 28-year-old person with medium brown shoulder-length hair, oval face with light olive skin tone, wearing grey button-down shirt tucked into navy blue slacks, black leather belt, brown oxford shoes, minimal jewelry with silver wristwatch, clean-shaven or natural appearance, average build around 5'8\", expressive hazel eyes) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: tired expression with slightly drooping eyes, sitting at office desk, reaching for sunglasses case, NOT wearing any sunglasses\n- SunVue Aviators [PRODUCT REFERENCE] (reference image shows: Classic aviator sunglasses with thin gold metal frames, teardrop-shaped lenses with subtle green-grey tint, double bridge design) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: shown in closed black leather case on desk, not being worn yet\n\nHyper-realistic photorealistic office photography, person at desk reaching for sunglasses case, fluorescent lighting, documentary style with authentic office environment details, tired Monday morning mood.",
+      "elements_used": [
+        "Office Worker/Protagonist",
+        "SunVue Aviators"
+      ]
+    },
+    {
+      "scene_number": 2,
+      "duration_seconds": 6,
+      "video_summary": "At coffee shop, barista gasps recognizing 'celebrity' while customers snap photos, false paparazzi appear in lens reflections",
+      "audio_summary": "Coffee shop ambience transforms to excited murmurs and camera clicks with strings maintaining elegant atmosphere",
+      "visual_effect": null,
+      "negative_prompt": "CRITICAL: Office Worker/Protagonist must NOT speak any dialogue in this scene. All dialogue must come ONLY from Coffee Shop Barista, Coffee Shop Customers, or any paparazzi/onlookers. The protagonist remains silent throughout, reacting only through facial expressions and body language.",
+      "00:00-00:02": {
+        "visual": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators on face with gold frames prominent) entering trendy coffee shop doorway, pushing glass door open with confidence. WEARING aviators that catch warm interior lighting. Coffee Shop Barista visible behind counter in background already beginning to look up. Coffee shop has exposed brick walls, Edison bulb lighting, wooden counter. Protagonist's grey shirt and navy slacks visible, posture confident and upright. Door handle reflection shows distorted 'paparazzi' figures that aren't really there.",
+        "cinematography": "Camera shot: Medium shot from inside shop looking at entrance. Lens & Depth: 35mm wide, f/2.8 for environment context. Camera motion: Subtle track right following entry at 2cm/sec. Composition: Foreground: coffee shop interior edge. Midground: Protagonist entering wearing aviators. Background: street visible through door. Lighting: Key light: warm Edison bulbs from above. Fill light: natural window light. Practical lights: coffee machine glow. Style: Warm cinematic caf\u00e9 atmosphere. Mood: Celebrity arrival energy",
+        "dialogue": null,
+        "sfx": "door chime, coffee machine steaming, door pushing open",
+        "ambience": "busy coffee shop chatter, espresso machine hissing, cups clinking",
+        "music": "strings continue from previous scene, adding subtle jazz piano underneath"
+      },
+      "00:02-00:04": {
+        "visual": "Coffee Shop Barista (22-year-old with short curly black hair, dark brown skin, green apron) gasps in recognition, eyes widening with excitement. Office Worker/Protagonist (WEARING SunVue Aviators) approaches counter awkwardly, remaining SILENT - no dialogue from protagonist, only reactions through facial expressions. Coffee Shop Customers turning heads to look, one lifting phone to take photo. Aviator lenses show false reflections of camera flashes that aren't actually happening. Barista's hand going to mouth in surprise, other hand already reaching for coffee cup. Menu board visible behind showing daily specials.",
+        "cinematography": "Camera shot: Medium two-shot, barista and protagonist. Lens & Depth: 50mm f/2.0 focusing on reactions. Camera motion: Slow push-in toward counter at 2cm/sec. Composition: Foreground: counter edge. Midground: Barista gasping, Protagonist approaching. Background: customers reacting. Lighting: Key light: warm overhead. Fill light: coffee machine steam glow. Style: Cinematic caf\u00e9 warmth with subtle glamour. Mood: Star-struck excitement building",
+        "dialogue": "Coffee Shop Barista: Oh my god, is that really you?",
+        "sfx": "gasp, phone camera shutter sound, coffee cup being grabbed",
+        "ambience": "excited murmuring growing, phones being pulled out, whispers",
+        "music": "jazz piano becomes playful, strings maintain elegance, duck under dialogue"
+      },
+      "00:04-00:06": {
+        "visual": "Coffee Shop Barista enthusiastically preparing free latte with flourish, drawing heart in foam while Office Worker/Protagonist (WEARING SunVue Aviators) looks confused but pleased, shrugging slightly, remaining SILENT - protagonist does NOT speak, only reacts through body language and facial expressions. Coffee Shop Customers openly taking photos now, phones raised. Aviator lens reflections show imaginary red carpet and velvet ropes. Barista sliding elaborate latte across counter with both hands, huge smile with gap-toothed grin. Protagonist's hand reaching for wallet but Barista waving it away. Steam rising from coffee cup with artistic swirl.",
+        "cinematography": "Camera shot: Medium shot favoring protagonist's reaction. Lens & Depth: 50mm f/2.0, protagonist sharp. Camera motion: Handheld slight drift for energy. Composition: Foreground: latte sliding across. Midground: Protagonist and Barista interaction. Background: customers with phones. Lighting: Key light: warm caf\u00e9 glow. Practical lights: phone screens adding to face. Style: Warm cinematic with paparazzi energy. Mood: Playful celebrity moment",
+        "dialogue": "Coffee Shop Barista: This one's on the house! Can I get a selfie?",
+        "sfx": "coffee sliding across counter, multiple camera shutters, steam hissing",
+        "ambience": "excited coffee shop buzz, multiple conversations about 'celebrity'",
+        "music": "playful jazz piano with strings, building energy for transition to next scene"
+      },
+      "first_frame_image_prompt": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators on face with gold frames prominent) entering trendy coffee shop doorway, pushing glass door open with confidence.\n\nCamera shot: Medium shot from inside shop looking at entrance. Lens & Depth: 35mm wide, f/2.8 for environment context. Composition: Foreground: coffee shop interior edge. Midground: Protagonist entering wearing aviators. Background: street visible through door. Lighting: Key light: warm Edison bulbs from above. Fill light: natural window light. Practical lights: coffee machine glow. Style: Warm cinematic caf\u00e9 atmosphere. Mood: Celebrity arrival energy.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Office Worker/Protagonist [CHARACTER REFERENCE] (reference image shows: 28-year-old person with medium brown shoulder-length hair, oval face with light olive skin tone, wearing grey button-down shirt tucked into navy blue slacks) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: confident posture, WEARING gold aviator sunglasses on face, entering through doorway with hand on door\n- Coffee Shop Barista [CHARACTER REFERENCE] (reference image shows: 22-year-old with short curly black hair, dark brown skin, wearing green apron over black t-shirt, name tag reading 'Sam') - USE THIS REFERENCE IMAGE AS-IS, positioned behind counter in background\n- Coffee Shop Customers [CHARACTER REFERENCE] (reference image shows: Group of 3-4 diverse customers aged 25-45, mixed ethnicities) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: seated at tables, beginning to notice protagonist\n- SunVue Aviators [PRODUCT REFERENCE] (reference image shows: Classic aviator sunglasses with thin gold metal frames) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: being worn on protagonist's face, catching warm lighting\n\nHyper-realistic photorealistic coffee shop interior photography, trendy caf\u00e9 with exposed brick and Edison bulbs, person confidently entering wearing designer aviators, warm inviting atmosphere with subtle celebrity arrival energy.",
+      "elements_used": [
+        "Office Worker/Protagonist",
+        "Coffee Shop Barista",
+        "Coffee Shop Customers",
+        "SunVue Aviators"
+      ]
+    },
+    {
+      "scene_number": 3,
+      "duration_seconds": 6,
+      "video_summary": "Walking outside to grocery store, real paparazzi swarm as doorman creates VIP path with velvet rope",
+      "audio_summary": "Street ambience erupts into paparazzi chaos with shouting and cameras as dramatic orchestral music peaks",
+      "visual_effect": {
+        "name": "Glow Trace",
+        "description": "The frames leave behind glowing trails of movement\u2014stylized and energetic, perfect for showing frame movement",
+        "timing": "2-4 seconds as protagonist moves through crowd"
+      },
+      "00:00-00:02": {
+        "visual": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators with gold frames) exiting coffee shop onto busy sidewalk holding latte cup. WEARING aviators prominently catching sunlight. Immediately confronted by group of Paparazzi (5-6 photographers with professional cameras) who seem to materialize from nowhere. Photographers raising large telephoto lenses, press badges swinging on lanyards. Protagonist freezing mid-step in surprise, latte cup held up defensively. Grocery Store entrance visible across street.",
+        "cinematography": "Camera shot: Medium wide shot showing emerging chaos. Lens & Depth: 35mm f/2.8 capturing full scene. Camera motion: Handheld kinetic energy, slight shake. Composition: Foreground: photographer shoulders entering frame. Midground: Protagonist surrounded. Background: Grocery Store entrance visible. Lighting: Key light: bright daylight from above. Fill light: building reflections. Style: Documentary paparazzi chase aesthetic. Mood: Sudden overwhelming attention",
+        "dialogue": "one person from Paparazzi: Over here! Look this way! Just one photo!",
+        "sfx": "multiple camera shutters rapid-fire, footsteps rushing, coffee cup lid rattling",
+        "ambience": "city street noise, traffic, multiple voices shouting",
+        "music": "orchestral strings surge dramatically, percussion enters with energy"
+      },
+      "00:02-00:04": {
+        "visual": "Doorman (45-year-old, 6'2\" muscular build, bald, dark skin, black suit with red tie) emerges from nowhere carrying velvet rope, pushing through Paparazzi to reach Office Worker/Protagonist (WEARING SunVue Aviators). Doorman's earpiece visible, professional security stance, creating protective space. Aviator frames leaving subtle glowing traces as protagonist turns head (Glow Trace effect). Photographers jostling for position but respecting Doorman's authority. Protagonist looking bewildered but starting to play along with slight smile.",
+        "cinematography": "Camera shot: Medium shot tracking with movement. Lens & Depth: 50mm f/2.0 for intimate chaos. Camera motion: Tracking shot following doorman's path at 5cm/sec. Composition: Foreground: velvet rope entering. Midground: Doorman clearing path, Protagonist following. Background: paparazzi crowd. Lighting: Key light: harsh sunlight. Fill light: multiple camera flashes. Style: Cinematic security escort scene. Mood: Controlled chaos with VIP treatment",
+        "dialogue": "Doorman: Step back! Make way! VIP coming through!",
+        "sfx": "velvet rope swooshing, cameras clicking frantically, footsteps on pavement",
+        "ambience": "street chaos, cars honking at commotion, crowd gathering sounds",
+        "music": "full orchestral with driving rhythm, brass section prominent, duck under dialogue"
+      },
+      "00:04-00:06": {
+        "visual": "Doorman escorts Office Worker/Protagonist (WEARING SunVue Aviators) through velvet rope corridor toward Grocery Store entrance. Aviator lenses reflecting dozens of camera flashes creating strobe effect. Paparazzi following but maintaining distance from rope barrier. Protagonist now fully embracing moment with confident stride, free hand waving like celebrity. Doorman opening Grocery Store door with professional flourish. Other pedestrians stopped to watch and take phone videos. Glow traces fading as movement slows at entrance.",
+        "cinematography": "Camera shot: Medium tracking shot approaching entrance. Lens & Depth: 35mm f/2.8 showing full escort scene. Camera motion: Steadicam following at 4cm/sec. Composition: Foreground: velvet rope corridor edges. Midground: Protagonist and Doorman moving toward door. Background: crowd of photographers and onlookers. Lighting: Key light: bright exterior transitioning to interior. Style: Celebrity red carpet arrival. Mood: Peak celebrity treatment moment",
+        "dialogue": null,
+        "sfx": "grocery store door opening, camera shutters continuing, velvet rope dragging",
+        "ambience": "crowd excitement, street noise fading as approaching door, grocery store AC hum beginning",
+        "music": "orchestral crescendo then pulling back, transitioning to quirky retail melody"
+      },
+      "first_frame_image_prompt": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators with gold frames) exiting coffee shop onto busy sidewalk holding latte cup, immediately confronted by Paparazzi.\n\nCamera shot: Medium wide shot showing emerging chaos. Lens & Depth: 35mm f/2.8 capturing full scene. Composition: Foreground: photographer shoulders entering frame. Midground: Protagonist surrounded. Background: Grocery Store entrance visible. Lighting: Key light: bright daylight from above. Fill light: building reflections. Style: Documentary paparazzi chase aesthetic. Mood: Sudden overwhelming attention.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters and locations from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Office Worker/Protagonist [CHARACTER REFERENCE] (reference image shows: 28-year-old person with medium brown shoulder-length hair, oval face with light olive skin tone, wearing grey button-down shirt tucked into navy blue slacks) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: surprised expression, WEARING gold aviator sunglasses, holding coffee cup defensively, on city sidewalk\n- Paparazzi [CHARACTER REFERENCE] (reference image shows: Group of 5-6 photographers aged 30-50, mixed genders, wearing dark casual clothing, carrying professional DSLR cameras) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: aggressive shooting stances, cameras raised, surrounding protagonist\n- Doorman [CHARACTER REFERENCE] (reference image shows: 45-year-old tall muscular build, bald head with dark skin, wearing black suit with red tie) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: beginning to enter frame edge with velvet rope\n- Grocery Store [LOCATION REFERENCE] (reference image shows: Modern suburban grocery store with bright fluorescent lighting) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: exterior entrance visible across street in background\n- SunVue Aviators [PRODUCT REFERENCE] (reference image shows: Classic aviator sunglasses with thin gold metal frames) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: being worn on protagonist's face, catching bright sunlight\n\nHyper-realistic photorealistic street photography, chaotic paparazzi scene with protagonist in designer sunglasses being swarmed, bright daylight, documentary style celebrity chase energy.",
+      "elements_used": [
+        "Office Worker/Protagonist",
+        "Paparazzi",
+        "Doorman",
+        "Grocery Store",
+        "SunVue Aviators"
+      ]
+    },
+    {
+      "scene_number": 4,
+      "duration_seconds": 6,
+      "video_summary": "In grocery produce aisle, manager presents champagne glass to protagonist wearing Aviators, other shoppers take photos",
+      "audio_summary": "Grocery store muzak transforms to celebration sounds with champagne pop and camera shutters as shoppers capture the moment",
+      "visual_effect": null,
+      "00:00-00:02": {
+        "visual": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators on face) standing in Grocery Store produce section examining apples. WEARING aviators that reflect colorful fruit displays. Grocery Store Manager (38-year-old with thinning brown hair, pale freckled skin, white shirt, red vest) approaching with already-poured champagne glass in hand (champagne already in glass, not pouring). Normal shoppers in background stopping to stare. Produce displays vibrant with stacked fruits and vegetables. Fluorescent lighting creating stark shadows.",
+        "cinematography": "Camera shot: Medium shot in produce aisle. Lens & Depth: 50mm f/2.8 with retail depth. Camera motion: Static on tripod for stability. Composition: Foreground: apple display. Midground: Protagonist and approaching Manager. Background: produce aisles receding. Lighting: Key light: fluorescent overhead strips. Fill light: produce display bounce. Practical lights: refrigerated section glow. Style: Bright retail documentary. Mood: Surreal grocery store celebration",
+        "dialogue": "Grocery Store Manager: Our celebrity shopper! Champagne?",
+        "sfx": "footsteps approaching on linoleum, champagne glass being offered",
+        "ambience": "grocery store muzak, refrigeration hum, distant cart wheels",
+        "music": "quirky retail muzak with subtle orchestral undertone, duck under dialogue"
+      },
+      "00:02-00:04": {
+        "visual": "Office Worker/Protagonist (WEARING SunVue Aviators - glasses remain on face throughout, NO removal or switching) accepts already-poured champagne glass from Grocery Store Manager's hand awkwardly. Manager watching eagerly with wide smile. Other shoppers now openly taking photos with phones raised, camera shutters clicking. Protagonist holding champagne glass, looking slightly bewildered but pleased. WEARING aviators prominently throughout - no glasses removal or change occurs.",
+        "cinematography": "Camera shot: Medium close-up on champagne handoff. Lens & Depth: 85mm f/2.0 for intimate moment. Camera motion: Subtle push-in at 2cm/sec. Composition: Foreground: champagne glass being accepted. Midground: Protagonist and Manager interaction. Background: shoppers with phones taking photos. Lighting: Key light: fluorescent overhead. Fill light: champagne bubble sparkle. Style: Retail documentary with surreal edge. Mood: Celebrity moment in grocery store",
+        "dialogue": null,
+        "sfx": "champagne glass being accepted, multiple camera shutters clicking, phones being raised",
+        "ambience": "grocery store muzak continues, camera shutters adding to ambience",
+        "music": "orchestral strings building subtly, quirky beat building"
+      },
+      "00:04-00:06": {
+        "visual": "Office Worker/Protagonist (WEARING SunVue Aviators - glasses remain on face, NO transformation or face morphing occurs) holds champagne glass, looking around at all the shoppers taking photos. Multiple shoppers with phones raised, camera flashes going off, creating paparazzi-like atmosphere. Manager beaming with pride. Protagonist's face remains unchanged - NO Morphskin effect, NO facial transformation, NO glasses switching. WEARING Aviators prominently throughout. Produce section remains normal grocery store setting. Other shoppers continuing to take photos and videos.",
+        "cinematography": "Camera shot: Medium shot showing paparazzi moment. Lens & Depth: 50mm f/2.8 for complete view. Camera motion: Slight zoom in at 2cm/sec on protagonist's face. Composition: Foreground: champagne glass. Midground: Protagonist wearing Aviators with shoppers around. Background: more shoppers with phones. Lighting: Key light: fluorescent overhead with camera flash bursts. Fill light: produce display bounce. Style: Retail documentary with paparazzi energy. Mood: Celebrity moment in mundane setting",
+        "dialogue": "Grocery Store Manager: Magnificent! You're a star!",
+        "sfx": "multiple camera shutters clicking rapidly, phones being raised, champagne bubbles fizzing",
+        "ambience": "grocery store ambience with excited murmurs and camera clicks",
+        "music": "orchestral strings with playful melody, building to transition"
+      },
+      "first_frame_image_prompt": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators on face) standing in Grocery Store produce section examining apples, with Grocery Store Manager approaching with already-poured champagne glass in hand.\n\nCamera shot: Medium shot in produce aisle. Lens & Depth: 50mm f/2.8 with retail depth. Composition: Foreground: apple display. Midground: Protagonist and approaching Manager. Background: produce aisles receding. Lighting: Key light: fluorescent overhead strips. Fill light: produce display bounce. Practical lights: refrigerated section glow. Style: Bright retail documentary. Mood: Surreal grocery store celebration.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters and locations from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Office Worker/Protagonist [CHARACTER REFERENCE] (reference image shows: 28-year-old person with medium brown shoulder-length hair, oval face with light olive skin tone, wearing grey button-down shirt tucked into navy blue slacks) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: WEARING gold aviator sunglasses, examining apples in produce section\n- Grocery Store Manager [CHARACTER REFERENCE] (reference image shows: 38-year-old with thinning brown hair combed over, pale skin with freckles, wearing white dress shirt with rolled sleeves, red vest with store logo) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: approaching with already-poured champagne glass in hand (champagne already in glass), eager expression\n- Grocery Store [LOCATION REFERENCE] (reference image shows: Modern suburban grocery store with bright white fluorescent lighting, wide clean aisles, produce section) - USE THIS REFERENCE IMAGE AS-IS for produce section setting\n- SunVue Aviators [PRODUCT REFERENCE] (reference image shows: Classic aviator sunglasses with thin gold metal frames) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: being worn on protagonist's face throughout entire scene\n\nHyper-realistic photorealistic grocery store photography, bright fluorescent retail lighting, produce section with protagonist in aviators being approached by eager manager with already-poured champagne glass, surreal celebration in mundane setting.",
+      "elements_used": [
+        "Office Worker/Protagonist",
+        "Grocery Store Manager",
+        "Grocery Store",
+        "SunVue Aviators"
+      ]
+    },
+    {
+      "scene_number": 5,
+      "duration_seconds": 6,
+      "video_summary": "Protagonist removes sunglasses at checkout causing reality to snap back to normal, then puts them back on for instant transformation return",
+      "audio_summary": "Music and ambience collapse to mundane reality then surge back as frames return, ending with confident flourish",
+      "visual_effect": {
+        "name": "Freezing",
+        "description": "Time freezes as glasses go on\u2014breath becomes visible, motion stops. Perfect for showing the moment everything changes",
+        "timing": "4-6 seconds as glasses go back on"
+      },
+      "00:00-00:02": {
+        "visual": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators) at Grocery Store checkout lane with Checkout Clerk (19-year-old with auburn ponytail, fair skin, blue polo). WEARING Aviators prominently with gold frames catching light. Champagne bottle and luxury items on conveyor belt. Checkout Clerk scanning items with star-struck expression. Other customers in adjacent lanes craning to look. Fluorescent checkout lighting harsh overhead. Protagonist reaching up to remove Aviators with right hand.",
+        "cinematography": "Camera shot: Medium two-shot at checkout. Lens & Depth: 50mm f/2.8 standard retail. Camera motion: Slight handheld drift for energy. Composition: Foreground: conveyor belt with items. Midground: Protagonist and Clerk interaction. Background: other checkout lanes. Lighting: Key light: harsh fluorescent strips. Fill light: register screen glow. Style: Bright retail documentary. Mood: Celebrity moment about to break",
+        "dialogue": "Checkout Clerk: I can't believe you're shopping here!",
+        "sfx": "barcode scanner beeping, conveyor belt moving, plastic bags rustling",
+        "ambience": "grocery checkout area sounds, registers beeping, carts rolling",
+        "music": "quirky celebration music continuing from previous scene, duck under dialogue"
+      },
+      "00:02-00:04": {
+        "visual": "Office Worker/Protagonist removes SunVue Aviators completely (NOT wearing any sunglasses - face fully visible). Reality instantly snaps back: fluorescent lights become harsh and unflattering, luxury items on belt transform back to regular groceries, champagne becomes regular sparkling water. Checkout Clerk's expression shifts to confusion, blinking as if waking up. Protagonist's appearance returns to normal tired office worker. Store returns to mundane retail environment. Everything desaturated and ordinary.",
+        "cinematography": "Camera shot: Same two-shot with reality shift. Lens & Depth: 50mm f/2.8 but image quality degrades. Camera motion: Static, energy drops. Composition: Same but now mundane. Lighting: Key light: harsh unflattering fluorescent. Fill light: eliminated. Style: Drab documentary reality. Mood: Mundane reality returns",
+        "dialogue": "Checkout Clerk: Wait... who are you? That'll be $47.83.",
+        "sfx": "reality snap sound effect, fluorescent buzz returning, items transforming",
+        "ambience": "mundane grocery sounds return, muzak becomes tinny",
+        "music": "music deflates like air leaving balloon, becomes thin muzak"
+      },
+      "00:04-00:06": {
+        "visual": "Office Worker/Protagonist shrugs, pulls aviators back out of pocket and slides them onto face (NOW WEARING SunVue Aviators). Freezing effect occurs - time stops, other shoppers freeze mid-motion, Checkout Clerk freezes with mouth open. Then reality transforms again but differently than before - golden light returns, protagonist's confidence resurges, slight wind appears making hair flow dramatically. Protagonist adjusts aviators with both hands in hero pose, winking at camera. Tagline appears as overlay: 'See Different. Be Different.' SunVue logo visible.",
+        "cinematography": "Camera shot: Medium hero shot. Lens & Depth: 50mm f/2.0 with shallow depth. Camera motion: Slow push-in to hero close-up at 3cm/sec. Composition: Foreground: blurred checkout items. Midground: Protagonist in hero pose with aviators. Background: frozen/transformed store. Lighting: Key light: golden hero lighting 45\u00b0 above. Fill light: warm bounce. Rim light: dramatic backlight. Style: Cinematic hero moment. Mood: Confident transformation triumph",
+        "dialogue": null,
+        "sfx": "aviators sliding on with authority, time freeze whoosh, wind effect",
+        "ambience": "ambience mutes during freeze then returns transformed",
+        "music": "orchestral surge with modern beat drop, confident ending flourish"
+      },
+      "first_frame_image_prompt": "First frame shows: Office Worker/Protagonist (28-year-old with medium brown shoulder-length hair, WEARING SunVue Aviators) at Grocery Store checkout lane with Checkout Clerk (19-year-old with auburn ponytail, fair skin, blue polo) scanning luxury items. WEARING Aviators prominently with gold frames catching light. Champagne bottle and luxury items on conveyor belt. Checkout Clerk scanning items with star-struck expression. Other customers in adjacent lanes craning to look. Fluorescent checkout lighting harsh overhead.\n\nCamera shot: Medium two-shot at checkout. Lens & Depth: 50mm f/2.8 standard retail. Composition: Foreground: conveyor belt with items. Midground: Protagonist and Clerk interaction. Background: other checkout lanes. Lighting: Key light: harsh fluorescent strips. Fill light: register screen glow. Style: Bright retail documentary. Mood: Celebrity moment about to break.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters and locations from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Office Worker/Protagonist [CHARACTER REFERENCE] (reference image shows: 28-year-old person with medium brown shoulder-length hair, oval face with light olive skin tone, wearing grey button-down shirt tucked into navy blue slacks) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: WEARING SunVue Aviators (gold frames) prominently on face, at checkout counter\n- Checkout Clerk [CHARACTER REFERENCE] (reference image shows: 19-year-old with long straight auburn hair in ponytail, fair skin with light acne scarring, wearing blue polo shirt with store logo) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: star-struck expression, scanning items\n- Grocery Store [LOCATION REFERENCE] (reference image shows: Modern suburban grocery store with bright white fluorescent lighting, checkout lanes) - USE THIS REFERENCE IMAGE AS-IS for checkout lane setting\n- SunVue Aviators [PRODUCT REFERENCE] (reference image shows: Classic aviator sunglasses with thin gold metal frames, teardrop-shaped lenses) - Character WEARING prominently on face\n\nHyper-realistic photorealistic grocery checkout photography, bright fluorescent lighting, protagonist WEARING SunVue Aviators (gold frames) prominently on face being checked out by star-struck clerk, celebrity shopping moment about to collapse to reality.",
+      "elements_used": [
+        "Office Worker/Protagonist",
+        "Checkout Clerk",
+        "Grocery Store"
+      ]
+    }
+  ]
+}

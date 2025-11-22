@@ -1,0 +1,77 @@
+{
+  "json_file": "/Users/sanjaykarinje/git/video-gen/s5_generate_universe/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/sunvue_reality_upgrade_mode_revised_universe_characters.json",
+  "json_prefix": "sunvue_reality_upgrade_mode_revised",
+  "generated_at": "2025-11-21 18:55:03",
+  "elements": [
+    {
+      "element_name": "Urban Street with Bus Stop",
+      "element_type": "location",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/locations/urban_street_with_bus_stop/urban_street_with_bus_stop_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "Hero/Main Commuter",
+      "element_type": "character",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/characters/heromain_commuter/heromain_commuter_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Sunglasses Case",
+      "element_type": "prop",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/props/sunvue_sunglasses_case/sunvue_sunglasses_case_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Aviator Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/props/sunvue_aviator_sunglasses/sunvue_aviator_sunglasses_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "Background Commuters",
+      "element_type": "character",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/characters/background_commuters/background_commuters_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Cat-Eye Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/props/sunvue_cat_eye_sunglasses/sunvue_cat_eye_sunglasses_canonical.png",
+          "url": null
+        }
+      }
+    },
+    {
+      "element_name": "SunVue Wayfarer Sunglasses",
+      "element_type": "prop",
+      "images": {
+        "canonical": {
+          "filepath": "/Users/sanjaykarinje/git/video-gen/s6_generate_reference_images/outputs/sunvue_1121_1827/sunvue_reality_upgrade_mode_revised/props/sunvue_wayfarer_sunglasses/sunvue_wayfarer_sunglasses_canonical.png",
+          "url": null
+        }
+      }
+    }
+  ]
+}

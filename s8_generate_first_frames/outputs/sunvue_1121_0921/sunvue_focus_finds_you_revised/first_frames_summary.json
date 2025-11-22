@@ -1,0 +1,15 @@
+{
+  "scene_prompts_file": "s7_generate_scene_prompts/outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised/sunvue_focus_finds_you_revised_scene_prompts.json",
+  "output_dir": "s8_generate_first_frames/outputs/sunvue_1121_0921/sunvue_focus_finds_you_revised",
+  "resolution": "720p",
+  "aspect_ratio": "16:9",
+  "total_scenes": 5,
+  "generated_frames": 5,
+  "first_frames": {
+    "1": "sunvue_focus_finds_you_revised_p1_first_frame.png",
+    "2": "sunvue_focus_finds_you_revised_p2_first_frame.png",
+    "3": "sunvue_focus_finds_you_revised_p3_first_frame.png",
+    "4": "sunvue_focus_finds_you_revised_p4_first_frame.png",
+    "5": "sunvue_focus_finds_you_revised_p5_first_frame.png"
+  }
+}

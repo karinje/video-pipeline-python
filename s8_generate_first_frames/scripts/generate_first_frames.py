@@ -91,8 +91,52 @@ def find_reference_images_for_scene(scene_data, universe_chars, universe_images_
                 canonical_img = images.get("canonical", {})
                 filepath = canonical_img.get("filepath")
                 
-                if filepath and os.path.exists(filepath):
-                    return (filepath, summary_element_name)
+                if filepath:
+                    candidates = []
+                    
+                    # As-is (in case already absolute)
+                    if os.path.isabs(filepath):
+                        candidates.append(filepath)
+                    
+                    base_dir = image_summary.get("_base_dir")
+                    if base_dir:
+                        candidates.append(os.path.normpath(os.path.join(base_dir, filepath)))
+                        candidates.append(os.path.normpath(os.path.join(os.path.dirname(base_dir), filepath)))
+                    
+                    if universe_images_dir:
+                        candidates.append(os.path.normpath(os.path.join(universe_images_dir, filepath)))
+                        candidates.append(os.path.normpath(os.path.join(os.path.dirname(universe_images_dir), filepath)))
+                    
+                    # Remove duplicates while preserving order
+                    seen = set()
+                    unique_candidates = []
+                    for candidate in candidates:
+                        if candidate not in seen:
+                            unique_candidates.append(candidate)
+                            seen.add(candidate)
+                    
+                    for candidate in unique_candidates:
+                        if os.path.exists(candidate):
+                            return (candidate, summary_element_name)
+        
+        # Final fallback: build canonical path from element name
+        if universe_images_dir:
+            type_map = {
+                "character": "characters",
+                "location": "locations",
+                "prop": "props"
+            }
+            type_dir = type_map.get(element_type)
+            if type_dir:
+                slug = slugify(element_name)
+                candidate = os.path.join(
+                    universe_images_dir,
+                    type_dir,
+                    slug,
+                    f"{slug}_canonical.png"
+                )
+                if os.path.exists(candidate):
+                    return (candidate, element_name)
         
         return (None, None)
     
@@ -225,7 +269,9 @@ def load_image_generation_summary(universe_images_dir):
     summary_path = os.path.join(universe_images_dir, "image_generation_summary.json")
     if os.path.exists(summary_path):
         with open(summary_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
+            summary = json.load(f)
+            summary["_base_dir"] = os.path.dirname(summary_path)
+            return summary
     return None
 
 

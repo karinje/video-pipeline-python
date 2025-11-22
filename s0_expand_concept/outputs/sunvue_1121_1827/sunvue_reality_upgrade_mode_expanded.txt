@@ -1,0 +1,57 @@
+---
+
+**CONCEPT TITLE**: Reality Upgrade Mode
+
+**EYEWEAR FOCUS**:
+- Frame Style: Aviators, Wayfarers, Cat-Eyes
+- Lens Type: Premium tinted lenses with UV protection
+- Style Persona: The Reality Transformer - turning mundane moments into extraordinary experiences
+
+**5-SCENE AD CONCEPT**:
+
+**SCENE 1**: Office worker sits at grey cubicle, sighs at spreadsheets. Discovers sleek SunVue case in drawer.
+
+**SCENE 2**: Puts on Aviators. Office transforms: water cooler bubbles champagne, boss spins records, coworkers groove confidently.
+
+**SCENE 3**: Switches to Wayfarers. Reality shifts: photocopiers shoot confetti, desk becomes rooftop bar, everyone's celebrating success.
+
+**SCENE 4**: Tries Cat-Eyes. World goes playfully surreal: office plants dance, emails become paper airplanes, everything's delightfully absurd.
+
+**SCENE 5**: Removes glasses. Grey reality snaps back instantly. Grins, puts Aviators back on. World transforms again.
+
+---
+
+**AUDIENCE JOURNEY**: Viewers experience the liberating realization that the right frames don't just change your look—they transform your entire perspective on life.
+
+**WHY THIS WORKS FOR EYEWEAR**: SunVue frames become magical objects that unlock hidden potential in everyday situations, making them irresistibly desirable. The instant transformation demonstrates that these aren't just accessories—they're confidence catalysts that help you see life's hidden possibilities. Each frame style delivers its own unique vibe, showcasing the range while keeping the brand promise consistent.
+
+**TAGLINE/END CARD**: Hero wearing all three styles simultaneously, reality kaleidoscoping between vibes. "SunVue. Never Hide."
+
+---
+
+## QUALITY CHECKLIST
+
+Before submitting, verify:
+
+**EYEWEAR FOCUS**:
+- [✓] Frames are the hero (not just present)
+- [✓] Style benefit clear and aspirational
+- [✓] Frames visible in at least 3 scenes
+- [✓] Includes putting on/adjusting frames moment
+- [✓] Makes viewers want THESE specific frames
+
+**BRAND ALIGNMENT**:
+- [✓] Matches input FRAME_STYLE
+- [✓] Fits STYLE_PERSONA
+- [✓] Appropriate for WEARING_OCCASION
+- [✓] Embodies BRAND_PERSONALITY
+- [✓] Delivers VALUE_PROPOSITION
+
+**NARRATIVE QUALITY**:
+- [✓] Would make viewers feel something
+- [✓] Story is simple but memorable
+- [✓] Style transformation is believable
+- [✓] Brand integration feels natural
+- [✓] Concept feels fresh for eyewear
+
+---

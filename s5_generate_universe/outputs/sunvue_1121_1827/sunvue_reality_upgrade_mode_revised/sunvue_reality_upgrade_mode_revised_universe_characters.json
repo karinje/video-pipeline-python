@@ -1,0 +1,81 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Urban Street with Bus Stop",
+        "scenes_used": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "canonical_state": "Grey, wet urban street on overcast morning with concrete bus stop shelter featuring metal bench and faded transit map, cracked sidewalk with puddles reflecting dull sky, row of closed storefronts with peeling paint and dim windows, sparse morning commuter foot traffic, light rain creating wet sheen on asphalt, overhead power lines, distant office buildings in fog",
+        "image_generation_prompt": "Hyper-realistic photorealistic wide shot of dreary urban street corner on rainy morning, documentary photography style, wet concrete bus stop shelter with metal bench, puddles on cracked sidewalk, authentic natural lighting through overcast clouds, ultra-realistic rain droplets and wet surfaces, row of old storefronts with realistic weathering and peeling paint, sparse pedestrians in rain gear, lifelike atmospheric fog, professional street photography, real location, natural skin texture on distant figures, realistic fabric textures on clothing, authentic urban decay details, 35mm film photography aesthetic"
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Sunglasses Case",
+        "scenes_used": [
+          1,
+          3,
+          4
+        ],
+        "canonical_state": "Sleek matte black leather case with subtle embossed SunVue logo, premium magnetic closure, compact rectangular form factor sized for multiple frames, soft microfiber interior lining visible when open, minimal modern design with rounded edges, approximately 7 inches long by 3 inches wide",
+        "image_generation_prompt": "Hyper-realistic photorealistic product photography of premium black leather sunglasses case, ultra-realistic leather texture with natural grain, authentic material finish, subtle embossed logo catching light, professional product photography on neutral surface, lifelike material textures, real leather with natural imperfections, documentary style product shot, authentic stitching details, realistic soft lighting, genuine leather patina, photorealistic microfiber lining visible, natural shadows and highlights, commercial photography quality"
+      },
+      {
+        "name": "SunVue Aviator Sunglasses",
+        "scenes_used": [
+          2,
+          5
+        ],
+        "canonical_state": "Classic aviator frame design in polished gold metal with double bridge, teardrop-shaped dark amber tinted lenses with visible UV protection coating, thin wire temples with clear silicone nose pads, subtle SunVue logo etched on right lens corner, premium construction with visible quality in joints and hinges",
+        "image_generation_prompt": "Hyper-realistic photorealistic close-up of premium aviator sunglasses, ultra-realistic polished gold metal frame with authentic reflections, genuine glass lenses with natural light refraction, professional product photography, lifelike metal texture with micro-scratches and authentic finish, real sunglasses with visible construction details, documentary style product shot, authentic lens tinting, realistic shadows and highlights, genuine metal patina, photorealistic temple tips, natural material interactions, commercial photography quality"
+      },
+      {
+        "name": "SunVue Wayfarer Sunglasses",
+        "scenes_used": [
+          3,
+          5
+        ],
+        "canonical_state": "Bold black acetate wayfarer frames with glossy finish, thick angular design with distinctive trapezoidal shape, dark grey gradient lenses, silver metal hinges and accents at temples, SunVue logo printed in silver on inner left temple, substantial weight and premium feel",
+        "image_generation_prompt": "Hyper-realistic photorealistic close-up of classic black wayfarer sunglasses, ultra-realistic glossy acetate material with authentic reflections, genuine plastic texture with natural imperfections, professional product photography, lifelike frame thickness and weight, real sunglasses with visible construction details, documentary style product shot, authentic gradient lens tinting, realistic shadows and highlights on glossy surface, genuine acetate material properties, photorealistic metal hinges, natural material interactions, commercial photography quality"
+      },
+      {
+        "name": "SunVue Cat-Eye Sunglasses",
+        "scenes_used": [
+          4,
+          5
+        ],
+        "canonical_state": "Vintage-inspired cat-eye frames in tortoiseshell acetate pattern with upswept corners, brown gradient lenses, gold metal accents at corner points, refined feminine silhouette with medium-thick frame, SunVue logo subtly placed on right temple, retro-modern aesthetic",
+        "image_generation_prompt": "Hyper-realistic photorealistic close-up of tortoiseshell cat-eye sunglasses, ultra-realistic acetate material with authentic tortoiseshell pattern variations, genuine mixed brown and amber coloring with natural depth, professional product photography, lifelike frame curves and upswept angles, real vintage-inspired sunglasses, documentary style product shot, authentic gradient brown lenses, realistic light play through translucent areas, genuine acetate texture and finish, photorealistic gold metal accents, natural material properties, commercial photography quality"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Hero/Main Commuter",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "canonical_state": "28-year-old professional woman with shoulder-length dark brown hair often tucked behind ears, olive skin tone with natural freckles across nose, expressive hazel eyes, wearing grey wool coat over navy business casual outfit consisting of knit sweater and dark slacks, practical black ankle boots, carries worn leather messenger bag, minimal makeup with natural look, tired expression initially shifting to wonder and joy, approximately 5'6\" height with athletic build",
+      "image_generation_prompt": "Hyper-realistic photorealistic portrait of 28-year-old professional woman, documentary photography style, authentic olive skin with natural freckles and skin texture, real person with shoulder-length dark brown hair with natural highlights and movement, lifelike hazel eyes with realistic iris details, wearing grey wool coat with genuine fabric texture over navy knit sweater, ultra-realistic clothing wrinkles and fabric weight, professional portrait photography, natural tired expression, authentic facial features with real skin pores and fine lines, realistic natural lighting, genuine human proportions and anatomy, candid street photography style, real leather messenger bag with wear patterns"
+    },
+    {
+      "name": "Background Commuters",
+      "scenes_used": [
+        2,
+        3,
+        4
+      ],
+      "canonical_state": "Diverse group of 6-8 morning commuters of dramatically varied ethnicities: young Black businessman in charcoal suit carrying briefcase, elderly Asian woman with shopping trolley wearing quilted jacket, middle-aged Latino construction worker in high-vis vest and work boots, young white female student with backpack and earbuds, South Asian family with stroller, Middle Eastern shop owner opening storefront, all wearing weather-appropriate rain gear, moving with typical morning commute urgency, natural urban diversity",
+      "image_generation_prompt": "DIVERSE MULTI-ETHNIC GROUP: Hyper-realistic photorealistic wide shot of authentically diverse morning commuters, BLACK businessman with dark skin in business suit, ASIAN elderly woman with East Asian features and weathered skin, LATINO construction worker with brown skin and work clothes, WHITE young woman with pale skin and student attire, SOUTH ASIAN family with brown skin tones, MIDDLE EASTERN shop owner with olive complexion, documentary street photography style capturing genuine ethnic diversity, ultra-realistic varied skin tones and ethnic features, authentic individual facial structures representing different races, real people with natural skin textures and ethnic characteristics, professional candid photography, realistic rain gear and umbrellas, genuine urban diversity, lifelike clothing appropriate to each person's occupation, natural morning light on varied skin tones, authentic human proportions and real-world diversity"
+    }
+  ]
+}

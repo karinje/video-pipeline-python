@@ -38,34 +38,15 @@ def call_anthropic_with_caching(prompt, model, api_key, thinking=None, max_token
     
     client = Anthropic(api_key=api_key)
     
-    # Split prompt into cacheable (schema/instructions) and dynamic (content) parts
-    # Cache everything up to the OUTPUT FORMAT section
-    if "**OUTPUT FORMAT (JSON):**" in prompt:
-        parts = prompt.split("**OUTPUT FORMAT (JSON):**")
-        cacheable_part = parts[0] + "**OUTPUT FORMAT (JSON):**"
-        dynamic_part = parts[1] if len(parts) > 1 else ""
-    else:
-        # Fallback: cache most of the prompt
-        cacheable_part = prompt[:int(len(prompt) * 0.7)]
-        dynamic_part = prompt[int(len(prompt) * 0.7):]
-    
-    # Build system messages with cache control
-    system = [
-        {
-            "type": "text",
-            "text": cacheable_part.strip(),
-            "cache_control": {"type": "ephemeral"}  # Cache this part
-        }
-    ]
-    
-    # Build request parameters
+    # NO CACHING - Direct simple call (caching causes 20min delays)
     params = {
         "model": model,
-        "system": system,
         "messages": [
-            {"role": "user", "content": dynamic_part.strip() if dynamic_part else "Generate the scene prompts now."}
+            {"role": "user", "content": prompt}
         ]
     }
+    
+    print(f"    [DEBUG] Building API request (thinking={thinking})...")
     
     # Add thinking parameter
     if thinking is not None and thinking > 0:
@@ -77,50 +58,107 @@ def call_anthropic_with_caching(prompt, model, api_key, thinking=None, max_token
             params["thinking"] = {"type": "enabled", "budget_tokens": budget_tokens}
         
         if max_tokens is None:
-            params["max_tokens"] = budget_tokens + 10000  # Large buffer for scene prompts
+            # Total max_tokens = thinking + response
+            # With thinking=5000, we want 12k response, so 17k total
+            params["max_tokens"] = 17000  # Total: thinking (5000) + response (12000)
         else:
             params["max_tokens"] = max_tokens
         
         params["temperature"] = temperature if temperature is not None else 1
     else:
-        params["max_tokens"] = max_tokens if max_tokens else 10000
+        # Scene prompts JSON with new timestamp format needs more tokens
+        params["max_tokens"] = max_tokens if max_tokens else 17000
         params["temperature"] = temperature if temperature is not None else 0.5
     
-    response = client.messages.create(**params)
+    print(f"    [DEBUG] Sending request to Anthropic API...", flush=True)
+    print(f"    [DEBUG] Model: {model}, Max tokens: {params.get('max_tokens')}, Thinking: {thinking}", flush=True)
     
-    # Extract content from response (handle ThinkingBlocks)
-    if not response.content or len(response.content) == 0:
-        raise ValueError("Empty response from Anthropic API")
+    # Use streaming if thinking budget is high (required for long operations)
+    use_streaming = thinking and thinking >= 5000
     
-    content_parts = []
-    for block in response.content:
-        # Skip thinking blocks - we only want the actual text response
-        if hasattr(block, 'type') and block.type == 'thinking':
-            continue
-        
-        if hasattr(block, 'text'):
-            content_parts.append(block.text)
-        elif hasattr(block, 'content'):
-            content_parts.append(block.content)
+    api_start = time.time()
+    try:
+        if use_streaming:
+            print(f"    [DEBUG] Using streaming mode (thinking={thinking} requires it)...", flush=True)
+            full_response = ""
+            chunk_count = 0
+            with client.messages.stream(**params) as stream:
+                for text in stream.text_stream:
+                    full_response += text
+                    chunk_count += 1
+                    if chunk_count % 50 == 0:  # Progress indicator
+                        print(f"    [DEBUG] Received {chunk_count} chunks, {len(full_response)} chars so far...", flush=True)
+                # Get the final message to ensure we have everything
+                final_message = stream.get_final_message()
+            
+            api_end = time.time()
+            print(f"    [DEBUG] ✓ API response received in {api_end - api_start:.1f} seconds", flush=True)
+            print(f"    [DEBUG] Total chunks received: {chunk_count}, Total chars: {len(full_response)}", flush=True)
+            
+            # Use final message text if available (more reliable)
+            if hasattr(final_message, 'content') and final_message.content:
+                final_text = ""
+                for block in final_message.content:
+                    if hasattr(block, 'text'):
+                        final_text += block.text
+                if final_text and len(final_text) > len(full_response):
+                    print(f"    [DEBUG] Using final_message.content ({len(final_text)} chars) instead of streamed ({len(full_response)} chars)", flush=True)
+                    full_response = final_text
+            
+            # Create a mock response object with text property
+            class MockResponse:
+                def __init__(self, text):
+                    self.text = text
+                    self.content = [type('obj', (object,), {'type': 'text', 'text': text})]
+            response = MockResponse(full_response)
         else:
-            content_parts.append(str(block))
+            response = client.messages.create(**params)
+        api_end = time.time()
+        print(f"    [DEBUG] ✓ API response received in {api_end - api_start:.1f} seconds", flush=True)
+        
+        # Save raw response text for debugging (skip pickle for streaming responses)
+        if not use_streaming:
+            import pickle
+            from pathlib import Path
+            debug_dir = Path(__file__).parent.parent / "outputs" / "debug"
+            debug_dir.mkdir(parents=True, exist_ok=True)
+            response_file = debug_dir / f"anthropic_response_{int(time.time())}.pkl"
+            try:
+                with open(response_file, 'wb') as f:
+                    pickle.dump(response, f)
+                print(f"    [DEBUG] Response saved to: {response_file}", flush=True)
+            except Exception as e:
+                print(f"    [DEBUG] Could not save response (streaming mode): {e}", flush=True)
+        
+    except Exception as e:
+        api_end = time.time()
+        print(f"    [DEBUG] ✗ API call failed after {api_end - api_start:.1f} seconds: {e}", flush=True)
+        raise
     
-    if not content_parts:
-        raise ValueError("No text content found in Anthropic API response (only thinking blocks)")
+    # Extract content from response - use .text property which handles thinking blocks automatically
+    print(f"    [DEBUG] Extracting content using .text property...", flush=True)
     
-    content = '\n'.join(content_parts)
-    
-    # Print cache usage stats
-    usage = getattr(response, 'usage', None)
-    if usage:
-        cache_read = getattr(usage, 'cache_read_input_tokens', 0)
-        cache_create = getattr(usage, 'cache_creation_input_tokens', 0)
-        if cache_read > 0:
-            print(f"  → Cache hit: {cache_read} tokens read from cache (saved cost!)")
-        if cache_create > 0:
-            print(f"  → Cache created: {cache_create} tokens cached for future use")
-    
-    return content
+    try:
+        # Anthropic SDK's .text property automatically filters out thinking blocks
+        content = response.text
+        print(f"    [DEBUG] Content extracted: {len(content)} chars", flush=True)
+        return content
+    except AttributeError:
+        # Fallback to manual extraction if .text doesn't exist
+        print(f"    [DEBUG] .text not available, using manual extraction...", flush=True)
+        content_parts = []
+        for block in response.content:
+            if hasattr(block, 'type') and block.type == 'thinking':
+                continue
+            if hasattr(block, 'text'):
+                content_parts.append(block.text)
+        
+        if not content_parts:
+            raise ValueError("No text content found in response")
+        
+        content = '\n'.join(content_parts)
+        print(f"    [DEBUG] Content extracted: {len(content)} chars", flush=True)
+        return content
 
 
 def get_api_key(provider):
@@ -276,12 +314,12 @@ def generate_scene_prompts(revised_script, universe_chars, config, duration=30, 
     print(f"  ✓ Number of clips: {num_scenes}")
     print(f"  ✓ Total duration: {actual_total_duration} seconds")
     
-    print("  [Step 2/6] Determining aspect ratio...")
+    print(f"[{time.strftime('%H:%M:%S')}] [Step 2/7] Determining aspect ratio...")
     # Determine aspect ratio from resolution
     aspect_ratio = "16:9"  # Default for 480p/1080p
     print(f"  ✓ Aspect ratio: {aspect_ratio}")
     
-    print("  [Step 3/6] Loading image generation summary (if available)...")
+    print(f"[{time.strftime('%H:%M:%S')}] [Step 3/7] Loading image generation summary (if available)...")
     # Load image_generation_summary.json if available to get actual element names used for images
     image_element_names = {}
     if image_summary_path and os.path.exists(image_summary_path):
@@ -324,7 +362,7 @@ def generate_scene_prompts(revised_script, universe_chars, config, duration=30, 
     else:
         print(f"  → No image summary provided, using universe names directly")
     
-    print("  [Step 4/6] Building allowed element names list...")
+    print(f"[{time.strftime('%H:%M:%S')}] [Step 4/7] Building allowed element names list...")
     # Build allowed names list - use image summary names if available, otherwise universe names
     def get_display_name(original_name):
         return image_element_names.get(original_name, original_name)
@@ -334,19 +372,38 @@ def generate_scene_prompts(revised_script, universe_chars, config, duration=30, 
     allowed_prop_names = [get_display_name(prop.get('name')) for prop in universe_chars.get('universe', {}).get('props', [])]
     print(f"  ✓ Allowed names: {len(allowed_char_names)} characters, {len(allowed_loc_names)} locations, {len(allowed_prop_names)} props")
     
+    # Build reference images documentation with type labels and canonical states
+    reference_images_list = []
+    for char in universe_chars.get('characters', []):
+        char_name = get_display_name(char.get('name'))
+        canonical_state = char.get('canonical_state', 'Character in neutral state')
+        reference_images_list.append(f"- {char_name} [CHARACTER REFERENCE] (canonical state: {canonical_state})")
+    
+    for loc in universe_chars.get('universe', {}).get('locations', []):
+        loc_name = get_display_name(loc.get('name'))
+        canonical_state = loc.get('canonical_state', 'Location in neutral state')
+        reference_images_list.append(f"- {loc_name} [LOCATION REFERENCE] (canonical state: {canonical_state})")
+    
+    for prop in universe_chars.get('universe', {}).get('props', []):
+        prop_name = get_display_name(prop.get('name'))
+        canonical_state = prop.get('canonical_state', 'Prop in neutral state')
+        reference_images_list.append(f"- {prop_name} [PRODUCT REFERENCE] (canonical state: {canonical_state})")
+    
+    reference_images_documentation = "\n".join(reference_images_list)
+    
     # Load visual effects library only if enabled
     visual_effects_library = None
     if enable_visual_effects:
-        print("  [Step 5/6] Loading visual effects library...")
+        print(f"[{time.strftime('%H:%M:%S')}] [Step 5/7] Loading visual effects library...")
         visual_effects_library = load_visual_effects_library()
         if visual_effects_library:
             print(f"  ✓ Loaded visual effects library")
         else:
             print(f"  ⚠ Visual effects library not found")
     else:
-        print("  [Step 5/6] Visual effects disabled (enable_visual_effects=false)")
+        print(f"[{time.strftime('%H:%M:%S')}] [Step 5/7] Visual effects disabled (enable_visual_effects=false)")
     
-    print("  [Step 6/7] Building LLM prompt...")
+    print(f"[{time.strftime('%H:%M:%S')}] [Step 6/7] Building LLM prompt...")
     
     # Build visual effects section conditionally
     if enable_visual_effects:
@@ -356,35 +413,107 @@ def generate_scene_prompts(revised_script, universe_chars, config, duration=30, 
 {visual_effects_library if visual_effects_library else "Visual effects library not available"}
 
 **VISUAL EFFECTS USAGE INSTRUCTIONS:**
-1. Select 1-3 visual effects per scene that enhance the eyewear storytelling
-2. Effects should complement, not overshadow the frames
-3. Use effects that highlight the product benefits (e.g., "Luminous Gaze" for lens quality, "3D Rotation" for design showcase)
-4. Include the exact effect name and description in your scene
-5. Time the effects appropriately within the scene duration"""
-        visual_effects_instruction = """
-
-6. **visual_effects**: Include 1-3 visual effects from the library.
-   - Use EXACT effect names from the visual effects library
-   - Include full description from library
-   - Specify timing within the scene (e.g., "at 2-3 seconds")
-   - Effects should enhance the eyewear storytelling"""
-        visual_effects_example = """,
-      "visual_effects": [
-        {{
-          "name": "Effect Name from Library",
-          "description": "Full description from visual effects library",
-          "timing": "When in the scene (e.g., '2-3 seconds', 'throughout', 'at climax')"
-        }}
-      ]"""
+1. AT MOST 1 visual effect per scene - can be ZERO if nothing fits naturally
+2. Only include an effect when it NATURALLY ENHANCES the scene - do NOT force an effect just to have one
+3. Effect should complement, not overshadow the frames
+4. Use effects that highlight product benefits (e.g., "Luminous Gaze" for lens quality, "3D Rotation" for design showcase)
+5. Include exact effect name and description from the library
+6. Time the effect appropriately within the scene duration
+7. If NO effect fits naturally, set visual_effect to null - this is COMPLETELY ACCEPTABLE"""
     else:
         visual_effects_section = ""
-        visual_effects_instruction = ""
-        visual_effects_example = ""
     
     # Pipeline assumes eyewear/sunglasses products only
     prompt = f"""You are a professional video director creating prompts for AI video generation (Veo 3 Fast, Sora 2) specializing in eyewear/sunglasses advertising.
 
 **CRITICAL CONTEXT**: Each scene will be generated INDEPENDENTLY by the video AI model. Each prompt must be COMPLETELY SELF-CONTAINED with all necessary information.
+
+════════════════════════════════════════════════════════════════════════════════
+🚨 MOST CRITICAL REQUIREMENTS - READ FIRST 🚨
+════════════════════════════════════════════════════════════════════════════════
+
+**REQUIREMENT 1: SCENE TRANSITION CONTINUITY (CRITICAL FOR FINAL AD)**
+
+All {num_scenes} scenes will be STITCHED TOGETHER into one coherent advertisement. Therefore:
+
+**VIDEO TRANSITIONS:**
+1. **Each scene MUST transition smoothly into the next scene** - NO abrupt endings or jarring cuts
+2. **Scene endings must set up the next scene** - Consider what happens next when planning the final 2 seconds of each scene
+3. **Scene beginnings must flow from previous scene** - Consider what came before when planning the first 2 seconds (except Scene 1)
+4. **Visual/narrative bridges required** - Use motion, composition, or thematic elements that carry across the cut
+5. **Timing must support flow** - Actions should feel continuous across scenes, not like separate isolated clips
+
+**AUDIO TRANSITIONS (EQUALLY CRITICAL):**
+1. **Music MUST NOT hard-stop at scene end** - Use "continues into next scene", "fades preparing for transition", "sustains as scene ends"
+2. **SFX should bridge scenes where logical** - If same location (e.g., rain, traffic), continue the sound across the cut
+3. **Ambience should evolve naturally** - Don't reset ambience abruptly; transition it (e.g., "rain continues but softens", "traffic fades as we move indoors")
+4. **Audio hierarchy throughout**: Dialogue > SFX > Ambience > Music (duck music/ambience when dialogue present)
+5. **Think: "How does THIS scene's audio flow INTO the NEXT scene's audio?"**
+
+**Example of GOOD transition planning:**
+- Scene 1 ends (6-8s): Hero discovers sunglasses, begins to raise them toward face. Music: piano melody completes phrase but sustains, setting up continuation. SFX: case opening sound begins. Ambience: rain continues.
+- Scene 2 begins (0-2s): Continuation of raising motion, now placing them on face. Music: piano sustained note from previous scene now shifts to new melody. SFX: case opening sound completes, frames slide onto face. Ambience: rain continues from previous scene.
+
+**Example of BAD transition (DO NOT DO THIS):**
+- Scene 1 ends: Hero freezes mid-action. Music: abrupt stop at 8 seconds. SFX: silence. Ambience: cuts off.
+- Scene 2 begins: Entirely new action. Music: suddenly starts from scratch. SFX: unrelated sounds. Ambience: completely different soundscape with no connection.
+
+**REQUIREMENT 2: FIRST FRAME FACE VISIBILITY (CRITICAL FOR CHARACTER CONSISTENCY)**
+
+The first_frame_image_prompt generates an image that Veo uses as the REFERENCE for the ENTIRE video clip.
+
+**CRITICAL RULE: If a character/person appears in the scene, their COMPLETE FACE must be FULLY VISIBLE and PROPERLY FRAMED in the first frame image.**
+
+Why this matters:
+- Veo uses the first frame to understand what the character looks like
+- If you hide/crop the face in the first frame (e.g., extreme close-up of just eyes, back of head, side profile with face obscured), Veo will GENERATE A DIFFERENT FACE when the camera moves or character turns
+- This breaks character consistency and ruins the video
+
+**MANDATORY FACE FRAMING for first_frame_image_prompt when character is present:**
+- ✅ CORRECT: "Medium shot showing Hero's full face clearly visible" (face occupies 20-40% of frame height)
+- ✅ CORRECT: "Medium close-up with Hero centered, face fully recognizable" (face occupies 30-50% of frame)
+- ❌ WRONG: "Wide shot" (face too small, unrecognizable, distant)
+- ❌ WRONG: "Extreme close-up of Hero's eyes through lens" (face cropped, only partial features visible)
+- ❌ WRONG: "Over-shoulder shot, Hero's face partially obscured" (face not fully visible)
+- ❌ WRONG: "Hero from behind, back of head" (face not visible at all)
+
+**FIRST FRAME SHOT REQUIREMENTS:**
+- Use Medium Shot or Medium Close-Up for character scenes (NOT Wide, NOT Extreme Close-Up)
+- Face should occupy 20-40% of frame height for clear visibility and recognition
+- Full face visible: eyes, nose, mouth, chin, forehead all clearly recognizable
+- If your timestamp blocks include camera moves (push-in, pull-out), the first frame MUST show the character's face BEFORE those moves happen
+
+**REQUIREMENT 3: SUNGLASSES STATE CONSISTENCY (CRITICAL FOR EYEWEAR ADS)**
+
+**SUNGLASSES STATE RULES - MUST FOLLOW IN EVERY TIMESTAMP:**
+
+1. **Character can wear ONLY ONE pair of sunglasses at a time** - NEVER wear multiple pairs stacked or layered
+2. **To switch frames, MUST explicitly show removal and wearing sequence:**
+   - First: Remove current pair (state: "NOT wearing any sunglasses")
+   - Then: Put on new pair (state: "NOW WEARING [new model]")
+3. **Every visual description MUST explicitly state sunglasses status:**
+   - "NOT wearing any sunglasses" (when bare face)
+   - "WEARING [specific SunVue model]" (when wearing)
+   - "Removing [model] with [hand]" (during removal)
+   - "Putting on [model]" (during wearing)
+4. **Once removed, old frames stay removed** - they don't magically reappear unless explicitly shown being put back on
+5. **Switching action must be clear and complete:**
+   - ❌ WRONG: "Hero now wearing wayfarers" (what happened to the aviators she was wearing?)
+   - ✅ CORRECT: "Hero removes aviators with left hand (NOT wearing any). Takes wayfarers with right hand. Slides wayfarers onto face (NOW WEARING wayfarers only)."
+
+**EXPLICIT STATE TRACKING REQUIRED:**
+In each timestamp's visual description, you MUST include the current sunglasses state:
+- Before wearing any: "NOT wearing any sunglasses - face fully visible"
+- While wearing: "WEARING SunVue Aviator Sunglasses on face"
+- During switch: "Removing aviators (NOT wearing any), putting on wayfarers (NOW WEARING wayfarers)"
+
+════════════════════════════════════════════════════════════════════════════════
+
+**VEO 3 WORKFLOW (Google Recommended)**: 
+- First frame is generated separately using an image model (Imagen/nano-banana) from first_frame_image_prompt
+- That generated image becomes the starting frame for Veo's image-to-video generation
+- Timestamp blocks tell Veo how to ANIMATE that first frame with synchronized video and audio
+- Therefore: first_frame_image_prompt and the first timestamp block (00:00-00:02) must be PERFECTLY aligned in style/lighting/camera/mood
 
 **BRAND CONTEXT:**
 - Brand: {config.get('BRAND_NAME', '')}
@@ -421,177 +550,237 @@ You MUST use the EXACT names from the universe_characters.json above. Do NOT cre
 **ALLOWED PROP NAMES** (use EXACTLY as shown - these are the names that have reference images):
 {chr(10).join([f"- {name}" for name in allowed_prop_names])}
 
+**REFERENCE IMAGES AVAILABLE (with canonical states):**
+These reference images will be attached to first_frame_image_prompt generation. Each shows the element in its BASE/NEUTRAL/CANONICAL state:
+
+{reference_images_documentation}
+
+When creating first_frame_image_prompt, you will include these with proper [TYPE REFERENCE] labels and instruct whether to use AS-IS or MODIFY based on the scene requirements.
+
 **VIDEO SPECIFICATIONS:**
 - Resolution: {resolution}
 - Aspect Ratio: {aspect_ratio}
 - Scene Duration: {scene_duration} seconds (EXACT - all scenes must be this duration)
 
-**SORA 2 PROMPTING BEST PRACTICES:**
+**VEO 3 PROMPTING BEST PRACTICES (Google's Official Guidelines):**
 1. **Each scene prompt must be self-contained** - include style/aesthetic in EVERY scene (not just the first one)
 2. **Be specific, not vague** - "wet asphalt, neon reflections" beats "beautiful street"
 3. **Clear who, where, what** - Explicitly state who is in the frame, where they are, what they're doing
 4. **For montage/multi-shot scenes**: Clearly distinguish each shot/moment so they don't blend together
 5. **Dialogue**: Always specify WHO is speaking (character name or narrator with voice description)
 6. **Keep motion simple**: One clear camera move, one clear subject action per shot
-7. **Lighting**: Describe quality and source, not just "well lit"
+7. **CRITICAL: Always specify depth composition** - Foreground/Midground/Background enables Veo to create parallax and realistic camera moves
+8. **CRITICAL: Always specify lens type and depth of field** - Controls focus falloff, bokeh, and lens character (e.g., "50mm f/2.8 shallow depth")
+9. **CRITICAL: Always specify directional lighting** - Give source and direction for key/fill/rim/practical lights (e.g., "key light: overhead left 45°"), not just mood
+10. **Include atmospheric particles** - Haze, mist, dust motes, breath vapor add cinematic depth and subtle motion cues
+11. **Specify material surfaces** - Glossy/matte/reflective properties help Veo render realistic materials and reflections
+12. **Add small environmental motion** - Distant traffic, drifting steam, swaying elements make the world feel alive
 {visual_effects_section}
 **INSTRUCTIONS:**
 For EACH of the {num_scenes} scenes, create:
 
-**CRITICAL: ALL scenes must be EXACTLY {scene_duration} seconds. Do NOT vary the duration.**
+**CRITICAL REQUIREMENTS:**
+1. **YOU MUST GENERATE ALL {num_scenes} SCENES** - The "scenes" array MUST contain exactly {num_scenes} complete scene objects (scene_number 1 through {num_scenes}). Do NOT stop after generating only 1 or 2 scenes.
+2. **EVERY scene must be EXACTLY {scene_duration} seconds** - Set "duration_seconds": {scene_duration} for all {num_scenes} scenes. Do NOT vary the duration.
 
 **CRITICAL WORKFLOW REMINDER:**
 - The first_frame_image_prompt generates an image FIRST (using nano-banana)
 - That image becomes the FIRST FRAME reference for video generation (Veo 3 Fast/Sora 2)
-- **Therefore, first_frame_image_prompt MUST copy ALL stylistic elements from video_prompt** - they must be visually identical in style, lighting, camera, color grade, mood, etc.
-- If the image style doesn't match the video style, the final video will look inconsistent and unprofessional
+- Veo will generate video + audio from timestamp-based prompts following Google's recommended format
+- Each timestamp block (e.g., "00:00-00:02") contains visual, cinematography, and audio (dialogue, sfx, ambience, music)
+- Audio follows strict hierarchy: Dialogue > SFX > Ambience > Music (music ducks under dialogue)
 
-1. **video_prompt**: Complete, self-contained prompt following this structure:
+1. **video_summary**: One-sentence overview of what happens in this scene (for UI display to user)
 
-   **Style:** [Overall aesthetic, era, film format - e.g., "Modern documentary style, shot on digital cinema camera with natural grain, warm cinematic color grade" - INCLUDE IN EVERY SCENE]
-   
-   **Scene Description:** [Prose description clearly stating WHO is in the scene, WHERE they are, WHAT they're doing. Be specific with details - colors, textures, objects, expressions]
-   
-   **Cinematography:**
-   Camera shot: [Specific framing - e.g., "wide shot, eye level" or "medium close-up, slight angle from behind"]
-   Camera motion: [e.g., "slow push-in" or "handheld, steady" or "static"]
-   Lighting: [Quality and source - e.g., "soft window light with warm lamp fill, cool rim from hallway"]
-   Mood: [e.g., "contemplative and determined" or "triumphant yet intimate"]
-   
-   **Actions:** [Break action into specific beats, e.g., "- Takes four steps forward", "- Pauses at window", "- Turns head to camera"]
-   
-   For MONTAGE scenes with multiple shots: Clearly separate each shot and describe the transition. Example:
-   SHOT 1 (0-2 sec): [Who, where, what, how - be specific]
-   SHOT 2 (2-4 sec): [Who, where, what, how - be specific]
-   SHOT 3 (4-6 sec): [Who, where, what, how - be specific]
-   
-   Keep the video_prompt detailed but focused on what the model needs to generate THIS specific scene
+2. **audio_summary**: One-sentence description of the audio journey in this scene (for UI display to user)
 
-2. **audio_background**: Detailed background music prompt for ElevenLabs/Suno (genre, mood, tempo, instruments, energy level)
+3. **visual_effect** (singular): Select the SINGLE MOST SUITABLE visual effect for this scene from the library. Include name, description, and timing. If no effect is appropriate, set to null.
 
-3. **audio_dialogue**: Format as "Speaker: [dialogue]" where Speaker is:
-   - EXACT character name from universe_characters.json OR
-   - "Narrator (voice description)" with tone/emotion/style
-   Example: "Character Name: [their dialogue here]"
-   Example: "Narrator (warm, nostalgic voice): [voiceover text here]"
+4. **Timestamp blocks** (00:00-00:02, 00:02-00:04, etc.): For a {scene_duration}-second scene, create {scene_duration//2} timestamp blocks of 2 seconds each.
 
-4. **first_frame_image_prompt**: Complete image gen prompt matching {resolution} {aspect_ratio}. 
+   Each timestamp block MUST contain these fields:
+   
+   **visual**: Complete prose description of what is happening visually in this 2-second segment. CRITICAL: Each timestamp must be SELF-CONTAINED with all essential visual information.
+   
+   Include:
+   - WHO: Character(s) in frame with key appearance details that ensure consistency (e.g., "Hero/Main Commuter, 28-year-old woman with shoulder-length dark hair, grey wool coat")
+   - WHERE: Location/setting for this segment (e.g., "under concrete bus stop shelter", "at rain-slicked urban intersection") - restate even if established earlier for Veo's clarity
+   - WHAT ACTION: Specific physical action being performed (e.g., "checking phone with squinting tired eyes", "sliding aviators onto face")
+   - **SUNGLASSES STATE (MANDATORY - MUST BE EXPLICIT IN EVERY TIMESTAMP)**: State which sunglasses are currently worn:
+     * "NOT wearing any sunglasses - face fully visible" (when bare face)
+     * "WEARING SunVue [Model] Sunglasses on face" (when wearing specific pair)
+     * When switching: "Removes [old model] with [hand] (NOT wearing any). Takes [new model] with [hand]. Slides [new model] onto face (NOW WEARING [new model] only)."
+     * NEVER: "wearing multiple pairs", "aviators appear again" (once removed, stay removed unless explicitly put back on)
+   - WHAT OBJECTS/PRODUCTS: All visible props and products, especially eyewear (CRITICAL: state if sunglasses are worn/held/visible/prominent - e.g., "wearing gold SunVue aviators on face, frames catching light", "SunVue case held in right hand, logo visible")
+   - HOW: Character expressions, emotions, body language that drive the narrative (e.g., "weary expression with hunched shoulders", "confident smile forming, posture straightening")
+   - Material surfaces if pivotal to visual quality (glossy puddles, matte concrete, polished metal frames)
+   - Atmospheric particles if essential to cinematic depth (light mist, breath vapor in cold air, dust motes in light)
+   - Small environmental motion if it enhances realism (distant car passing, steam drifting, rain droplets on lens)
+   
+   **cinematography**: Complete cinematography description for this segment. Include ALL of:
+   - Camera shot: [Specific framing - e.g., "Medium shot at eye level, centered"]
+   - Lens & Depth: [CRITICAL - lens type (e.g., "50mm standard", "85mm portrait"), aperture/depth of field (e.g., "f/2.8 shallow depth with creamy bokeh")]
+   - Camera motion: [e.g., "slow dolly-in at 2cm/sec, easing" or "static locked-off" or "handheld subtle drift"]
+   - Composition: [CRITICAL - depth layers: "Foreground: [elements], Midground: [subject], Background: [distant elements]"]
+   - Lighting: [CRITICAL - directional sources: "Key light: [source + direction], Fill light: [source], Rim light: [source + direction], Practical lights: [sources]"]
+   - Style: [Overall aesthetic for this timestamp - e.g., "Modern documentary, desaturated grey-blue grade, natural film grain"]
+   - Mood: [Emotional tone - e.g., "weary and mundane"]
+   
+   **dialogue**: Dialogue spoken in this 2-second segment. Format as "Character Name: [dialogue text]" or "Narrator (voice description): [voiceover text]" or null if no dialogue.
+   
+   **sfx**: Sound effects for this 2-second segment. List 1-3 key sound effects, most important first. Be specific (e.g., "phone screen tap, distant car horn" not just "city sounds"). Consider what creates the sound and its character.
+   
+   **ambience**: Background ambient sound for this 2-second segment. Describe the sonic environment (e.g., "light rain pattering on concrete shelter, distant traffic hum, puddle ripples"). Should evolve naturally across timestamps, not reset abruptly.
+   
+   **music**: Background music description for this 2-second segment. Include:
+   - Instrumentation (e.g., "minimal melancholic piano")
+   - Tempo if relevant (e.g., "60 BPM")
+   - Dynamics/volume (e.g., "very muted, sparse" or "building tension")
+   - How it evolves (e.g., "adds second note for tension" or "sustains preparing for next scene")
+   - Note: Music should duck (lower volume) when dialogue is present
+   - Note: Music should transition smoothly between scenes, not hard-stop
+   
+   **CRITICAL AUDIO HIERARCHY:** In each timestamp, audio priority is: Dialogue > SFX > Ambience > Music. When dialogue is present, music and ambience should duck in volume.
+
+5. **first_frame_image_prompt**: Complete image gen prompt matching {resolution} {aspect_ratio}. 
    
    **CRITICAL WORKFLOW UNDERSTANDING:**
    - The first_frame_image_prompt will be used FIRST to generate a reference image using image generation models (nano-banana)
    - Reference images from universe/characters will be attached (showing elements in their CANONICAL state)
-   - That generated image will then be used as the FIRST FRAME reference for the video generation model (Veo 3 Fast, Sora 2)
+   - That generated image will then be used as the FIRST FRAME reference for video generation (Veo 3 Fast/Sora 2)
    - The video model will use this first frame image to maintain visual consistency throughout the video
-   - **THEREFORE: The first_frame_image_prompt MUST match the video_prompt style EXACTLY** - they are part of the SAME visual sequence
+   - **THEREFORE: The first_frame_image_prompt MUST match the FIRST TIMESTAMP BLOCK (00:00-00:02) style EXACTLY** - same visual, cinematography, style, lighting, composition
    
-   **CRITICAL FOR VIDEO CONTINUITY**: The generated first frame image MUST be stylistically identical to what the video_prompt describes. If they don't match, the video will look inconsistent and jarring.
+   **CRITICAL FOR VIDEO CONTINUITY**: The generated first frame image MUST be stylistically identical to the first timestamp block. If they don't match, the video will look inconsistent and jarring.
    
    **REFERENCE IMAGES HANDLING - CRITICAL:**
    
-   Reference images will be attached showing elements in their CANONICAL state (from universe_characters JSON below).
+   **IMPORTANT: Reference image files will be physically attached to the image generation API call.**
+   
+   These are actual image files (not descriptions) showing elements in their CANONICAL state (from universe_characters JSON below).
+   The image generation model (nano-banana-pro) will receive these image files as input and must use them as the BASE/STARTING POINT.
    
    In your first_frame_image_prompt, you MUST include a "REFERENCE IMAGES ATTACHED:" section that:
-   1. Lists each element from elements_used
-   2. Describes what the reference shows (copy the canonical_state from universe_characters)
-   3. Specifies how to use it: "USE AS-IS" or "MODIFY to: [specific transformation]"
+   1. Explicitly states that reference image files are being provided as input
+   2. For each element, clearly describe what the reference image shows (copy the canonical_state from universe_characters)
+   3. Explicitly instruct how to use the reference image:
+      - "USE THIS REFERENCE IMAGE AS-IS" (if no changes needed)
+      - "USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: [specific transformation]" (if changes needed)
    
    **Format:**
    ```
-   [Style, camera, lighting from video_prompt]
+   [Style, camera, lens, composition, lighting, mood from first timestamp block (00:00-00:02)]
    
-   REFERENCE IMAGES ATTACHED:
-   - Element Name (shows: [canonical_state from universe_characters]) - USE AS-IS / MODIFY to: [transformation]
+   REFERENCE IMAGES CONTEXT:
+   You are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.
    
-   [Composition details]
+   REFERENCE IMAGES ATTACHED (each element has one reference image file):
+   - Element Name [CHARACTER/LOCATION/PRODUCT REFERENCE] (reference image shows: [canonical_state from universe_characters - their BASE appearance]) - USE THIS REFERENCE IMAGE AS-IS / USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: [specific transformation for this scene]
+   
+   [Hyper-realistic photorealistic composition matching first timestamp visual description]
    ```
    
    **Example - Scene 1 (before transformation):**
    ```
    Modern documentary, wide shot, natural lighting, muted color grade.
    
-   REFERENCE IMAGES ATTACHED:
-   - Main Character (shows: without sunglasses, neutral expression, casual attire) - USE AS-IS
-   - Urban City Streets (shows: neutral colors, normal atmosphere) - MODIFY to: washed-out, desaturated, lifeless
-   - SunVue Aviators (shows: gold frames on white surface) - Character HOLDING in case, not wearing
+   REFERENCE IMAGES CONTEXT:
+   You are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.
    
-   Character walking through dull city, squinting, clutching sunglasses case, looking tired...
+   REFERENCE IMAGES ATTACHED (each element has one reference image file):
+   - Main Character [CHARACTER REFERENCE] (reference image shows: 28-year-old professional woman, shoulder-length dark brown hair, olive skin, hazel eyes, neutral expression, casual attire - this is her BASE appearance) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: weary fatigued expression, squinting eyes, shoulders hunched, grey wool coat damp from rain, NOT wearing sunglasses, holding black leather sunglasses case in right hand
+   - Urban City Streets [LOCATION REFERENCE] (reference image shows: grey wet urban street, concrete bus stop shelter, neutral colors, normal atmosphere) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: washed-out, desaturated, lifeless, frozen mannequin-like commuters in background
+   - SunVue Aviators [PRODUCT REFERENCE] (reference image shows: classic aviator frame in polished gold metal with amber lenses, on neutral background) - Character HOLDING in CLOSED case, NOT visible in frame, NOT wearing
+   
+   Hyper-realistic photorealistic street photography, character walking through dull city, squinting, clutching sunglasses case, looking tired, documentary style
    ```
    
    **Example - Scene 3 (after transformation):**
    ```
    Modern documentary, medium shot, golden hour, vibrant color grade.
    
-   REFERENCE IMAGES ATTACHED:
-   - Main Character (shows: without sunglasses, neutral expression) - MODIFY to: WEARING gold aviators, confident posture, relaxed smile
-   - Urban City Streets (shows: neutral colors) - MODIFY to: saturated vibrant colors, energetic atmosphere
-   - SunVue Aviators (shows: gold frames) - Character WEARING on face, catching light
+   REFERENCE IMAGES CONTEXT:
+   You are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.
    
-   Character striding confidently, aviators prominent, city bursting with color and life...
+   REFERENCE IMAGES ATTACHED (each element has one reference image file):
+   - Main Character [CHARACTER REFERENCE] (reference image shows: 28-year-old professional woman, shoulder-length dark brown hair, olive skin, hazel eyes, neutral expression - this is her BASE appearance) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: WEARING gold aviators on face, confident posture, relaxed smile, shoulders back, vibrant energy
+   - Urban City Streets [LOCATION REFERENCE] (reference image shows: grey wet urban street, neutral colors, normal atmosphere) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY IT TO: saturated vibrant colors, energetic atmosphere, warm golden hour lighting, neon signs glowing
+   - SunVue Aviators [PRODUCT REFERENCE] (reference image shows: classic aviator frame in polished gold metal with amber lenses) - Character WEARING on face prominently, frames catching golden light, lenses showing reflections
+   
+   Hyper-realistic photorealistic street photography, character striding confidently, aviators prominent and catching light, city bursting with color and life, cinematic style
    ```
    
-   **MANDATORY REQUIREMENTS - COPY EXACTLY FROM YOUR VIDEO_PROMPT:**
+   **MANDATORY REQUIREMENTS - COPY EXACTLY FROM YOUR FIRST TIMESTAMP BLOCK (00:00-00:02):**
    
    When creating first_frame_image_prompt, you MUST:
-   1. **Copy the ENTIRE "Style:" line** from your video_prompt verbatim
-   2. **Copy the EXACT "Camera shot:" description** from your video_prompt's Cinematography section
-   3. **Copy the EXACT "Lighting:" description** from your video_prompt's Cinematography section
-   4. **Copy the EXACT "Mood:" description** from your video_prompt's Cinematography section
-   5. **Include the EXACT camera type/film style** from your video_prompt
-   6. **Add REFERENCE IMAGES section** describing what's attached and how to use/modify each element
-   6. **Include the EXACT color grade** from your video_prompt (e.g., "warm cinematic color grade with rich amber tones")
-   7. Include all characters/locations from elements_used clearly visible
-   8. Add hyper-realistic, photorealistic style keywords for image generation
+   1. **Copy the ENTIRE "Style:" from the first timestamp's cinematography** verbatim
+   2. **Copy the EXACT "Camera shot:" from the first timestamp's cinematography** - BUT ensure it follows FACE FRAMING requirements below
+   3. **Copy the EXACT "Lens & Depth:" from the first timestamp's cinematography**
+   4. **Copy the EXACT "Composition:" (Foreground/Midground/Background) from the first timestamp's cinematography**
+   5. **Copy the EXACT "Lighting:" (with all directional sources) from the first timestamp's cinematography**
+   6. **Copy the EXACT "Mood:" from the first timestamp's cinematography**
+   7. **Use the visual description from the first timestamp** as the basis for composition
+   8. **Verify FACE FRAMING if character is present:**
+      - Use Medium Shot or Medium Close-Up (NOT Wide, NOT Extreme Close-Up)
+      - Face should occupy 20-40% of frame height for clear recognition
+      - Full face visible: eyes, nose, mouth, chin, forehead all clearly recognizable
+   9. **Add REFERENCE IMAGES section** describing what's attached and how to use/modify each element
+   10. Include all characters/locations from elements_used clearly visible
+   11. Add hyper-realistic, photorealistic style keywords for image generation
    
    **WORKFLOW REMINDER:** Image is generated FIRST, then used as first frame for video. They MUST be stylistically identical or the video will look wrong.
    
-   **The first frame image should look like a still frame FROM the exact video you described in video_prompt - same style, same lighting, same camera, same mood, same everything.**
+   **The first frame image should look like a still frame FROM the first timestamp block (00:00-00:02) - same style, same lighting, same camera, same mood, same composition, same everything.**
 
-5. **elements_used**: List of element names (characters/props/locations) from universe_characters that appear in this scene.
+6. **elements_used**: List of element names (characters/props/locations) from universe_characters that appear in this scene.
    - Use EXACT names from ALLOWED lists
    - Only include elements that appear in MULTIPLE scenes (2+)
    - These will have their canonical reference images attached to first frame generation
-{visual_effects_instruction}
 **EXAMPLE OUTPUT STRUCTURE:**
 
-Single shot scene example:
+Example 8-second scene with timestamp blocks:
 ```
-Style: [Overall aesthetic, film format, color grade - INCLUDE IN EVERY SCENE]
+video_summary: "Hero discovers and opens SunVue sunglasses case at rainy bus stop, transforming from weary to hopeful"
 
-Scene Description: [WHO is in the frame, WHERE they are, WHAT they're doing. Specific details: colors, textures, expressions, objects]
+audio_summary: "Melancholic piano builds from sparse notes to hopeful melody, with rain ambience and discovery sound effects"
 
-Cinematography:
-Camera shot: [Specific framing - wide/medium/close-up, angle]
-Camera motion: [Slow push-in/static/dolly/handheld]
-Lighting: [Quality and source - soft window light, harsh overhead, golden hour, etc.]
-Mood: [Emotional tone - contemplative, triumphant, tense, etc.]
+visual_effect: {{
+  "name": "Freezing",
+  "description": "Time freezes as glasses go on—breath becomes visible, motion stops. Perfect for showing the moment everything changes",
+  "timing": "6-8 seconds as she discovers the case"
+}}
 
-Actions:
-- [First specific beat with timing]
-- [Second specific beat with timing]
-- [Third specific beat with timing]
-```
+00:00-00:02:
+  visual: "Hero/Main Commuter (28-year-old professional woman with shoulder-length dark brown hair, olive skin, grey wool coat damp from rain) stands under concrete bus stop shelter on dreary rainy morning at Urban Street with Bus Stop. She's hunched against drizzle, checking phone with squinting tired eyes, shoulders slumped in weary posture. NOT wearing sunglasses - face fully visible. Worn leather messenger bag visible on shoulder. Cracked sidewalk puddles with glossy surface reflecting overcast sky. Light rain visible as fine droplets in air."
+  cinematography: "Camera shot: Medium shot at eye level, subject center-frame. Lens & Depth: 50mm standard lens, f/2.8 shallow depth of field with soft bokeh. Camera motion: Subtle handheld drift forward at 1cm/sec. Composition: Foreground: rain puddles on concrete. Midground: Hero centered under shelter. Background: blurred wet street with dim storefronts. Lighting: Key light: flat overcast daylight from above, even illumination. Fill light: soft bounce from wet pavement. Practical lights: distant streetlamp glow. Style: Modern documentary photography, desaturated grey-blue grade, natural film grain. Mood: Weary and mundane, quietly desperate"
+  dialogue: null
+  sfx: "phone screen tap, distant car horn"
+  ambience: "light rain pattering on concrete shelter, distant traffic hum, puddle ripples"
+  music: "minimal melancholic piano notes, 60 BPM, very muted, sparse, single note pattern"
 
-MONTAGE scene example (clearly separate each shot):
-```
-Style: [Overall aesthetic - INCLUDE color grading transitions if applicable]
+00:02-00:04:
+  visual: "Hero/Main Commuter at Urban Street with Bus Stop digs through worn leather messenger bag with frustrated movements, searching urgently. Hands visible rummaging through bag interior, items shifting. Still NOT wearing sunglasses. Expression shows mounting frustration - furrowed brow, slight frown. Grey wool coat sleeve visible as arm reaches into bag. Messenger bag matte leather texture, worn edges. Rain continues falling in background, puddles visible on ground."
+  cinematography: "Camera shot: Medium close-up on hands and bag. Lens & Depth: 50mm f/2.8 shallow depth, bag in focus. Camera motion: Handheld subtle shake matching frustration. Composition: Foreground: bag flap edge. Midground: hands searching bag interior. Background: soft grey shelter wall. Lighting: Same flat overcast, bag interior slightly darker. Style: Continues documentary aesthetic. Mood: Mounting frustration and urgency"
+  dialogue: "Hero/Main Commuter: [soft sigh of frustration]"
+  sfx: "bag zipper sound, leather rustling, items clinking inside bag"
+  ambience: "rain continues steady, bus engine approaching in far distance"
+  music: "piano adds second note creating tension, dynamics lift slightly, duck under dialogue"
 
-SHOT 1 (0-2 seconds - [Shot Name]):
-Scene: [WHO, WHERE, WHAT - be specific]
-Cinematography: [Framing for this shot]
-Lighting: [Lighting for this shot]
-Action: [What happens in this shot]
+00:04-00:06:
+  visual: "Hero/Main Commuter at bus stop discovers sleek SunVue Sunglasses Case (matte black leather with embossed logo) in messenger bag, pauses in surprise. Hand holds case against bag interior, fingers touching embossed SunVue logo with curiosity. Expression shifts from frustration to surprise - eyes widen slightly, eyebrows raise. Still NOT wearing sunglasses. Case surface catching slight overhead light with subtle sheen. Bag interior fabric texture visible in matte grey tones."
+  cinematography: "Camera shot: Insert close-up of case in hand against bag. Lens & Depth: 85mm portrait lens f/2.8 for intimacy. Camera motion: Push-in slowly to case at 1cm/sec. Composition: Foreground: bag fabric texture. Midground: case prominent in hand. Background: soft grey blur. Lighting: Key light: slight highlight catching case surface from above. Style: Documentary with hint of warmth emerging. Mood: Surprise shifting to curiosity"
+  dialogue: "Hero/Main Commuter: [curious 'hmm?']"
+  sfx: "subtle leather case texture sound as fingers trace logo, discovery moment silence"
+  ambience: "rain softens slightly, bus engine fades"
+  music: "piano adds hopeful third note, tempo unchanged, dynamics lift creating optimism, duck under dialogue"
 
-SHOT 2 (2-4 seconds - [Shot Name]):
-Scene: [WHO, WHERE, WHAT - be specific]
-Cinematography: [Framing for this shot]
-Lighting: [Lighting for this shot]
-Action: [What happens in this shot]
-
-SHOT 3 (4-6 seconds - [Shot Name]):
-Scene: [WHO, WHERE, WHAT - be specific]
-Cinematography: [Framing for this shot]
-Lighting: [Lighting for this shot]
-Action: [What happens in this shot]
+00:06-00:08:
+  visual: "Hero/Main Commuter at Urban Street with Bus Stop holds SunVue case up examining it with growing curiosity, bringing it closer to eye level. Hint of smile forming on face - corners of mouth lifting, eyes showing interest. Hand beginning to open case clasp (motion transitions toward next scene). Still NOT wearing sunglasses - full face visible showing emotion shift from weary to hopeful. Case prominent in frame, logo clearly visible. Grey wool coat shoulder visible, rain-dampened. Background shows wet street and shelter softening with emerging warmth in light."
+  cinematography: "Camera shot: Medium shot returning to Hero's face with case. Lens & Depth: 50mm f/2.8 keeping face sharp. Camera motion: Slight drift up following case movement. Composition: Foreground: case edge entering frame. Midground: Hero's face showing emotion shift. Background: shelter and street softening. Lighting: Slight warmth beginning to emerge in highlights. Style: Documentary with emerging hope. Mood: Curiosity and emerging confidence"
+  dialogue: null
+  sfx: "case being raised through air, subtle fabric rustle from coat movement, case clasp beginning to click (sets up next scene)"
+  ambience: "rain ambient continues steady, distant footsteps of approaching commuter"
+  music: "piano melody completes hopeful phrase but sustains final note, preparing smooth transition to next scene, no hard stop"
 ```
 
 **OUTPUT FORMAT (JSON):**
@@ -601,28 +790,88 @@ Action: [What happens in this shot]
     {{
       "scene_number": 1,
       "duration_seconds": {scene_duration},
-      "video_prompt": "[Complete self-contained prompt following structure above]",
-      "audio_background": "[Music prompt with genre, mood, tempo, instruments]",
-      "audio_dialogue": "Speaker Name: [text]" or "Narrator (voice): [text]" or null,
-      "first_frame_image_prompt": "[Style/camera/lighting from video_prompt]\n\nREFERENCE IMAGES ATTACHED:\n- Element Name 1 (shows: canonical state) - USE AS-IS / MODIFY to: [...]\n- Element Name 2 (shows: canonical state) - USE AS-IS / MODIFY to: [...]\n\n[Composition details]",
-      "elements_used": ["Element Name 1", "Element Name 2"]{visual_effects_example}
+      "video_summary": "One-sentence overview of what happens in this scene",
+      "audio_summary": "One-sentence description of the audio journey",
+      "visual_effect": {{
+        "name": "Effect Name from Library",
+        "description": "Full description from library",
+        "timing": "When it occurs (e.g., '6-8 seconds')"
+      }} or null,
+      "00:00-00:02": {{
+        "visual": "Complete self-contained visual description: WHO (character with key appearance), WHERE (location/setting), WHAT ACTION (specific action), WHAT OBJECTS/PRODUCTS (especially eyewear - worn/held/visible?), HOW (expressions/emotions/body language), plus material surfaces, atmospheric particles, environmental motion as needed",
+        "cinematography": "Complete cinematography: Camera shot, Lens & Depth, Camera motion, Composition (Foreground/Midground/Background), Lighting (Key/Fill/Rim/Practical with directions), Style, Mood",
+        "dialogue": "Character Name: [dialogue]" or "Narrator (voice): [text]" or null,
+        "sfx": "sound effect 1, sound effect 2, sound effect 3",
+        "ambience": "ambient sound description for this segment",
+        "music": "music description with instrumentation, tempo, dynamics, evolution"
+      }},
+      "00:02-00:04": {{
+        "visual": "...",
+        "cinematography": "...",
+        "dialogue": "..." or null,
+        "sfx": "...",
+        "ambience": "...",
+        "music": "..."
+      }},
+      "00:04-00:06": {{
+        "visual": "...",
+        "cinematography": "...",
+        "dialogue": "..." or null,
+        "sfx": "...",
+        "ambience": "...",
+        "music": "..."
+      }},
+      "00:06-00:08": {{
+        "visual": "...",
+        "cinematography": "...",
+        "dialogue": "..." or null,
+        "sfx": "...",
+        "ambience": "...",
+        "music": "..."
+      }},
+      "first_frame_image_prompt": "[Copy style/camera/lens/composition/lighting/mood from 00:00-00:02 cinematography]\n\nREFERENCE IMAGES ATTACHED (image files provided as input - use each as base and modify as instructed):\n- Element Name 1 (reference image shows: canonical state) - USE THIS REFERENCE IMAGE AS-IS / AS BASE AND MODIFY TO: [...]\n- Element Name 2 (reference image shows: canonical state) - USE THIS REFERENCE IMAGE AS-IS / AS BASE AND MODIFY TO: [...]\n\n[Hyper-realistic photorealistic composition matching first timestamp visual]",
+      "elements_used": ["Element Name 1", "Element Name 2"]
     }}
   ]
 }}
-```"""
+```
+
+**CRITICAL NOTES:**
+- For an 8-second scene, you will have 4 timestamp blocks: 00:00-00:02, 00:02-00:04, 00:04-00:06, 00:06-00:08
+- For a 6-second scene: 3 blocks (00:00-00:02, 00:02-00:04, 00:04-00:06)
+- For a 4-second scene: 2 blocks (00:00-00:02, 00:02-00:04)
+- Each timestamp must have ALL six fields: visual, cinematography, dialogue, sfx, ambience, music
+- visual_effect is SINGULAR - pick the ONE most suitable effect, or null if none fit
+- Audio must transition smoothly between scenes - last timestamp should set up next scene's audio
+"""
     print(f"  ✓ Prompt built ({len(prompt)} chars)")
     
-    print("  [Step 7/7] Calling LLM to generate scene prompts...")
+    print(f"[{time.strftime('%H:%M:%S')}] [Step 7/7] Calling LLM to generate scene prompts...")
     provider, model_name = model.split("/", 1) if "/" in model else ("anthropic", model)
     api_key = get_api_key(provider)
     
     # Define JSON schema for structured output (OpenAI)
+    # Note: Timestamp blocks (00:00-00:02, etc.) are dynamic based on scene_duration,
+    # so we use additionalProperties to allow them
+    
+    timestamp_block_schema = {
+        "type": "object",
+        "properties": {
+            "visual": {"type": "string"},
+            "cinematography": {"type": "string"},
+            "dialogue": {"type": ["string", "null"]},
+            "sfx": {"type": "string"},
+            "ambience": {"type": "string"},
+            "music": {"type": "string"}
+        },
+        "required": ["visual", "cinematography", "dialogue", "sfx", "ambience", "music"]
+    }
+    
     scene_properties = {
         "scene_number": {"type": "integer"},
         "duration_seconds": {"type": "integer"},
-        "video_prompt": {"type": "string"},
-        "audio_background": {"type": "string"},
-        "audio_dialogue": {"type": ["string", "null"]},
+        "video_summary": {"type": "string"},
+        "audio_summary": {"type": "string"},
         "first_frame_image_prompt": {"type": "string"},
         "elements_used": {
             "type": "array",
@@ -630,21 +879,19 @@ Action: [What happens in this shot]
         }
     }
     
-    # Add visual_effects to schema only if enabled
+    # Add visual_effect to schema (singular, nullable)
     if enable_visual_effects:
-        scene_properties["visual_effects"] = {
-            "type": "array",
-            "items": {
-                "type": "object",
+        scene_properties["visual_effect"] = {
+            "type": ["object", "null"],
                 "properties": {
                     "name": {"type": "string"},
                     "description": {"type": "string"},
                     "timing": {"type": "string"}
                 },
                 "required": ["name", "description", "timing"]
-            }
         }
     
+    # Scene schema - additionalProperties=True to allow dynamic timestamp keys
     scene_schema = {
         "type": "object",
         "properties": {
@@ -653,12 +900,12 @@ Action: [What happens in this shot]
                 "items": {
                     "type": "object",
                     "properties": scene_properties,
-                    "required": ["scene_number", "duration_seconds", "video_prompt", "audio_background", "first_frame_image_prompt", "elements_used"]
+                    "required": ["scene_number", "duration_seconds", "video_summary", "audio_summary", "first_frame_image_prompt", "elements_used"],
+                    "additionalProperties": True  # Allow timestamp blocks like "00:00-00:02"
                 }
             }
         },
-        "required": ["scenes"],
-        "additionalProperties": False
+        "required": ["scenes"]
     }
     
     print(f"  → Calling {provider}/{model_name}...")
@@ -694,21 +941,30 @@ Action: [What happens in this shot]
             # Fallback for older models
             response = call_openai(prompt, model_name, api_key, reasoning_effort="high" if thinking else None)
     else:
-        # Claude: Use prompt caching + ThinkingBlock handling
-        print(f"  → Using Anthropic Prompt Caching to reduce costs and latency...")
+        # Claude: Direct API call (NO CACHING)
+        print(f"  → Calling Anthropic API (no caching)...")
         thinking_value = thinking if thinking and thinking > 0 else None
         response = call_anthropic_with_caching(
             prompt, model_name, api_key, 
             thinking=thinking_value, 
-            max_tokens=10000, 
+            max_tokens=17000,  # Total: thinking (5000) + response (12000)
             temperature=temperature
         )
     llm_end_time = time.time()
     llm_duration = llm_end_time - llm_start_time
     
-    print(f"  ✓ LLM response received ({len(response)} chars)")
-    print(f"  ⏱️  Pure LLM API call time: {llm_duration:.1f} seconds ({llm_duration/60:.1f} minutes)")
-    print(f"  → Parsing JSON from response...")
+    print(f"  ✓ LLM response received ({len(response)} chars)", flush=True)
+    print(f"  ⏱️  Pure LLM API call time: {llm_duration:.1f} seconds ({llm_duration/60:.1f} minutes)", flush=True)
+    
+    # ALWAYS save raw response for debugging
+    debug_dir = Path(__file__).parent.parent / "outputs" / "debug"
+    debug_dir.mkdir(parents=True, exist_ok=True)
+    raw_response_file = debug_dir / f"raw_response_{int(time.time())}.txt"
+    with open(raw_response_file, 'w', encoding='utf-8') as f:
+        f.write(response)
+    print(f"  → Raw response saved to: {raw_response_file}", flush=True)
+    
+    print(f"  → Parsing JSON from response...", flush=True)
     
     # Extract JSON from response (handles markdown code blocks)
     json_text = response.strip()
@@ -726,9 +982,10 @@ Action: [What happens in this shot]
         if start != -1 and end > start:
             json_text = json_text[start:end]
     
-    print(f"  → Loading JSON...")
+    print(f"  → Loading JSON...", flush=True)
     try:
         result = json.loads(json_text)
+        print(f"  ✓ JSON loaded successfully", flush=True)
     except json.JSONDecodeError as e:
         print(f"  ⚠ JSON parsing failed: {e}")
         print(f"  → Attempting to fix common JSON issues...")
@@ -771,7 +1028,7 @@ Action: [What happens in this shot]
             
             raise Exception(f"Failed to parse JSON after fixes. See {raw_file} for details.") from e2
     
-    print(f"  ✓ JSON parsed successfully - {len(result.get('scenes', []))} scenes generated")
+    print(f"  ✓ JSON parsed successfully - {len(result.get('scenes', []))} scenes generated", flush=True)
     
     step_end_time = time.time()
     total_duration = step_end_time - step_start_time
@@ -799,30 +1056,61 @@ if __name__ == "__main__":
     # Extract concept name from filename (remove _revised.txt)
     concept_name = input_path.stem.replace("_revised", "")
     
-    # Extract batch folder from path (parent's parent)
-    # Path structure: .../batch_folder/concept_name/concept_name_revised.txt
-    batch_folder = input_path.parent.parent.name
-    concept_dir = input_path.parent
+    # Extract batch folder from path
+    # Path structure can be either:
+    #   .../batch_folder/concept_name/concept_name_revised.txt (pipeline structure)
+    #   .../batch_folder/concept_name_revised.txt (Step 0 structure)
+    # Check if parent's name matches concept_name (pipeline structure)
+    if input_path.parent.name == concept_name:
+        # Pipeline structure: batch_folder is parent's parent
+        batch_folder = input_path.parent.parent.name
+        concept_dir = input_path.parent
+    else:
+        # Step 0 structure: batch_folder is parent
+        batch_folder = input_path.parent.name
+        concept_dir = input_path.parent
     
     # Extract brand name from concept name (first part before first underscore)
     brand_name = concept_name.split("_")[0] if "_" in concept_name else "unknown"
     
     # Construct all paths automatically (matching pipeline structure exactly)
     args.concept = str(input_path)
-    args.universe = str(BASE_DIR / "s5_generate_universe" / "outputs" / batch_folder / concept_name / f"{concept_name}_universe_characters.json")
-    args.config = str(BASE_DIR / "s1_generate_concepts" / "inputs" / "configs" / f"{brand_name}.json")
-    # Pipeline expects: universe_images_dir / "image_generation_summary.json" where universe_images_dir = s6/.../{batch_folder}/{concept_name}
-    # But actual file structure has extra level: s6/.../{batch_folder}/{concept_name}/{concept_name}/
-    # Try pipeline path first, then actual path
-    pipeline_image_summary = BASE_DIR / "s6_generate_reference_images" / "outputs" / batch_folder / concept_name / "image_generation_summary.json"
-    actual_image_summary = BASE_DIR / "s6_generate_reference_images" / "outputs" / batch_folder / concept_name / concept_name / "image_generation_summary.json"
-    if pipeline_image_summary.exists():
-        args.image_summary = str(pipeline_image_summary)
-    elif actual_image_summary.exists():
-        args.image_summary = str(actual_image_summary)
+    
+    # Try both concept_name and concept_name_revised for universe path
+    universe_base = concept_name
+    universe_revised = f"{concept_name}_revised"
+    universe_path_base = BASE_DIR / "s5_generate_universe" / "outputs" / batch_folder / universe_base / f"{universe_base}_universe_characters.json"
+    universe_path_revised = BASE_DIR / "s5_generate_universe" / "outputs" / batch_folder / universe_revised / f"{universe_revised}_universe_characters.json"
+    if universe_path_revised.exists():
+        args.universe = str(universe_path_revised)
+    elif universe_path_base.exists():
+        args.universe = str(universe_path_base)
+    else:
+        args.universe = str(universe_path_base)  # Will fail with clear error
+    
+    # Try brand-specific config first, then fallback to sunglasses.json
+    config_brand = BASE_DIR / "s1_generate_concepts" / "inputs" / "configs" / f"{brand_name}.json"
+    config_sunglasses = BASE_DIR / "s1_generate_concepts" / "inputs" / "configs" / "sunglasses.json"
+    if config_brand.exists():
+        args.config = str(config_brand)
+    elif config_sunglasses.exists():
+        args.config = str(config_sunglasses)
+    else:
+        args.config = str(config_brand)  # Will fail with clear error
+    
+    # Try both concept_name and concept_name_revised for image summary
+    image_summary_base = BASE_DIR / "s6_generate_reference_images" / "outputs" / batch_folder / universe_base / "image_generation_summary.json"
+    image_summary_revised = BASE_DIR / "s6_generate_reference_images" / "outputs" / batch_folder / universe_revised / "image_generation_summary.json"
+    if image_summary_revised.exists():
+        args.image_summary = str(image_summary_revised)
+    elif image_summary_base.exists():
+        args.image_summary = str(image_summary_base)
     else:
         args.image_summary = None
-    args.output = str(BASE_DIR / "s7_generate_scene_prompts" / "outputs" / batch_folder / concept_name / f"{concept_name}_scene_prompts.json")
+    
+    # Output uses same folder name as universe (could be concept_name or concept_name_revised)
+    output_folder = universe_revised if universe_path_revised.exists() else universe_base
+    args.output = str(BASE_DIR / "s7_generate_scene_prompts" / "outputs" / batch_folder / output_folder / f"{output_folder}_scene_prompts.json")
     
     print("=" * 80)
     print("STEP 7: Generate Scene Prompts (Direct Run)")
@@ -863,7 +1151,7 @@ if __name__ == "__main__":
     print()
     print("=" * 80)
     
-    # Generate
+    # Generate (with thinking enabled - saving response for debugging)
     result = generate_scene_prompts(
         concept_content,
         universe_chars,
@@ -871,7 +1159,8 @@ if __name__ == "__main__":
         duration=args.duration,
         model=args.model,
         resolution=args.resolution,
-        image_summary_path=image_summary_path
+        image_summary_path=image_summary_path,
+        thinking=2500  # ENABLED to debug the hang issue
     )
     
     # Save

@@ -155,7 +155,7 @@ def call_anthropic(prompt, model):
     response = client.messages.create(
         model=model,
         max_tokens=4000,
-        temperature=0.7,
+        temperature=1.0,  # Higher temperature for more creative variation
         system="You are an elite creative director specializing in eyewear advertising.",
         messages=[
             {"role": "user", "content": prompt}

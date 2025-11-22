@@ -1,0 +1,251 @@
+{
+  "scenes": [
+    {
+      "scene_number": 1,
+      "duration_seconds": 8,
+      "video_summary": "Weary commuter at rainy bus stop discovers sleek SunVue case in messenger bag, curiosity replacing exhaustion",
+      "audio_summary": "Melancholic piano builds from single notes to hopeful melody over rain ambience and discovery sound effects",
+      "visual_effect": null,
+      "00:00-00:02": {
+        "visual": "Hero/Main Commuter (28-year-old professional woman with shoulder-length dark brown hair, olive skin, grey wool coat damp from rain) stands under concrete bus stop shelter at Urban Street with Bus Stop on dreary morning. She checks phone with squinting tired eyes, shoulders hunched against drizzle. NOT wearing any sunglasses - face fully visible showing exhaustion. Worn leather messenger bag on shoulder. Cracked sidewalk puddles reflect overcast sky. Light rain creates fine mist in air, breath vapor visible in cold morning.",
+        "cinematography": "Camera shot: Medium shot at eye level, subject center-frame. Lens & Depth: 50mm standard lens, f/2.8 shallow depth creating soft bokeh. Camera motion: Subtle handheld drift, documentary feel. Composition: Foreground: rain puddles on concrete. Midground: Hero centered under shelter. Background: blurred wet street with dim storefronts. Lighting: Key light: flat overcast daylight from above. Fill light: soft bounce from wet pavement. Rim light: none. Practical lights: distant streetlamp glow. Style: Modern documentary, desaturated grey-blue grade, natural film grain. Mood: Weary and mundane",
+        "dialogue": null,
+        "sfx": "phone notification ping, distant car horn, footsteps on wet pavement",
+        "ambience": "steady rain pattering on metal shelter roof, distant traffic hum creating urban white noise",
+        "music": "sparse melancholic piano, single note every 2 seconds, 60 BPM, very muted volume"
+      },
+      "00:02-00:04": {
+        "visual": "Hero/Main Commuter at Urban Street with Bus Stop sighs and tucks phone in pocket, then opens worn leather messenger bag to search inside. Hands visible rummaging through bag interior, fingers pushing aside items. NOT wearing any sunglasses - face shows mounting frustration with furrowed brow. Rain continues steadily, droplets visible on bag surface. Grey wool coat sleeve damp as arm reaches deeper into bag.",
+        "cinematography": "Camera shot: Medium close-up tilting down to hands and bag. Lens & Depth: 50mm f/2.8, focus shifts to bag. Camera motion: Slow tilt down following action. Composition: Foreground: bag flap. Midground: hands searching. Background: soft shelter wall blur. Lighting: Same overcast key light, bag interior darker. Fill from pavement. Style: Documentary aesthetic continues. Mood: Building frustration",
+        "dialogue": "Hero/Main Commuter: [frustrated sigh]",
+        "sfx": "bag zipper opening, items rustling inside, keys jingling",
+        "ambience": "rain continues steady, bus engine approaching in distance",
+        "music": "piano adds second note creating minor interval tension, slightly louder, ducks under dialogue"
+      },
+      "00:04-00:06": {
+        "visual": "Hero/Main Commuter discovers sleek SunVue Sunglasses Case (matte black leather with embossed logo) tucked in bag corner. Fingers pause on case, tracing embossed SunVue logo with surprise. Expression shifts - eyes widen, slight head tilt of curiosity. NOT wearing any sunglasses - full face visible showing intrigue. Case catches subtle light creating soft sheen on leather surface. Rain patters steadily outside shelter.",
+        "cinematography": "Camera shot: Insert shot of case in hand. Lens & Depth: 85mm portrait lens f/2.0 for shallow focus. Camera motion: Slow push-in 2cm/sec toward case. Composition: Foreground: soft bag edge. Midground: case prominent in hand. Background: creamy bokeh. Lighting: Key light catches case surface from above-left. Style: Documentary with emerging warmth. Mood: Surprise shifting to curiosity",
+        "dialogue": null,
+        "sfx": "soft leather texture sound as fingers explore case, subtle magnetic closure click",
+        "ambience": "rain softening slightly, distant bus engine fading",
+        "music": "piano adds hopeful major third note, creating chord progression, building anticipation"
+      },
+      "00:06-00:08": {
+        "visual": "Hero/Main Commuter at bus stop lifts SunVue Sunglasses Case to eye level, examining with growing interest. Thumb begins pressing case clasp to open (motion continues to next scene). NOT wearing any sunglasses - face fully visible showing emerging hope, slight smile forming. Case prominent in frame with logo clearly visible. Background shows wet street beginning to lighten subtly. Rain continues but feels less oppressive.",
+        "cinematography": "Camera shot: Medium shot returning to face with case. Lens & Depth: 50mm f/2.8 maintaining face sharpness. Camera motion: Slight upward drift following case. Composition: Foreground: case lower third. Midground: Hero's hopeful face. Background: shelter and street. Lighting: Subtle warm highlight emerging on face. Style: Documentary with hope emerging. Mood: Curiosity building to anticipation",
+        "dialogue": null,
+        "sfx": "case clasp beginning to click open, fabric rustle from coat movement",
+        "ambience": "rain continues but lighter, approaching footsteps of another commuter",
+        "music": "piano melody completes phrase but sustains final note, preparing seamless transition, no hard stop"
+      },
+      "first_frame_image_prompt": "Camera shot: Medium shot at eye level, subject center-frame. Lens & Depth: 50mm standard lens, f/2.8 shallow depth creating soft bokeh. Composition: Foreground: rain puddles on concrete. Midground: Hero centered under shelter. Background: blurred wet street with dim storefronts. Lighting: Key light: flat overcast daylight from above. Fill light: soft bounce from wet pavement. Rim light: none. Practical lights: distant streetlamp glow. Style: Modern documentary, desaturated grey-blue grade, natural film grain. Mood: Weary and mundane.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Hero/Main Commuter [CHARACTER REFERENCE] (reference image shows: 28-year-old professional woman with shoulder-length dark brown hair, olive skin, hazel eyes, neutral expression, grey wool coat) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: tired weary expression with eyes squinting, shoulders hunched, coat damp from rain, NOT wearing any sunglasses, holding phone in left hand\n- Urban Street with Bus Stop [LOCATION REFERENCE] (reference image shows: grey wet urban street with concrete bus stop shelter) - USE THIS REFERENCE IMAGE AS-IS for dreary rainy morning atmosphere\n- SunVue Sunglasses Case [PRODUCT REFERENCE] (reference image shows: sleek matte black leather case with embossed logo) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: tucked inside messenger bag, not yet visible in first frame\n\nHyper-realistic photorealistic street photography of tired commuter checking phone under bus shelter in rain, documentary style with natural lighting, authentic urban morning scene with wet surfaces and overcast atmosphere.",
+      "elements_used": [
+        "Hero/Main Commuter",
+        "Urban Street with Bus Stop",
+        "SunVue Sunglasses Case"
+      ]
+    },
+    {
+      "scene_number": 2,
+      "duration_seconds": 8,
+      "video_summary": "Hero opens case revealing golden Aviators, puts them on as reality transforms from grey to vibrant neon-lit street",
+      "audio_summary": "Piano melody blooms into energetic arrangement with bass joining as urban sounds become musical and alive",
+      "visual_effect": {
+        "name": "Innerlight",
+        "description": "A radiant glow builds from within the lenses, shining through. Feels powerful or magical\u2014perfect for smart glasses or transformations",
+        "timing": "4-6 seconds as aviators slide onto face"
+      },
+      "00:00-00:02": {
+        "visual": "Hero/Main Commuter at Urban Street with Bus Stop opens SunVue Sunglasses Case fully, revealing SunVue Aviator Sunglasses (polished gold frames with amber lenses) nestled in microfiber lining. Case held at chest level, fingers delicately lifting aviators by temple. NOT wearing any sunglasses yet - face visible showing anticipation. Morning light catches gold metal creating warm gleam. Rain continues but lighter, creating gentle atmosphere.",
+        "cinematography": "Camera shot: Close-up on case and aviators being lifted. Lens & Depth: 85mm f/2.0 extreme shallow depth. Camera motion: Slow pull-back revealing face. Composition: Foreground: case edge soft. Midground: aviators lifting from case. Background: Hero's face coming into view. Lighting: Key light: warm highlight on gold frames. Fill: soft ambient. Style: Documentary transitioning to cinematic. Mood: Anticipation building",
+        "dialogue": null,
+        "sfx": "case fully opening with soft click, aviators lifting from microfiber with subtle swoosh",
+        "ambience": "rain continuing lighter, morning birds beginning to chirp",
+        "music": "piano sustained note from previous scene blooms into new melody, adding subtle bass line, 70 BPM"
+      },
+      "00:02-00:04": {
+        "visual": "Hero/Main Commuter raises SunVue Aviator Sunglasses toward face with both hands, temples spreading as they approach. Gold frames catch increasing light, creating lens flare effect. NOT wearing any sunglasses yet - face shows slight smile of anticipation. Background begins subtle shift - wet pavement starting to gleam differently. Rain droplets seem to slow slightly in air.",
+        "cinematography": "Camera shot: Medium close-up on face and approaching aviators. Lens & Depth: 50mm f/2.8 with face sharp. Camera motion: Subtle push-in matching aviator approach. Composition: Foreground: aviators moving toward camera. Midground: Hero's anticipating face. Background: street beginning transformation. Lighting: Warm glow building on frames and face. Style: Cinematic with magical realism emerging. Mood: Threshold of transformation",
+        "dialogue": null,
+        "sfx": "temple arms unfolding with mechanical precision, ambient sounds beginning to shift pitch",
+        "ambience": "rain sounds morphing subtly musical, traffic beginning to harmonize",
+        "music": "bass line strengthens, piano adds harmony, building energy and anticipation"
+      },
+      "00:04-00:06": {
+        "visual": "Hero/Main Commuter slides SunVue Aviator Sunglasses onto face - NOW WEARING aviators on face. Moment of contact triggers reality shift: puddles explode with neon reflections, storefronts illuminate with vibrant signs, Background Commuters appear sharing colorful umbrellas. Hero's posture straightens instantly, confident smile emerging. Amber lenses show inner glow effect as transformation spreads outward.",
+        "cinematography": "Camera shot: Medium shot as world transforms. Lens & Depth: 50mm f/2.8, selective focus on Hero. Camera motion: Gentle rotate around subject 15 degrees. Composition: Foreground: neon puddle reflections. Midground: Hero transforming. Background: street coming alive with color. Lighting: Neon key lights from multiple sources, rim light from behind. Style: Cinematic with saturated colors emerging. Mood: Magical transformation moment",
+        "dialogue": null,
+        "sfx": "reality 'pop' transformation sound, neon lights buzzing to life, musical street sounds",
+        "ambience": "rain becomes rhythmic percussion, traffic transforms into bass rhythm",
+        "music": "full arrangement kicks in - piano, bass, light drums, uplifting major key progression"
+      },
+      "00:06-00:08": {
+        "visual": "Hero/Main Commuter WEARING SunVue Aviator Sunglasses walks forward confidently through transformed street. Neon signs reflect in amber lenses, creating light patterns. Street fully alive - puddles mirror disco lights, buses painted with art, Background Commuters dancing with umbrellas. Hero's grey coat appears stylish now, stride confident. Reality completely upgraded through aviator lenses.",
+        "cinematography": "Camera shot: Tracking medium shot moving with Hero. Lens & Depth: 50mm f/2.8 maintaining focus on Hero. Camera motion: Smooth dolly tracking alongside. Composition: Foreground: neon reflections passing. Midground: Hero striding confidently. Background: transformed vibrant street. Lighting: Multiple neon sources creating color wash, rim lighting from behind. Style: Cinematic urban musical. Mood: Confident and energized",
+        "dialogue": null,
+        "sfx": "footsteps syncing with beat, neon buzz, umbrella swooshes in rhythm",
+        "ambience": "fully musical street atmosphere - every sound in harmony",
+        "music": "energetic progression continues, preparing modulation for next scene transition"
+      },
+      "first_frame_image_prompt": "Camera shot: Close-up on case and aviators being lifted. Lens & Depth: 85mm f/2.0 extreme shallow depth. Composition: Foreground: case edge soft. Midground: aviators lifting from case. Background: Hero's face coming into view. Lighting: Key light: warm highlight on gold frames. Fill: soft ambient. Style: Documentary transitioning to cinematic. Mood: Anticipation building.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Hero/Main Commuter [CHARACTER REFERENCE] (reference image shows: 28-year-old professional woman with shoulder-length dark brown hair, olive skin, hazel eyes) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: anticipating expression, holding open sunglasses case at chest level, NOT wearing sunglasses yet, slight smile forming\n- Urban Street with Bus Stop [LOCATION REFERENCE] (reference image shows: grey wet urban street) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: beginning subtle transformation, wet surfaces starting to gleam\n- SunVue Sunglasses Case [PRODUCT REFERENCE] (reference image shows: matte black leather case) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: open showing microfiber interior\n- SunVue Aviator Sunglasses [PRODUCT REFERENCE] (reference image shows: gold aviator frames with amber lenses) - USE THIS REFERENCE IMAGE AS-IS being lifted from case\n\nHyper-realistic photorealistic close-up of hands lifting golden aviator sunglasses from open leather case, warm light catching polished metal, professional product photography with cinematic style emerging.",
+      "elements_used": [
+        "Hero/Main Commuter",
+        "Urban Street with Bus Stop",
+        "SunVue Sunglasses Case",
+        "SunVue Aviator Sunglasses"
+      ]
+    },
+    {
+      "scene_number": 3,
+      "duration_seconds": 8,
+      "video_summary": "Hero removes Aviators and switches to Wayfarers, reality shifts from neon party to glitter-filled street celebration",
+      "audio_summary": "Electronic dance beat emerges from transformed piano as street sounds become festival atmosphere with crowd energy",
+      "visual_effect": {
+        "name": "Color Rain",
+        "description": "Vivid streaks of liquid color reflect off the lenses, creating artistic light play. Bright and playful",
+        "timing": "5-7 seconds as Wayfarers activate the celebration mode"
+      },
+      "00:00-00:02": {
+        "visual": "Hero/Main Commuter WEARING SunVue Aviator Sunglasses reaches into open SunVue Sunglasses Case still in left hand, beginning to remove aviators with right hand. Neon-lit transformed street visible through amber lenses. Fingers grasp aviator temple preparing to slide off. Street maintains vibrant energy from previous scene - neon puddles, artistic buses, dancing commuters visible in background.",
+        "cinematography": "Camera shot: Medium close-up on face and hands. Lens & Depth: 50mm f/2.8 sharp on action. Camera motion: Static with slight handheld breathing. Composition: Foreground: case in left hand. Midground: Hero's face with aviators. Background: vibrant street life. Lighting: Neon wash continues from previous scene. Style: Cinematic urban energy. Mood: Playful anticipation",
+        "dialogue": null,
+        "sfx": "aviator temple sliding against skin, case interior rustling, neon ambience",
+        "ambience": "musical street atmosphere from previous scene continuing, crowd energy building",
+        "music": "piano melody modulating to new key, electronic elements creeping in, seamless genre shift beginning"
+      },
+      "00:02-00:04": {
+        "visual": "Hero/Main Commuter removes SunVue Aviator Sunglasses completely - NOT wearing any sunglasses now, face fully visible. Places aviators back in case compartment, then pulls out SunVue Wayfarer Sunglasses (bold black frames) from second compartment. Reality flickers momentarily between vibrant and grey as Hero is between frames. Expression shows playful experimentation.",
+        "cinematography": "Camera shot: Medium shot showing switching action. Lens & Depth: 50mm f/2.8. Camera motion: Slow orbit right 10 degrees. Composition: Foreground: hands with both frames. Midground: Hero's bare face. Background: reality flickering. Lighting: Strobing between neon and flat grey. Style: Transition moment between realities. Mood: Playful experimentation",
+        "dialogue": "Hero/Main Commuter: 'Let's try these...'",
+        "sfx": "frames clicking as switched, reality 'glitch' sound, static electricity crackle",
+        "ambience": "street sounds phasing between vibrant and dull, anticipatory pause",
+        "music": "beat drops out momentarily creating suspense, electronic build-up starting, ducks under dialogue"
+      },
+      "00:04-00:06": {
+        "visual": "Hero/Main Commuter slides on SunVue Wayfarer Sunglasses - NOW WEARING wayfarers on face. Reality explodes into celebration: rain becomes glitter falling, photocopiers in office windows shoot confetti, Background Commuters break into synchronized street dancing. Hero laughs with delight, thick black frames prominent on face. Street transforms into impromptu festival.",
+        "cinematography": "Camera shot: Wide shot revealing celebration. Lens & Depth: 35mm f/4 deep focus showing all action. Camera motion: Boom up revealing scope. Composition: Foreground: glitter rain falling. Midground: Hero centered in celebration. Background: entire street partying. Lighting: Disco ball reflections from windows, party lights everywhere. Style: Music video aesthetic. Mood: Pure celebration",
+        "dialogue": null,
+        "sfx": "confetti cannons, crowd cheering, glitter tinkling as it falls",
+        "ambience": "festival atmosphere - music from everywhere, crowd energy, celebration sounds",
+        "music": "full EDM drop - heavy bass, synthesizers, festival energy at 128 BPM"
+      },
+      "00:06-00:08": {
+        "visual": "Hero/Main Commuter WEARING SunVue Wayfarer Sunglasses dances through the glitter storm, black frames catching rainbow reflections. Spins with arms out, coat flowing. Liquid color streaks trail from the wayfarers' lenses as Hero moves. Background Commuters form dance circle, office workers throw paper from windows like ticker tape. Reality in full celebration mode through wayfarer perspective.",
+        "cinematography": "Camera shot: Dynamic tracking shot. Lens & Depth: 50mm f/2.8 with motion blur on background. Camera motion: Circular tracking around dancing Hero. Composition: Foreground: glitter and color streaks. Midground: Hero spinning. Background: street party chaos. Lighting: Rainbow lights from every direction, lens flares. Style: High-energy music video. Mood: Euphoric celebration",
+        "dialogue": null,
+        "sfx": "glitter swooshes, fabric spinning, crowd celebration continuing",
+        "ambience": "peak festival energy - cheering, music from all directions",
+        "music": "EDM climax continuing, preparing breakdown transition to next scene"
+      },
+      "first_frame_image_prompt": "Camera shot: Medium close-up on face and hands. Lens & Depth: 50mm f/2.8 sharp on action. Composition: Foreground: case in left hand. Midground: Hero's face with aviators. Background: vibrant street life. Lighting: Neon wash continues from previous scene. Style: Cinematic urban energy. Mood: Playful anticipation.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Hero/Main Commuter [CHARACTER REFERENCE] (reference image shows: 28-year-old professional woman with shoulder-length dark brown hair, olive skin, hazel eyes) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: WEARING gold aviator sunglasses on face, playful expression, holding open case\n- Urban Street with Bus Stop [LOCATION REFERENCE] (reference image shows: grey wet urban street) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: transformed with neon lights, vibrant colors, wet surfaces reflecting disco lights\n- Background Commuters [CHARACTER REFERENCE] (reference image shows: diverse group of commuters) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: dancing with umbrellas in background, energetic movement\n- SunVue Sunglasses Case [PRODUCT REFERENCE] (reference image shows: black leather case) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: open showing multiple compartments\n- SunVue Wayfarer Sunglasses [PRODUCT REFERENCE] (reference image shows: black wayfarer frames) - USE THIS REFERENCE IMAGE AS-IS visible in case\n\nHyper-realistic photorealistic medium shot of woman wearing aviators about to switch to wayfarers, neon-lit street party atmosphere, cinematic lighting with vibrant colors.",
+      "elements_used": [
+        "Hero/Main Commuter",
+        "Urban Street with Bus Stop",
+        "Background Commuters",
+        "SunVue Sunglasses Case",
+        "SunVue Wayfarer Sunglasses"
+      ]
+    },
+    {
+      "scene_number": 4,
+      "duration_seconds": 8,
+      "video_summary": "Hero switches from Wayfarers to Cat-Eyes, world becomes whimsically surreal with dancing objects and playful impossibilities",
+      "audio_summary": "Music morphs into quirky experimental sounds with toy pianos and kazoos as reality becomes delightfully absurd",
+      "visual_effect": {
+        "name": "Wonderland",
+        "description": "Psychedelic colors warp through tinted lenses. Artistic and bold",
+        "timing": "4-6 seconds as Cat-Eyes activate surreal mode"
+      },
+      "00:00-00:02": {
+        "visual": "Hero/Main Commuter WEARING SunVue Wayfarer Sunglasses stands in glitter-filled celebration, reaches up to remove wayfarers with both hands. Glitter still falling but slowing. Black frames sliding off face as fingers grip temples. Background Commuters still dancing but movement becoming dreamlike. Street party atmosphere beginning to shift toward something stranger.",
+        "cinematography": "Camera shot: Medium shot centered on Hero. Lens & Depth: 50mm f/2.8. Camera motion: Slow zoom in 2x over 2 seconds. Composition: Foreground: falling glitter slowing. Midground: Hero removing wayfarers. Background: party becoming surreal. Lighting: Party lights beginning to warp colors. Style: Transitioning to surrealism. Mood: Curious wonder emerging",
+        "dialogue": null,
+        "sfx": "glitter falling slower with chime sounds, wayfarers sliding off, reality 'wobble' effect",
+        "ambience": "festival sounds warping pitch, becoming dreamlike and strange",
+        "music": "EDM breaking down into experimental sounds, toy piano notes appearing"
+      },
+      "00:02-00:04": {
+        "visual": "Hero/Main Commuter NOT wearing any sunglasses - face fully visible with amused expression. Places wayfarers in case, pulls out SunVue Cat-Eye Sunglasses (tortoiseshell frames with upswept corners). Studies the vintage-inspired frames with curiosity. Reality wavers between party and something undefined. Glitter transforms into floating bubbles mid-air.",
+        "cinematography": "Camera shot: Close-up on cat-eyes being examined. Lens & Depth: 85mm f/2.0 shallow. Camera motion: Slight Dutch angle developing. Composition: Foreground: cat-eye frames prominent. Midground: Hero's intrigued face. Background: reality warping. Lighting: Colors shifting through spectrum. Style: Building surrealism. Mood: Playful curiosity",
+        "dialogue": "Hero/Main Commuter: 'Oh, these look fun!'",
+        "sfx": "frames being lifted with 'magical' chime, bubbles popping musically",
+        "ambience": "sounds becoming cartoon-like, reality 'giggling'",
+        "music": "quirky arrangement with toy piano, kazoo, and backwards sounds, ducks under dialogue"
+      },
+      "00:04-00:06": {
+        "visual": "Hero/Main Commuter puts on SunVue Cat-Eye Sunglasses - NOW WEARING cat-eyes on face. Reality goes wonderfully absurd: pigeons wear tiny bowler hats, traffic lights wink flirtatiously, buildings sway like dancers. Hero gasps then laughs at the delightful madness. Tortoiseshell frames with psychedelic colors warping through lenses. Paper airplanes made of emails fly past.",
+        "cinematography": "Camera shot: Wide shot showing surreal transformation. Lens & Depth: 24mm f/5.6 deep focus for surreal clarity. Camera motion: Camera tilts 15 degrees matching world's tilt. Composition: Foreground: email airplanes flying. Midground: Hero in wonder. Background: dancing architecture. Lighting: Colors shifting impossibly, defying physics. Style: Full surrealism achieved. Mood: Delightful absurdity",
+        "dialogue": null,
+        "sfx": "cartoon 'boing' sounds, pigeons cooing opera, buildings creaking musically",
+        "ambience": "reality sounds like a cartoon come to life",
+        "music": "full experimental arrangement - backwards instruments, toy sounds, whimsical chaos"
+      },
+      "00:06-00:08": {
+        "visual": "Hero/Main Commuter WEARING SunVue Cat-Eye Sunglasses walks through surreal wonderland. Reaches out to pet a floating cat wearing a monocle. Buildings lean in to look at the cat-eye frames. Manhole covers spin like records playing music. Hero's delighted expression visible through brown gradient lenses. Reality at peak absurdity through cat-eye perspective.",
+        "cinematography": "Camera shot: Tracking shot following Hero. Lens & Depth: 35mm f/4 with surreal sharpness. Camera motion: Floating camera movement defying gravity. Composition: Foreground: floating impossible objects. Midground: Hero interacting with surreal world. Background: architecture dancing. Lighting: Impossible light sources from everywhere and nowhere. Style: Peak surrealism. Mood: Joyful absurdity",
+        "dialogue": null,
+        "sfx": "cat purring in harmony, manhole covers scratching like records, building sighs",
+        "ambience": "complete cartoon reality - every sound is musical and impossible",
+        "music": "whimsical climax, preparing sudden stop for reality return"
+      },
+      "first_frame_image_prompt": "Camera shot: Medium shot centered on Hero. Lens & Depth: 50mm f/2.8. Composition: Foreground: falling glitter slowing. Midground: Hero removing wayfarers. Background: party becoming surreal. Lighting: Party lights beginning to warp colors. Style: Transitioning to surrealism. Mood: Curious wonder emerging.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Hero/Main Commuter [CHARACTER REFERENCE] (reference image shows: 28-year-old professional woman with shoulder-length dark brown hair, olive skin, hazel eyes) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: WEARING black wayfarer sunglasses, reaching up to remove them, amused expression\n- Urban Street with Bus Stop [LOCATION REFERENCE] (reference image shows: grey wet urban street) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: glitter-filled party atmosphere beginning to warp into surreal\n- Background Commuters [CHARACTER REFERENCE] (reference image shows: diverse group of commuters) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: still dancing but movements becoming dreamlike\n- SunVue Cat-Eye Sunglasses [PRODUCT REFERENCE] (reference image shows: tortoiseshell cat-eye frames) - USE THIS REFERENCE IMAGE AS-IS visible in case ready to be selected\n\nHyper-realistic photorealistic shot transitioning from party to surreal, woman removing wayfarers with glitter transforming to bubbles, whimsical lighting emerging.",
+      "elements_used": [
+        "Hero/Main Commuter",
+        "Urban Street with Bus Stop",
+        "Background Commuters",
+        "SunVue Cat-Eye Sunglasses"
+      ]
+    },
+    {
+      "scene_number": 5,
+      "duration_seconds": 8,
+      "video_summary": "Hero removes Cat-Eyes returning to grey reality, then confidently puts Aviators back on as world transforms again",
+      "audio_summary": "Whimsical music cuts to silence and rain, then triumphantly returns with full orchestral arrangement for finale",
+      "visual_effect": {
+        "name": "Saint Glow",
+        "description": "A divine halo of light radiates from the frames, casting wearer in pure brilliance. Premium and majestic",
+        "timing": "6-8 seconds as Hero makes final choice with Aviators"
+      },
+      "00:00-00:02": {
+        "visual": "Hero/Main Commuter WEARING SunVue Cat-Eye Sunglasses reaches up decisively to remove them. Surreal world still active - floating cats, winking traffic lights, dancing buildings. Tortoiseshell frames sliding off face as fingers grip upswept corners. Background beginning to shimmer as reality prepares to snap back. Expression shows satisfaction but readiness to return.",
+        "cinematography": "Camera shot: Medium close-up on face and hands. Lens & Depth: 50mm f/2.8. Camera motion: Slow pull-back beginning. Composition: Foreground: hands removing cat-eyes. Midground: Hero's face. Background: surreal world shimmering. Lighting: Surreal colors beginning to drain. Style: Surrealism fading. Mood: Bittersweet transition",
+        "dialogue": null,
+        "sfx": "cat-eyes sliding off, surreal sounds beginning to fade, reality 'vacuum' sound building",
+        "ambience": "whimsical sounds decreasing pitch, returning to normal",
+        "music": "experimental sounds winding down, descending notes, preparing for silence"
+      },
+      "00:02-00:04": {
+        "visual": "Hero/Main Commuter removes Cat-Eye Sunglasses completely - NOT wearing any sunglasses, face bare. Reality SNAPS back to grey instantly: rain returns, buildings static, commuters trudging. Hero blinks at the dramatic contrast, slight frown at dreary reality. All three sunglasses visible in open case - aviators, wayfarers, and cat-eyes in separate compartments. Grey coat looks damp and ordinary again.",
+        "cinematography": "Camera shot: Wide shot showing grey reality. Lens & Depth: 35mm f/5.6 everything in dull focus. Camera motion: Static, documentary style. Composition: Foreground: wet pavement. Midground: Hero looking disappointed. Background: grey urban morning. Lighting: Flat overcast returns completely. Style: Documentary realism, desaturated. Mood: Disappointing return to mundane",
+        "dialogue": null,
+        "sfx": "rain pattering returns, distant car horn, reality 'thud' of return",
+        "ambience": "normal urban morning - traffic, rain, footsteps, no magic",
+        "music": "complete silence except for environmental sounds"
+      },
+      "00:04-00:06": {
+        "visual": "Hero/Main Commuter NOT wearing any sunglasses looks at three pairs in case, then decisively grabs SunVue Aviator Sunglasses with confident smile. Brings gold frames up toward face with both hands, amber lenses beginning to catch light even in grey world. Expression shifts to confident determination - she knows what she wants. Rain continues but she doesn't care.",
+        "cinematography": "Camera shot: Medium shot focusing on decision. Lens & Depth: 50mm f/2.8 with face sharp. Camera motion: Push-in slowly toward Hero. Composition: Foreground: case with all three options. Midground: Hero choosing aviators. Background: grey street waiting. Lighting: Subtle golden highlight appearing on aviators. Style: Building toward triumph. Mood: Confident decision",
+        "dialogue": "Hero/Main Commuter: 'I choose my reality.'",
+        "sfx": "aviators being lifted decisively, rain continuing, distant thunder rumble",
+        "ambience": "rain and city sounds, but with anticipatory quality",
+        "music": "single piano note begins, building tension, ducks slightly under dialogue"
+      },
+      "00:06-00:08": {
+        "visual": "Hero/Main Commuter slides SunVue Aviator Sunglasses back on - NOW WEARING aviators on face. World EXPLODES back to life with golden saint-like glow radiating from Hero. Neon returns even brighter, reality transforms beyond before. Hero stands powerful and confident, divine light creating halo effect around aviator frames. Raises arms in triumph. Text appears: 'SunVue. Never Hide.' All three frame styles appear in corner showing range.",
+        "cinematography": "Camera shot: Epic wide shot with Hero centered. Lens & Depth: 24mm f/8 everything in crisp focus. Camera motion: Boom up to heroic angle. Composition: Foreground: transformed street. Midground: Hero with saint glow. Background: city transformed. Lighting: Divine key light from above, rim lighting creating halo. Style: Epic commercial finale. Mood: Triumphant and empowering",
+        "dialogue": null,
+        "sfx": "reality transformation explosion, angelic chorus hint, crowd cheering",
+        "ambience": "transformed city sounds - musical, alive, celebrating",
+        "music": "full orchestral arrangement - strings, brass, choir hints, epic finale at 140 BPM"
+      },
+      "first_frame_image_prompt": "Camera shot: Medium close-up on face and hands. Lens & Depth: 50mm f/2.8. Composition: Foreground: hands removing cat-eyes. Midground: Hero's face. Background: surreal world shimmering. Lighting: Surreal colors beginning to drain. Style: Surrealism fading. Mood: Bittersweet transition.\n\nREFERENCE IMAGES CONTEXT:\nYou are receiving reference images showing the CANONICAL APPEARANCE of characters, locations, and props from this advertisement universe. These images show how each element looks in its BASE/NEUTRAL state. Your task is to use these as the visual foundation and transform them according to the instructions below to match this specific scene's requirements.\n\nREFERENCE IMAGES ATTACHED (each element has one reference image file):\n- Hero/Main Commuter [CHARACTER REFERENCE] (reference image shows: 28-year-old professional woman with shoulder-length dark brown hair, olive skin, hazel eyes) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: WEARING tortoiseshell cat-eye sunglasses, reaching to remove them, satisfied but ready to return expression\n- Urban Street with Bus Stop [LOCATION REFERENCE] (reference image shows: grey wet urban street) - USE THIS REFERENCE IMAGE AS BASE AND MODIFY TO: surreal wonderland with floating objects, dancing buildings, winking lights, about to snap back to reality\n- SunVue Aviator Sunglasses [PRODUCT REFERENCE] (reference image shows: gold aviator frames) - USE THIS REFERENCE IMAGE AS-IS visible in case compartment\n- SunVue Wayfarer Sunglasses [PRODUCT REFERENCE] (reference image shows: black wayfarer frames) - USE THIS REFERENCE IMAGE AS-IS visible in case compartment\n- SunVue Cat-Eye Sunglasses [PRODUCT REFERENCE] (reference image shows: tortoiseshell cat-eye frames) - Currently being worn, about to be removed\n\nHyper-realistic photorealistic medium shot of woman removing cat-eye sunglasses as surreal world prepares to return to normal, whimsical elements still visible but fading.",
+      "elements_used": [
+        "Hero/Main Commuter",
+        "Urban Street with Bus Stop",
+        "SunVue Aviator Sunglasses",
+        "SunVue Wayfarer Sunglasses",
+        "SunVue Cat-Eye Sunglasses"
+      ]
+    }
+  ]
+}

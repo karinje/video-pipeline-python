@@ -35,41 +35,67 @@ def get_replicate_token():
 
 def generate_sora2_clip(scene_data, first_frame_image_path, output_path, video_model="google/veo-3.1-fast", aspect_ratio="16:9"):
     """
-    Generate video clip using Sora 2, Veo 3 Fast, or Veo 3.1 Fast.
+    Generate video clip using Sora 2, Veo 3 Fast, Veo 3.1, or Veo 3.1 Fast.
     
     Args:
-        scene_data: Dict with video_prompt, audio_background, audio_dialogue
+        scene_data: Dict with timestamp blocks (00:00-00:02, 00:02-00:04, etc.)
         first_frame_image_path: Path to first frame image (local file)
         output_path: Where to save output video
-        video_model: Model to use - "openai/sora-2", "google/veo-3-fast", or "google/veo-3.1-fast"
+        video_model: Model to use - "openai/sora-2", "google/veo-3-fast", "google/veo-3.1", or "google/veo-3.1-fast"
         aspect_ratio: Video aspect ratio (16:9 = landscape)
     """
-    video_prompt = scene_data.get("video_prompt", "")
-    audio_background = scene_data.get("audio_background", "")
-    audio_dialogue = scene_data.get("audio_dialogue")
-    visual_effects = scene_data.get("visual_effects", [])
     
-    # Combine prompts
-    combined_prompt = video_prompt
+    # Build Veo prompt from timestamp blocks (Google's recommended format)
+    combined_prompt = ""
     
-    if audio_background:
-        combined_prompt += f"\n\nBackground Music: {audio_background}"
+    # Extract all timestamp keys and sort them
+    timestamp_keys = sorted([k for k in scene_data.keys() if k.startswith("00:")])
     
-    if audio_dialogue:
-        # audio_dialogue already includes speaker name and voice characteristics
-        # Format is: "Character Name: dialogue" or "Narrator (voice): dialogue"
-        combined_prompt += f"\n\n{audio_dialogue}"
+    for timestamp in timestamp_keys:
+        block = scene_data[timestamp]
+        
+        # Build timestamp block following Google's Veo format
+        combined_prompt += f"[{timestamp}]\n"
+        
+        # Visual description
+        visual = block.get("visual", "")
+        combined_prompt += f"{visual}\n\n"
+        
+        # Cinematography
+        cinematography = block.get("cinematography", "")
+        combined_prompt += f"{cinematography}\n"
+        
+        # Audio components (Google's recommended hierarchy: Dialogue > SFX > Ambience > Music)
+        dialogue = block.get("dialogue")
+        if dialogue:
+            combined_prompt += f"\nDialogue: {dialogue}\n"
+        
+        sfx = block.get("sfx", "")
+        if sfx:
+            combined_prompt += f"SFX: {sfx}\n"
+        
+        ambience = block.get("ambience", "")
+        if ambience:
+            combined_prompt += f"Ambience: {ambience}\n"
+        
+        music = block.get("music", "")
+        if music:
+            combined_prompt += f"Music: {music}\n"
+        
+        combined_prompt += "\n"  # Separator between timestamp blocks
     
-    # Add visual effects instructions if present
-    if visual_effects:
-        combined_prompt += "\n\n**VISUAL EFFECTS TO IMPLEMENT:**"
-        for effect in visual_effects:
-            effect_name = effect.get("name", "")
-            effect_desc = effect.get("description", "")
-            effect_timing = effect.get("timing", "")
-            combined_prompt += f"\n- **{effect_name}**: {effect_desc}"
-            if effect_timing:
-                combined_prompt += f" (Timing: {effect_timing})"
+    # Add negative prompt if present (critical constraints)
+    negative_prompt = scene_data.get("negative_prompt")
+    if negative_prompt:
+        combined_prompt = f"**CRITICAL CONSTRAINTS (MUST FOLLOW):**\n{negative_prompt}\n\n" + combined_prompt
+    
+    # Add visual effect if present (singular in new format)
+    visual_effect = scene_data.get("visual_effect")
+    if visual_effect:
+        combined_prompt += f"\n**VISUAL EFFECT TO IMPLEMENT:**\n"
+        combined_prompt += f"- **{visual_effect.get('name', '')}**: {visual_effect.get('description', '')}"
+        if visual_effect.get('timing'):
+            combined_prompt += f" (Timing: {visual_effect.get('timing')})\n"
     
     # Check if first frame image exists
     if not os.path.exists(first_frame_image_path):
@@ -79,8 +105,12 @@ def generate_sora2_clip(scene_data, first_frame_image_path, output_path, video_m
     is_sora2 = video_model == "openai/sora-2"
     if is_sora2:
         model_name = "Sora-2"
-    elif "veo-3.1" in video_model:
+    elif video_model == "google/veo-3.1-fast":
         model_name = "Veo 3.1 Fast"
+    elif video_model == "google/veo-3.1":
+        model_name = "Veo 3.1"
+    elif "veo-3.1" in video_model:
+        model_name = "Veo 3.1"  # Default for any other veo-3.1 variant
     else:
         model_name = "Veo 3 Fast"
     
@@ -116,16 +146,31 @@ def generate_sora2_clip(scene_data, first_frame_image_path, output_path, video_m
         f.write(combined_prompt)
         f.write("\n" + "-" * 80 + "\n\n")
         f.write("BREAKDOWN:\n")
-        f.write(f"Video Prompt: {scene_data.get('video_prompt', '')[:200]}...\n\n")
-        f.write(f"Audio Background: {scene_data.get('audio_background', '')}\n\n")
-        f.write(f"Audio Dialogue: {scene_data.get('audio_dialogue', 'None')}\n\n")
-        visual_effects = scene_data.get('visual_effects', [])
-        if visual_effects:
-            f.write(f"Visual Effects ({len(visual_effects)}):\n")
-            for effect in visual_effects:
-                f.write(f"  - {effect.get('name', 'Unknown')}: {effect.get('description', '')} (Timing: {effect.get('timing', 'N/A')})\n")
+        f.write(f"Video Summary: {scene_data.get('video_summary', 'N/A')}\n")
+        f.write(f"Audio Summary: {scene_data.get('audio_summary', 'N/A')}\n\n")
+        
+        # Negative prompt
+        negative_prompt = scene_data.get('negative_prompt')
+        if negative_prompt:
+            f.write(f"Negative Prompt (Critical Constraints):\n")
+            f.write(f"  {negative_prompt}\n\n")
         else:
-            f.write("Visual Effects: None\n")
+            f.write("Negative Prompt: None\n\n")
+        
+        # List timestamp blocks
+        timestamp_keys = sorted([k for k in scene_data.keys() if k.startswith("00:")])
+        f.write(f"Timestamp Blocks: {len(timestamp_keys)}\n")
+        for ts in timestamp_keys:
+            f.write(f"  - {ts}\n")
+        
+        # Visual effect
+        visual_effect = scene_data.get('visual_effect')
+        if visual_effect:
+            f.write(f"\nVisual Effect: {visual_effect.get('name', 'Unknown')}\n")
+            f.write(f"  Description: {visual_effect.get('description', '')}\n")
+            f.write(f"  Timing: {visual_effect.get('timing', 'N/A')}\n")
+        else:
+            f.write("\nVisual Effect: None\n")
     print(f"    ✓ Saved prompt to: {debug_prompt_file}")
     
     try:
@@ -190,9 +235,9 @@ def generate_sora2_clip(scene_data, first_frame_image_path, output_path, video_m
                 f.write(f"aspect_ratio: {sora_aspect}\n\n")
                 f.write(f"input_reference: {image_uri}\n")
         else:
-            # Veo 3/3.1 Fast API parameters
+            # Veo 3/3.1 (standard or fast) API parameters
             scene_duration = scene_data.get("duration_seconds", 6)
-            # Veo 3/3.1 Fast only accepts 4, 6, or 8 seconds
+            # Veo 3/3.1 (standard or fast) only accepts 4, 6, or 8 seconds
             valid_durations = [4, 6, 8]
             scene_duration = min(valid_durations, key=lambda x: abs(x - scene_duration))
             if scene_duration != scene_data.get("duration_seconds", 6):

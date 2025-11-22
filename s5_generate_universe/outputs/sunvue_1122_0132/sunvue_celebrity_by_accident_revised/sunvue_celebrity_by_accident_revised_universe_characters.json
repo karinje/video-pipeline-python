@@ -1,0 +1,90 @@
+{
+  "universe": {
+    "locations": [
+      {
+        "name": "Grocery Store",
+        "scenes_used": [
+          3,
+          4,
+          5
+        ],
+        "canonical_state": "Modern suburban grocery store with bright white fluorescent lighting, wide clean aisles with polished linoleum floors, standard produce section with green vegetables and colorful fruit displays in black plastic bins, conventional checkout lanes with beige conveyor belts and plastic dividers, neutral beige walls with promotional signage",
+        "image_generation_prompt": "Hyper-realistic photorealistic interior of a modern grocery store, ultra-realistic documentary photography style, authentic fluorescent lighting casting harsh white light, real linoleum floors with natural reflections, genuine produce section with realistic vegetables and fruits, natural skin texture on any visible shoppers, professional architectural photography, lifelike details, real commercial space, authentic retail environment, realistic depth of field, natural shadows and highlights"
+      }
+    ],
+    "props": [
+      {
+        "name": "SunVue Aviators",
+        "scenes_used": [
+          1,
+          2,
+          3
+        ],
+        "canonical_state": "Classic aviator sunglasses with thin gold metal frames, teardrop-shaped lenses with subtle green-grey tint, double bridge design, bayonet temples with plastic tips, premium UV protection coating creating subtle rainbow reflection at certain angles, SunVue logo etched discretely on right lens corner",
+        "image_generation_prompt": "Hyper-realistic photorealistic aviator sunglasses, ultra-realistic product photography style, authentic gold metal frame with natural metallic sheen, real glass lenses with lifelike reflections, professional product photography on white background, genuine materials and textures, realistic light refraction through lenses, natural shadows, documentary photography style detail, authentic luxury eyewear, real metal and glass materials"
+      }
+    ]
+  },
+  "characters": [
+    {
+      "name": "Office Worker/Protagonist",
+      "scenes_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "canonical_state": "28-year-old person with medium brown shoulder-length hair, oval face with light olive skin tone, wearing grey button-down shirt tucked into navy blue slacks, black leather belt, brown oxford shoes, minimal jewelry with silver wristwatch, clean-shaven or natural appearance, average build around 5'8\", expressive hazel eyes, natural everyday makeup if applicable",
+      "image_generation_prompt": "Hyper-realistic photorealistic portrait of a 28-year-old office worker, ultra-realistic documentary photography style, real person with authentic light olive skin texture and natural skin pores, genuine medium brown shoulder-length hair with realistic hair strands, lifelike hazel eyes with natural eye reflections, wearing real grey cotton button-down shirt with fabric texture, authentic navy blue wool blend slacks, professional portrait photography with natural lighting, real human features and proportions, authentic facial expressions, natural skin imperfections and texture"
+    },
+    {
+      "name": "Coffee Shop Barista",
+      "scenes_used": [
+        2
+      ],
+      "canonical_state": "22-year-old with short curly black hair, dark brown skin, wearing green apron over black t-shirt, name tag reading 'Sam', multiple ear piercings, warm smile with slight gap between front teeth, slim build around 5'6\"",
+      "image_generation_prompt": "Hyper-realistic photorealistic portrait of a 22-year-old African American barista with very dark brown skin tone, ultra-realistic documentary photography style, real person with authentic dark skin texture and natural highlights, genuine short curly black hair with realistic curl pattern and texture, lifelike brown eyes, wearing real green cotton apron over black t-shirt with visible fabric weave, authentic coffee shop uniform, professional portrait photography, real human features with gap-toothed smile, natural skin texture and sheen"
+    },
+    {
+      "name": "Coffee Shop Customers",
+      "scenes_used": [
+        2
+      ],
+      "canonical_state": "Group of 3-4 diverse customers aged 25-45, mixed ethnicities including East Asian woman with straight black bob haircut, Middle Eastern man with neat beard, Caucasian person with blonde ponytail, all in casual weekend attire like jeans and sweaters",
+      "image_generation_prompt": "Hyper-realistic photorealistic group of diverse coffee shop customers, prominently featuring multi-ethnic diversity: East Asian woman with pale ivory skin and straight black bob haircut, Middle Eastern man with warm tan skin and neat black beard, Caucasian person with fair pink-toned skin and blonde ponytail, ultra-realistic documentary photography style, real people with authentic varied skin textures and tones, genuine casual clothing with realistic fabric textures, lifelike natural expressions, professional candid photography, authentic diversity in real human features"
+    },
+    {
+      "name": "Paparazzi",
+      "scenes_used": [
+        3
+      ],
+      "canonical_state": "Group of 5-6 photographers aged 30-50, mixed genders, wearing dark casual clothing, carrying professional DSLR cameras with large telephoto lenses, some with press badges on lanyards, aggressive postures while shooting",
+      "image_generation_prompt": "Hyper-realistic photorealistic group of paparazzi photographers, ultra-realistic documentary photography style, real people with authentic varied skin tones, genuine professional cameras with realistic metal and plastic textures, lifelike aggressive shooting stances, wearing real dark clothing with natural fabric folds, authentic press credentials on lanyards, professional street photography style, real human features showing concentration, natural outdoor lighting"
+    },
+    {
+      "name": "Doorman",
+      "scenes_used": [
+        3
+      ],
+      "canonical_state": "45-year-old tall muscular build around 6'2\", bald head with dark skin, wearing black suit with red tie, white dress shirt, black dress shoes, professional security earpiece, serious expression with kind eyes",
+      "image_generation_prompt": "Hyper-realistic photorealistic portrait of a 45-year-old African American doorman with dark brown skin, ultra-realistic documentary photography style, real person with authentic bald head showing natural skin texture and shine, genuine black wool suit with realistic fabric texture, lifelike professional demeanor, wearing real white cotton dress shirt and red silk tie, authentic security earpiece, professional portrait photography, real human features with serious but kind expression, natural skin texture and muscle definition"
+    },
+    {
+      "name": "Grocery Store Manager",
+      "scenes_used": [
+        4
+      ],
+      "canonical_state": "38-year-old with thinning brown hair combed over, pale skin with freckles, wearing white dress shirt with rolled sleeves, red vest with store logo, black slacks, name tag reading 'MANAGER: STEVE', slight paunch, nervous eager smile",
+      "image_generation_prompt": "Hyper-realistic photorealistic portrait of a 38-year-old Caucasian grocery store manager with pale freckled skin, ultra-realistic documentary photography style, real person with authentic thinning brown hair and visible scalp, genuine white cotton dress shirt with realistic wrinkles, lifelike red polyester vest with store branding, authentic manager name tag, professional retail photography, real human features with nervous smile, natural skin texture with visible freckles and slight redness"
+    },
+    {
+      "name": "Checkout Clerk",
+      "scenes_used": [
+        5
+      ],
+      "canonical_state": "19-year-old with long straight auburn hair in ponytail, fair skin with light acne scarring, wearing blue polo shirt with store logo, beige khakis, confused expression, thin build around 5'5\"",
+      "image_generation_prompt": "Hyper-realistic photorealistic portrait of a 19-year-old Caucasian checkout clerk with fair skin showing light acne scarring, ultra-realistic documentary photography style, real person with authentic auburn hair in ponytail with flyaway strands, genuine blue polyester polo shirt with store logo, lifelike confused expression, wearing real beige khaki pants, professional retail photography, real human teenage features with natural skin imperfections, authentic youthful appearance"
+    }
+  ]
+}

@@ -54,6 +54,8 @@ def build_expand_prompt(concept_text, brand_config, video_settings, template_pat
     prompt = prompt.replace('{{VALUE_PROPOSITION}}', brand_config.get('VALUE_PROPOSITION', ''))
     prompt = prompt.replace('{{BRAND_PERSONALITY}}', brand_config.get('BRAND_PERSONALITY', ''))
     prompt = prompt.replace('{{TARGET_AUDIENCE}}', brand_config.get('TARGET_AUDIENCE', ''))
+    prompt = prompt.replace('{{AD_STYLE}}', brand_config.get('AD_STYLE', ''))
+    prompt = prompt.replace('{{CREATIVE_DIRECTION}}', brand_config.get('CREATIVE_DIRECTION', ''))
     
     # Eyewear specifications (with fallback text)
     prompt = prompt.replace('{{FRAME_STYLE}}', 
@@ -139,7 +141,7 @@ def call_anthropic(prompt, model):
     response = client.messages.create(
         model=model,
         max_tokens=4000,
-        temperature=0.7,
+        temperature=1.0,  # Higher temperature for more creative variation
         system="You are an elite creative director specializing in eyewear advertising.",
         messages=[
             {"role": "user", "content": prompt}
@@ -246,19 +248,33 @@ def expand_concept(concept_text, brand_config_path, video_settings, llm_model, o
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python expand_concept.py <concept_text> [brand_config] [llm_model] [output_dir]")
+        print("Usage: python expand_concept.py <concept_text_or_file> [brand_config] [llm_model] [output_dir]")
         print("\nExample:")
         print('  python expand_concept.py "The World Comes Into Focus..." ../../s1_generate_concepts/inputs/configs/sunglasses.json')
+        print('  python expand_concept.py inputs/concepts/world_comes_into_focus.txt ../../s1_generate_concepts/inputs/configs/sunglasses.json')
         print('  python expand_concept.py "Accidental Style Icon..." ../../s1_generate_concepts/inputs/configs/sunglasses.json anthropic/claude-sonnet-4-5-20250929')
         print("\nDefault brand config: ../../s1_generate_concepts/inputs/configs/sunglasses.json")
         print("Default LLM model: openai/gpt-5.1")
-        print("Default output directory: ../outputs")
+        print("Default output directory: s0_expand_concept/outputs/")
         sys.exit(1)
     
-    concept_text = sys.argv[1]
+    concept_input = sys.argv[1]
     brand_config_path = sys.argv[2] if len(sys.argv) > 2 else "../../s1_generate_concepts/inputs/configs/sunglasses.json"
     llm_model = sys.argv[3] if len(sys.argv) > 3 else "openai/gpt-5.1"
-    output_dir = sys.argv[4] if len(sys.argv) > 4 else "../outputs"
+    # Default to outputs folder in s0_expand_concept directory
+    script_dir = Path(__file__).parent
+    default_output_dir = script_dir.parent / "outputs"
+    output_dir = sys.argv[4] if len(sys.argv) > 4 else str(default_output_dir)
+    
+    # Check if input is a file path
+    concept_path = Path(concept_input)
+    if concept_path.exists() and concept_path.is_file():
+        print(f"Reading concept from file: {concept_path}")
+        with open(concept_path, 'r', encoding='utf-8') as f:
+            concept_text = f.read().strip()
+    else:
+        # Treat as concept text directly
+        concept_text = concept_input
     
     # Default video settings (can be overridden by config)
     video_settings = {

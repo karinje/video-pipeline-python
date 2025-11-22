@@ -1,0 +1,15 @@
+{
+  "scene_prompts_file": "/Users/sanjaykarinje/git/video-gen/s7_generate_scene_prompts/outputs/sunvue_1122_0132/sunvue_celebrity_by_accident_revised/sunvue_celebrity_by_accident_revised_scene_prompts.json",
+  "output_dir": "/Users/sanjaykarinje/git/video-gen/s8_generate_first_frames/outputs/sunvue_1122_0132/sunvue_celebrity_by_accident_revised",
+  "resolution": "1080p",
+  "aspect_ratio": "16:9",
+  "total_scenes": 5,
+  "generated_frames": 5,
+  "first_frames": {
+    "1": "sunvue_celebrity_by_accident_revised_p1_first_frame.png",
+    "2": "sunvue_celebrity_by_accident_revised_p2_first_frame.png",
+    "3": "sunvue_celebrity_by_accident_revised_p3_first_frame.png",
+    "4": "sunvue_celebrity_by_accident_revised_p4_first_frame.png",
+    "5": "sunvue_celebrity_by_accident_revised_p5_first_frame.png"
+  }
+}
